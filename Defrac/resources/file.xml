@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<company>
+	<staff a="1" b ="2" c = "3" d ="3"  e="">
+		<firstname>yong</firstname>
+		<lastname>mook kim</lastname>
+		<nickname>mkyong</nickname>
+		<salary>100000</salary>
+		<passport id="1111" />
+		<social number="2222" />
+	</staff>
+	<staff id="2001">
+		<firstname>low</firstname>
+		<lastname>yin fong</lastname>
+		<nickname>fong fong</nickname>
+		<salary>200000</salary>
+		<passport id="56789" />
+	</staff>
+</company>

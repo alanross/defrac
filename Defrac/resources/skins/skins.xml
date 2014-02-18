@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://texturepacker.com-->
+<!-- $TexturePacker:SmartUpdate:2a351c9da38c0d4a387d889dd641aacb$ -->
+<!--Format:
+n  => name of the sprite
+x  => sprite x pos in texture
+y  => sprite y pos in texture
+w  => sprite width (may be trimmed)
+h  => sprite height (may be trimmed)
+oX => sprite's x-corner offset (only available if trimmed)
+oY => sprite's y-corner offset (only available if trimmed)
+oW => sprite's original width (only available if trimmed)
+oH => sprite's original height (only available if trimmed)
+r => 'y' only set if sprite is rotated
+-->
+<TextureAtlas imagePath="skins.png" width="64" height="102">
+    <sprite n="ButtonAddHovered" x="2" y="2" w="15" h="15" left="0" right="0" top="0" bottom="0" />
+    <sprite n="ButtonAddNormal" x="19" y="2" w="15" h="15" left="0" right="0" top="0" bottom="0" />
+    <sprite n="ButtonAddPressed" x="2" y="2" w="15" h="15" left="0" right="0" top="0" bottom="0" />
+    <sprite n="ButtonBrightHovered" x="36" y="2" w="26" h="17" left="10" right="10" top="8" bottom="8" />
+    <sprite n="ButtonBrightNormal" x="36" y="2" w="26" h="17" left="10" right="10" top="8" bottom="8" />
+    <sprite n="ButtonBrightPressed" x="2" y="21" w="26" h="17" left="10" right="10" top="8" bottom="8" />
+    <sprite n="ScaleGridTest" x="2" y="40" w="60" h="60" left="20" right="20" top="20" bottom="20" />
+</TextureAtlas>

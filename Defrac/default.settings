@@ -1,0 +1,14 @@
+{
+  "name": "Defrac",
+  "package": "com.Defrac",
+  "identifier": "Defrac",
+  "main": "com.adjazent.defrac.sandbox.Sandbox",
+  "version": "1.0",
+  "targets": [
+    "ios",
+    "web",
+    "jvm"
+  ],
+  "debug": "true",
+  "web": {"js": "defrac.js"}
+}
