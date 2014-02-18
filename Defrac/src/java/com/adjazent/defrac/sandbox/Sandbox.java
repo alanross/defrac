@@ -4,6 +4,7 @@ import com.adjazent.defrac.sandbox.experiments.core.job.EJob;
 import com.adjazent.defrac.sandbox.experiments.core.utils.EArrayUtils;
 import com.adjazent.defrac.sandbox.experiments.core.utils.EDateUtils;
 import com.adjazent.defrac.sandbox.experiments.core.utils.EStringUtils;
+import com.adjazent.defrac.sandbox.experiments.flutterman.EFlutterman;
 import com.adjazent.defrac.sandbox.experiments.lang.EDataTypes;
 import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
@@ -47,8 +48,9 @@ public final class Sandbox extends AbstractSandbox
 		add( new EGSLS01() );
 		add( new EGSLS02() );
 		add( new EUISkinning() );
+		add( new EFlutterman() );
 
-		activate( ECanvas.class );
+		activate( EFlutterman.class );
 	}
 
 	public static void main( final String[] args )
