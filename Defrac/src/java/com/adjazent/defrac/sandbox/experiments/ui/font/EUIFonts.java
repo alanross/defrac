@@ -3,6 +3,8 @@ package com.adjazent.defrac.sandbox.experiments.ui.font;
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.utils.StringUtils;
+import com.adjazent.defrac.math.geom.MPoint;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.sandbox.experiments.Experiment;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
@@ -13,16 +15,13 @@ import com.adjazent.defrac.ui.text.UITextSelection;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
-import com.adjazent.defrac.ui.text.font.glyph.UIGlyphImageRenderer;
+import com.adjazent.defrac.ui.text.processing.UITextRenderer;
 import defrac.display.Image;
-import defrac.display.Layer;
 import defrac.display.Texture;
 import defrac.display.event.UIActionEvent;
 import defrac.display.event.UIEventType;
 import defrac.event.Event;
 import defrac.event.Events;
-import defrac.geom.Point;
-import defrac.geom.Rectangle;
 import defrac.lang.Procedure;
 
 import javax.annotation.Nonnull;
@@ -36,9 +35,9 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 	UITextProcessor _textProcessor1;
 	UITextProcessor _textProcessor2;
 	UITextProcessor _textProcessor3;
-	Layer _textLayer1;
-	Layer _textLayer2;
-	Layer _textLayer3;
+	UITextRenderer _renderer1;
+	UITextRenderer _renderer2;
+	UITextRenderer _renderer3;
 
 	public EUIFonts()
 	{
@@ -59,13 +58,13 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 	{
 		Log.info( Context.DEFAULT, this, "onResourceLoadingSuccess" );
 
-		addChild( _textLayer1 = new Layer() ).moveTo( 50.0f, 50.0f );
-		addChild( _textLayer2 = new Layer() ).moveTo( 50.0f, 150.0f );
-		addChild( _textLayer3 = new Layer() ).moveTo( 50.0f, 250.0f );
+		addChild( _renderer1 = new UITextRenderer() ).moveTo( 50.0f, 50.0f );
+		addChild( _renderer2 = new UITextRenderer() ).moveTo( 50.0f, 150.0f );
+		addChild( _renderer3 = new UITextRenderer() ).moveTo( 50.0f, 250.0f );
 
-		_textProcessor1 = createTextProcessor( _textLayer1, "Hello Moko!" );
-		_textProcessor2 = createTextProcessor( _textLayer2, "Output" );
-		_textProcessor3 = createTextProcessor( _textLayer3, "Output" );
+		_textProcessor1 = createTextProcessor( _renderer1, "Hello Moko!" );
+		_textProcessor2 = createTextProcessor( _renderer2, "Output" );
+		_textProcessor3 = createTextProcessor( _renderer3, "Output" );
 
 		addGlyph( 'M', 50.0f, 350.0f );
 
@@ -73,7 +72,7 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 	}
 
 	@Override
-	public void onResourceLoadingFailure()
+	public void onResourceLoadingFailure( Error error )
 	{
 		Log.info( Context.DEFAULT, this, "onResourceLoadingFailure" );
 	}
@@ -82,28 +81,28 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 	{
 		UIFont font = UIFontManager.get().getFont( "helvetica" );
 
-		UIGlyph g = font.getGlyph( character );
+		UIGlyph g = font.getGlyphWithChar( character );
 
-		Rectangle r = g.getSourceRect();
-		Image image = new Image( new Texture( font.getTextureData(), r.x, r.y, r.width, r.height ) );
+		MRectangle r = g.getSourceRect();
+		Image image = new Image( new Texture( font.getTextureData(), ( float ) r.x, ( float ) r.y, ( float ) r.width, ( float ) r.height ) );
 
 		addChild( image ).moveTo( posX, posY );
 	}
 
-	private UITextProcessor createTextProcessor( Layer container, String text )
+	private UITextProcessor createTextProcessor( UITextRenderer renderer, String text )
 	{
-		UITextFormat textFormat = new UITextFormat( "Helvetica", 0, 0, 0, 0 );
-		UIGlyphImageRenderer renderer = new UIGlyphImageRenderer( container );
-		UITextProcessor textProcessor = UITextProcessor.createSingleLine( renderer, textFormat );
+		UITextFormat textFormat = new UITextFormat( "Helvetica" );
+
+		UITextProcessor textProcessor = UITextProcessor.create( textFormat, renderer, true );
 
 		textProcessor.setText( text );
-		textProcessor.layout(); // no size restrictions
+		textProcessor.render(); // no size restrictions
 
 		return textProcessor;
 	}
 
 	private int step = 0;
-	private Point mousePos = new Point();
+	private defrac.geom.Point mousePos = new defrac.geom.Point();
 
 	@Override
 	public void apply( @Nonnull final Event event )
@@ -115,7 +114,7 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 		if( step++ == 40 )
 		{
 			_textProcessor1.setText( "Hello Moko! " + StringUtils.randomSequence( 15 ) );
-			_textProcessor1.layout();
+			_textProcessor1.render();
 			step = 0;
 		}
 	}
@@ -134,27 +133,32 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 			{
 				UIActionEvent actionEvent = ( UIActionEvent ) uiEvent;
 
-				Point p = actionEvent.pos;
+				defrac.geom.Point p = actionEvent.pos;
 
-				_textLayer1.globalToLocal( p );
+				_renderer1.globalToLocal( p );
 
-				_textProcessor2.setText( handleGlyphUnderPoint( p ) );
-				_textProcessor2.layout();
+				MPoint p2 = new MPoint( actionEvent.pos.x, actionEvent.pos.y );
 
-				_textProcessor3.setText( handleWordUnderPoint( p ) );
-				_textProcessor3.layout();
+				String t1 = handleGlyphUnderPoint( p2 );
+				String t2 = handleWordUnderPoint( p2 );
+
+				_textProcessor2.setText( t1 );
+				_textProcessor2.render();
+
+				_textProcessor3.setText( t2 );
+				_textProcessor3.render();
 			}
 		}
 	}
 
-	private String handleGlyphUnderPoint( Point p )
+	private String handleGlyphUnderPoint( MPoint p )
 	{
 		UIGlyph g = _textProcessor1.getGlyphUnderPoint( p );
 
-		return ( g != null ) ? g.getLetter() : "";
+		return ( g != null ) ? Character.toString( g.getCharacter() ) : "";
 	}
 
-	private String handleWordUnderPoint( Point p )
+	private String handleWordUnderPoint( MPoint p )
 	{
 		UITextSelection selection = new UITextSelection();
 
@@ -165,7 +169,7 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 
 		if( i0 != i1 )
 		{
-			return _textProcessor1.getText().substring( i0, i1 +1 );
+			return _textProcessor1.getText().substring( i0, i1 + 1 );
 		}
 
 		return "";

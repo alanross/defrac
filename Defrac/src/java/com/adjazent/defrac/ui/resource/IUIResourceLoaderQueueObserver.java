@@ -14,6 +14,6 @@ public interface IUIResourceLoaderQueueObserver
 	/**
 	 * Called of the resource loading process failed.
 	 */
-	void onResourceLoadingFailure();
+	void onResourceLoadingFailure( Error error );
 }
 

@@ -4,22 +4,17 @@ package com.adjazent.defrac.ui.text;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UITextFormat
+public class UITextFormat
 {
 	public String fontId;
-	public int size;
-	public boolean bold;
-	public boolean italic;
 
 	public int color;
 	public int leading;
 	public int tracking;
 	public int alignType;
+	public int lineSpacing;
 
-	/**
-	 * Creates a new instance of UITextFormat.
-	 */
-	public UITextFormat( String fontId, int color/*=0xFF000000*/, int leading/*=0*/, int tracking/*=0*/, int alignType/*=0*/ )
+	public UITextFormat( String fontId, int color, int leading, int tracking, int alignType, int lineSpacing )
 	{
 		this.fontId = fontId;
 
@@ -27,28 +22,35 @@ public final class UITextFormat
 		this.leading = leading;
 		this.tracking = tracking;
 		this.alignType = alignType;
+		this.lineSpacing = lineSpacing;
 	}
 
-	/**
-	 * Make a real copy of the UITextFormat object.
-	 */
+	public UITextFormat( String fontId )
+	{
+		this.fontId = fontId;
+
+		this.color = 0;
+		this.leading = 0;
+		this.tracking = 0;
+		this.alignType = 0;
+		this.lineSpacing = 0;
+	}
+
 	public UITextFormat clone()
 	{
-		return new UITextFormat( fontId, color, leading, tracking, alignType );
+		return new UITextFormat( fontId, color, leading, tracking, alignType, lineSpacing );
 	}
 
-	/**
-	 * Creates and returns a string representation of the UITextFormat object.
-	 */
 	@Override
 	public String toString()
 	{
 		return "[UITextFormat" +
-				"  fontId" + fontId +
-				"  color" + color +
-				"  leading" + leading +
-				"  tracking" + tracking +
-				"  alignType" + alignType +
+				", fontId:" + fontId +
+				", color:" + color +
+				", leading:" + leading +
+				", tracking:" + tracking +
+				", alignType:" + alignType +
+				", lineSpacing:" + lineSpacing +
 				"]";
 	}
 }

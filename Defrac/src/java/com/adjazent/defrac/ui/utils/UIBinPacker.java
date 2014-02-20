@@ -1,12 +1,13 @@
 package com.adjazent.defrac.ui.utils;
 
-import defrac.geom.Rectangle;
+
+import com.adjazent.defrac.math.geom.MRectangle;
 
 /**
- * Performs 'discrete online rectangle packing into a rectangular bin' by maintaining
+ * Performs 'discrete online rectangles packing into a rectangular bin' by maintaining
  * a binary tree of used and free rectangles of the bin. There are several variants
  * of bin packing problems, and this packer is characterized  by* - We're solving the 'online' version of the problem, which means that when we're adding
- * a rectangle, we have no information of the sizes of the rectangles that are going to
+ * a rectangles, we have no information of the sizes of the rectangles that are going to
  * be packed after this one.
  * - We are packing rectangles that are not rotated. I.e. the algorithm will not flip
  * a rectangle of (w,h) to be stored if it were a rectangle of size (h, w). There is no
@@ -17,7 +18,7 @@ import defrac.geom.Rectangle;
  * Internal memory usage is linear to the number of rectangles we've already packed.
  * <p/>
  * For more information, see
- * - Rectangle http packing //www.gamedev.net/community/forums/topic.asp?topic_id=392413
+ * - MRectangle http packing //www.gamedev.net/community/forums/topic.asp?topic_id=392413
  * - Packing http lightmaps //www.blackpawn.com/texts/lightmaps/default.html
  * <p/>
  * Instead Idea of just picking the first free rectangle to insert the new rect into,
@@ -44,7 +45,7 @@ public final class UIBinPacker
 	/**
 	 * Creates a new instance of RectangleBinPacker.
 	 */
-	public void UIBinPacker( int binWidth, int binHeight )
+	public void BinPacker( int binWidth, int binHeight )
 	{
 		_binWidth = binWidth;
 		_binHeight = binHeight;
@@ -62,7 +63,7 @@ public final class UIBinPacker
 	 * Running time is linear to the number of rectangles that have been already packed.
 	 * The x and y of rectangle are modified if the rectangle fits into the bin
 	 */
-	public boolean insert( Rectangle rect )
+	public boolean insert( MRectangle rect )
 	{
 		BinNode node = internalInsert( _root, ( int ) rect.width, ( int ) rect.height );
 
@@ -208,7 +209,6 @@ public final class UIBinPacker
 	{
 		return "[UIBinPacker]";
 	}
-
 
 	/**
 	 * A node of a binary tree. Each node represents a rectangular area of the texture

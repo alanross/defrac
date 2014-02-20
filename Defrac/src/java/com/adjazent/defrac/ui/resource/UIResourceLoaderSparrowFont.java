@@ -10,13 +10,13 @@ import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.xml.XML;
 import com.adjazent.defrac.core.xml.XMLNode;
-import com.adjazent.defrac.ui.text.font.UIFontManager;
+import com.adjazent.defrac.math.geom.MPoint;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.text.font.UIFont;
+import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 import com.adjazent.defrac.ui.text.font.glyph.UIKerningPair;
 import defrac.display.TextureData;
-import defrac.geom.Point;
-import defrac.geom.Rectangle;
 
 import java.util.LinkedList;
 
@@ -78,7 +78,7 @@ public final class UIResourceLoaderSparrowFont extends Job implements IUIResourc
 			font.addGlyph( createGlyph( font, lineHeight, base, glyphs.getChildAt( n ), kernings.children ) );
 		}
 
-		if( !font.hasGlyph( 10 ) ) // new-line character
+		if( !font.hasGlyphWithCode( 10 ) ) // new-line character
 		{
 			font.addGlyph( createNewLineGlyph( font ) );
 		}
@@ -110,12 +110,12 @@ public final class UIResourceLoaderSparrowFont extends Job implements IUIResourc
 
 		LinkedList<UIKerningPair> kerningPairs = createKerningPairs( matchingKernings );
 
-		Point offset = new Point(
+		MPoint offset = new MPoint(
 				Integer.parseInt( glyph.getAttribute( "xoffset" ) ),
 				Integer.parseInt( glyph.getAttribute( "yoffset" ) )
 		);
 
-		Rectangle sourceRect = new Rectangle(
+		MRectangle sourceRect = new MRectangle(
 				Integer.parseInt( glyph.getAttribute( "x" ) ),
 				Integer.parseInt( glyph.getAttribute( "y" ) ),
 				Integer.parseInt( glyph.getAttribute( "width" ) ),
@@ -130,7 +130,7 @@ public final class UIResourceLoaderSparrowFont extends Job implements IUIResourc
 			sourceRect.height += 1;
 		}
 
-		Rectangle bounds = new Rectangle( 0, 0, sourceRect.width, sourceRect.height );
+		MRectangle bounds = new MRectangle( 0, 0, sourceRect.width, sourceRect.height );
 
 		return new UIGlyph( font, code, sourceRect, bounds, offset, xAdvance, lineHeight, base, kerningPairs );
 	}
@@ -139,20 +139,20 @@ public final class UIResourceLoaderSparrowFont extends Job implements IUIResourc
 	{
 		// try to prepare a new line character by using the info from the space character
 
-		if( !font.hasGlyph( ' ' ) ) // space character
+		if( !font.hasGlyphWithChar( ' ' ) ) // space character
 		{
 			throw new NullError( this, "No space character present in the font atlas." );
 		}
 
-		UIGlyph glyph = font.getGlyph( ' ' );
+		UIGlyph glyph = font.getGlyphWithChar( ' ' );
 
 		int code = UIGlyph.NEW_LINE;
 		int xAdvance = 0;
 		int lineHeight = glyph.getLineHeight();
 		int base = glyph.getBase();
-		Point offset = new Point();
-		Rectangle sourceRect = new Rectangle();
-		Rectangle bounds = new Rectangle();
+		MPoint offset = new MPoint();
+		MRectangle sourceRect = new MRectangle();
+		MRectangle bounds = new MRectangle();
 		LinkedList<UIKerningPair> kerningPairs = new LinkedList<UIKerningPair>();
 
 		return new UIGlyph( font, code, sourceRect, bounds, offset, xAdvance, lineHeight, base, kerningPairs );

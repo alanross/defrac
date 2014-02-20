@@ -6,12 +6,11 @@ import com.adjazent.defrac.core.log.Level;
 import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.log.output.SilentLogOutput;
 import com.adjazent.defrac.core.log.output.SimpleLogOutput;
+import com.adjazent.defrac.core.stage.StageProvider;
 import com.adjazent.defrac.sandbox.experiments.Experiment;
 import defrac.app.GenericApp;
 import defrac.display.Layer;
 import defrac.display.Stats;
-import defrac.event.StageEvent;
-import defrac.lang.Procedure;
 
 import java.util.Hashtable;
 
@@ -21,15 +20,6 @@ import java.util.Hashtable;
  */
 public class AbstractSandbox extends GenericApp
 {
-	private final Procedure<StageEvent.Resize> resizeProcedure = new Procedure<StageEvent.Resize>()
-	{
-		@Override
-		public void apply( StageEvent.Resize event )
-		{
-			onAppResize();
-		}
-	};
-
 	protected Layer container;
 	protected Stats stats;
 
@@ -40,6 +30,8 @@ public class AbstractSandbox extends GenericApp
 	protected final void onCreate()
 	{
 		super.onCreate();
+
+		StageProvider.stage = stage();
 
 		Log.initialize();
 		Log.get().addOutput( new SimpleLogOutput() );
@@ -52,12 +44,9 @@ public class AbstractSandbox extends GenericApp
 
 		container = addChild( new Layer() );
 		stats = addChild( new Stats() );
+		stats.moveTo( 10, 10 );
 
 //		container.centerRegistrationPoint().moveBy( 100, 100 );
-
-		stage().onResize.attach( resizeProcedure );
-
-		onAppResize();
 
 		onCreateComplete();
 
@@ -66,17 +55,6 @@ public class AbstractSandbox extends GenericApp
 	protected void onCreateComplete()
 	{
 
-	}
-
-	protected void onAppResize()
-	{
-		stats.moveTo( 10, 10 );
-//		container.moveTo( ( stage().width() - container.width() ) * 0.5f, ( stage().height() - container.height() ) * 0.5f );
-
-		if( _experiment != null )
-		{
-			_experiment.resizeTo( stage().width(), stage().height() );
-		}
 	}
 
 	protected void add( Experiment experiment )

@@ -9,10 +9,10 @@ import defrac.display.TextureData;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UIFont extends Atlas implements IAtlasElement
+public class UIFont extends Atlas implements IAtlasElement
 {
-	private final TextureData _textureData;
-	private final String _id;
+	private TextureData _textureData;
+	private String _id;
 
 	private String _face;
 	private int _size;
@@ -31,36 +31,32 @@ public final class UIFont extends Atlas implements IAtlasElement
 		_lineHeight = lineHeight;
 	}
 
-	public Boolean addGlyph( UIGlyph glyph )
+	public boolean addGlyph( UIGlyph glyph )
 	{
 		return addElement( glyph );
 	}
 
-	public Boolean removeGlyph( UIGlyph glyph )
+	public boolean removeGlyph( UIGlyph glyph )
 	{
 		return removeElement( glyph );
 	}
 
-	public UIGlyph getGlyph( char character )
+	public UIGlyph getGlyphWithChar( char character )
 	{
-		int code = UIGlyph.charToCode( character );
-
-		return getGlyph( code );
+		return getGlyphWithCode( UIGlyph.charToCode( character ) );
 	}
 
-	public UIGlyph getGlyph( int code )
+	public UIGlyph getGlyphWithCode( int code )
 	{
 		return ( ( UIGlyph ) getElement( Integer.toString( code ) ) ).clone();
 	}
 
-	public boolean hasGlyph( char character )
+	public boolean hasGlyphWithChar( char character )
 	{
-		int code = UIGlyph.charToCode( character );
-
-		return hasGlyph( code );
+		return hasGlyphWithCode( UIGlyph.charToCode( character ) );
 	}
 
-	public boolean hasGlyph( int code )
+	public boolean hasGlyphWithCode( int code )
 	{
 		return hasElement( Integer.toString( code ) );
 	}
@@ -103,7 +99,6 @@ public final class UIFont extends Atlas implements IAtlasElement
 		return _lineHeight;
 	}
 
-	@Override
 	public String getId()
 	{
 		return _id;
@@ -120,4 +115,3 @@ public final class UIFont extends Atlas implements IAtlasElement
 				", italic:" + getItalic() + "]";
 	}
 }
-

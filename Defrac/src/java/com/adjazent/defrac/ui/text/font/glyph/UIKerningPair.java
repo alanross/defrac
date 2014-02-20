@@ -6,7 +6,7 @@ import com.adjazent.defrac.core.utils.IDisposable;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UIKerningPair implements IDisposable
+public class UIKerningPair implements IDisposable
 {
 	private int _firstGlyphCode;
 	private int _secondGlyphCode;
@@ -60,9 +60,9 @@ public final class UIKerningPair implements IDisposable
 	public String toString()
 	{
 		return "[UIKerningPair" +
-				"  first" + _firstGlyphCode +
-				"  second" + _secondGlyphCode +
-				"  kerning" + _kerning + "]";
+				" first" + _firstGlyphCode +
+				", second" + _secondGlyphCode +
+				", kerning" + _kerning + "]";
 	}
 }
 

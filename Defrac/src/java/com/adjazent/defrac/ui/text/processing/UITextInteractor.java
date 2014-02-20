@@ -1,9 +1,11 @@
-package com.adjazent.defrac.ui.text.font.glyph;
+package com.adjazent.defrac.ui.text.processing;
 
+
+import com.adjazent.defrac.math.geom.MPoint;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.text.UITextSelection;
-import com.adjazent.defrac.ui.text.UITextUtil;
-import defrac.geom.Point;
-import defrac.geom.Rectangle;
+import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
+import com.adjazent.defrac.ui.text.font.glyph.UIGlyphUtils;
 
 import java.util.LinkedList;
 
@@ -11,14 +13,13 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UIGlyphInteraction implements IUIGlyphInteraction
+public final class UITextInteractor
 {
-	public UIGlyphInteraction()
+	public UITextInteractor()
 	{
 	}
 
-	@Override
-	public int getCursorIndexForPoint( LinkedList<UIGlyph> glyphs, Point point )
+	public int getCursorIndexForPoint( LinkedList<UIGlyph> glyphs, MPoint point )
 	{
 		int n = glyphs.size();
 
@@ -30,13 +31,13 @@ public final class UIGlyphInteraction implements IUIGlyphInteraction
 
 			if( glyph.containsPoint( point ) )
 			{
-				Rectangle b = glyph.getSelectionRect();
+				MRectangle b = glyph.getSelectionRect();
 
 				int x = ( int ) ( point.x - ( b.x + b.width * 0.5 ) );
 
 				if( x < 0 )
 				{
-					return i - 1; // can result in -1;
+					return i - 1; // can and should result in -1;
 				}
 				else
 				{
@@ -48,35 +49,36 @@ public final class UIGlyphInteraction implements IUIGlyphInteraction
 		return -1;
 	}
 
-	@Override
-	public UIGlyph getGlyphUnderPoint( LinkedList<UIGlyph> glyphs, Point point )
+	public UIGlyph getGlyphUnderPoint( LinkedList<UIGlyph> glyphs, MPoint point )
 	{
-		for( UIGlyph glyph : glyphs )
+		int n = glyphs.size();
+
+		for( int i = 0; i < n; ++i )
 		{
-			if( glyph.containsPoint( point ) )
+			if( glyphs.get( i ).containsPoint( point ) )
 			{
-				return glyph;
+				return glyphs.get( i );
 			}
 		}
 
 		return null;
 	}
 
-	@Override
-	public void getWordUnderPoint( LinkedList<UIGlyph> glyphs, Point point, UITextSelection selection )
+	public void getWordUnderPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
 	{
 		int n = glyphs.size();
+		UIGlyph glyph = null;
 
 		selection.firstIndex = 0;
 		selection.lastIndex = 0;
 
 		for( int i = 0; i < n; ++i )
 		{
-			UIGlyph glyph = glyphs.get( i );
+			glyph = glyphs.get( i );
 
 			if( glyph.containsPoint( point ) )
 			{
-				if( UITextUtil.isWordSeparator( glyph ) )
+				if( UIGlyphUtils.isWordSeparator( glyph ) )
 				{
 					selection.firstIndex = i;
 					selection.lastIndex = i;
@@ -88,7 +90,7 @@ public final class UIGlyphInteraction implements IUIGlyphInteraction
 
 					for( int min = i; min > -1; --min )
 					{
-						if( UITextUtil.isWordSeparator( glyphs.get( min ) ) )
+						if( UIGlyphUtils.isWordSeparator( glyphs.get( min ) ) )
 						{
 							break;
 						}
@@ -98,7 +100,7 @@ public final class UIGlyphInteraction implements IUIGlyphInteraction
 
 					for( int max = i; max < n; ++max )
 					{
-						if( UITextUtil.isWordSeparator( glyphs.get( max ) ) )
+						if( UIGlyphUtils.isWordSeparator( glyphs.get( max ) ) )
 						{
 							break;
 						}
@@ -106,21 +108,14 @@ public final class UIGlyphInteraction implements IUIGlyphInteraction
 						selection.lastIndex = max;
 					}
 				}
-
-				break;
 			}
 		}
 	}
 
 	@Override
-	public void dispose()
-	{
-	}
-
-	@Override
 	public String toString()
 	{
-		return "[UIGlyphInteraction]";
+		return "[UITextInteractor]";
 	}
 }
 

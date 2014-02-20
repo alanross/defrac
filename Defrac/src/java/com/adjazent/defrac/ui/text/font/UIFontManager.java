@@ -1,5 +1,6 @@
 package com.adjazent.defrac.ui.text.font;
 
+
 import com.adjazent.defrac.core.error.SingletonError;
 import com.adjazent.defrac.ds.atlas.Atlas;
 
@@ -7,7 +8,7 @@ import com.adjazent.defrac.ds.atlas.Atlas;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UIFontManager extends Atlas
+public class UIFontManager extends Atlas
 {
 	private static UIFontManager _instance;
 
@@ -26,16 +27,16 @@ public final class UIFontManager extends Atlas
 		return _instance;
 	}
 
-	private UIFontManager()
+	public UIFontManager()
 	{
 	}
 
-	public Boolean addFont( UIFont element )
+	public boolean addFont( UIFont element )
 	{
 		return addElement( element );
 	}
 
-	public Boolean removeFont( UIFont element )
+	public boolean removeFont( UIFont element )
 	{
 		return removeElement( element );
 	}
@@ -47,12 +48,12 @@ public final class UIFontManager extends Atlas
 
 	public boolean hasFont( UIFont element )
 	{
-		return hasElement( element.getId() );
+		return hasFontWithId( element.getId() );
 	}
 
-	public boolean hasFont( String id )
+	public boolean hasFontWithId( String id )
 	{
-		return hasElement( id );
+		return hasFontWithId( id );
 	}
 
 	@Override
@@ -61,5 +62,3 @@ public final class UIFontManager extends Atlas
 		return "[UIFontManager]";
 	}
 }
-
-

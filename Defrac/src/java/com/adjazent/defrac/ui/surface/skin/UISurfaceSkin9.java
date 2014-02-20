@@ -2,6 +2,7 @@ package com.adjazent.defrac.ui.surface.skin;
 
 import com.adjazent.defrac.core.error.NullError;
 import com.adjazent.defrac.core.error.ValueError;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.surface.IUISurfaceSkin;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.texture.UITexture;
@@ -9,7 +10,6 @@ import com.adjazent.defrac.ui.utils.bitmap.UISlice9Grid;
 import defrac.display.Image;
 import defrac.display.Texture;
 import defrac.display.TextureData;
-import defrac.geom.Rectangle;
 
 /**
  * @author Alan Ross
@@ -41,7 +41,7 @@ public final class UISurfaceSkin9 implements IUISurfaceSkin
 	{
 	}
 
-	private void prepare( TextureData source, Rectangle rect, UISlice9Grid sliceGrid )
+	private void prepare( TextureData source, MRectangle rect, UISlice9Grid sliceGrid )
 	{
 		if( null == source )
 		{
@@ -56,7 +56,7 @@ public final class UISurfaceSkin9 implements IUISurfaceSkin
 		_minWidth = _sliceLeft + _sliceRight;
 		_minHeight = _sliceTop + _sliceBottom;
 
-		Rectangle[] slices = UISlice9Grid.createSlices( rect, sliceGrid );
+		MRectangle[] slices = UISlice9Grid.createSlices( rect, sliceGrid );
 
 		_tl.texture( slice( source, slices[ 0 ] ) );
 		_tc.texture( slice( source, slices[ 1 ] ) );
@@ -71,14 +71,14 @@ public final class UISurfaceSkin9 implements IUISurfaceSkin
 		_br.texture( slice( source, slices[ 8 ] ) );
 	}
 
-	private Texture slice( TextureData textureData, Rectangle rect )
+	private Texture slice( TextureData textureData, MRectangle rect )
 	{
 		if( rect.width <= 0 || rect.height <= 0 )
 		{
 			return null;
 		}
 
-		return new Texture( textureData, rect.x, rect.y, rect.width, rect.height );
+		return new Texture( textureData, ( float ) rect.x, ( float ) rect.y, ( float ) rect.width, ( float ) rect.height );
 	}
 
 	@Override

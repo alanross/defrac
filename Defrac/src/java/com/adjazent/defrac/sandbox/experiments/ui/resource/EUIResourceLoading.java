@@ -39,7 +39,7 @@ public final class EUIResourceLoading extends Experiment implements IUIResourceL
 	}
 
 	@Override
-	public void onResourceLoadingFailure()
+	public void onResourceLoadingFailure( Error error )
 	{
 		Log.info( Context.DEFAULT, this, "onResourceLoadingFailure" );
 	}

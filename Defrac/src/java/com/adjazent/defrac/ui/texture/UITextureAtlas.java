@@ -3,9 +3,9 @@ package com.adjazent.defrac.ui.texture;
 import com.adjazent.defrac.core.error.GenericError;
 import com.adjazent.defrac.ds.atlas.Atlas;
 import com.adjazent.defrac.ds.atlas.IAtlasElement;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.utils.bitmap.UISlice9Grid;
 import defrac.display.TextureData;
-import defrac.geom.Rectangle;
 
 /**
  * @author Alan Ross
@@ -22,7 +22,7 @@ public final class UITextureAtlas extends Atlas implements IAtlasElement
 		_id = id;
 	}
 
-	public UITexture addTexture( String id, Rectangle rect )
+	public UITexture addTexture( String id, MRectangle rect )
 	{
 		UITexture element = new UITexture( _textureData, id, rect );
 
@@ -34,7 +34,7 @@ public final class UITextureAtlas extends Atlas implements IAtlasElement
 		throw new GenericError( this, "There was a problem creating UITexture" );
 	}
 
-	public UITexture addTexture( String id, Rectangle rect, UISlice9Grid sliceGrid )
+	public UITexture addTexture( String id, MRectangle rect, UISlice9Grid sliceGrid )
 	{
 		UITexture element = new UITexture( _textureData, id, rect, sliceGrid );
 
@@ -91,15 +91,15 @@ public final class UITextureAtlas extends Atlas implements IAtlasElement
 		super.dispose();
 	}
 
+	public TextureData getTextureData()
+	{
+		return _textureData;
+	}
+
 	@Override
 	public String getId()
 	{
 		return _id;
-	}
-
-	public TextureData getTextureData()
-	{
-		return _textureData;
 	}
 
 	@Override

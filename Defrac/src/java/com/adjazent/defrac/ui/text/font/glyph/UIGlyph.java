@@ -2,11 +2,11 @@ package com.adjazent.defrac.ui.text.font.glyph;
 
 import com.adjazent.defrac.core.utils.IDisposable;
 import com.adjazent.defrac.ds.atlas.IAtlasElement;
+import com.adjazent.defrac.math.geom.MPoint;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import defrac.display.Texture;
 import defrac.display.TextureData;
-import defrac.geom.Point;
-import defrac.geom.Rectangle;
 
 import java.util.LinkedList;
 
@@ -20,51 +20,52 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 
 	// id
 	private int _code;
-	private String _letter;
+	private char _character;
 
-	// the atlas of which the glyph is part of
+	// the font of which the glyph is part of
 	private UIFont _font;
 
 	// the source texture bounds of the glyph
-	private Rectangle _sourceRect;
+	private MRectangle _sourceRect;
 
 	// the selection hit test bounds of the glyph
-	private Rectangle _selectionRect;
+	private MRectangle _selectionRect;
 
 	// the real bounds of the glyph
-	private Rectangle _bounds;
+	private MRectangle _bounds;
 
 	private Texture _texture;
 
 	// metrics
 	private int _xAdvance;
-	private Point _offset;
+	private MPoint _offset;
 	private int _lineHeight;
 	private int _base;
 	private LinkedList<UIKerningPair> _kerning;
 
-	public static int charToCode( char letter )
+	public static int charToCode( char character )
 	{
-		return ( int ) letter;
+		return ( int ) character;
 	}
 
-	public static String codeToChar( int code )
+	public static char codeToChar( int code )
 	{
-		return Character.toString( ( char ) code );
+		return Character.toString( ( char ) code ).charAt( 0 );
 	}
 
-	public UIGlyph( UIFont font, int code, Rectangle sourceRect, Rectangle bounds, Point offset, int xAdvance, int lineHeight, int base, LinkedList<UIKerningPair> kerning )
+
+	public UIGlyph( UIFont font, int code, MRectangle sourceRect, MRectangle bounds, MPoint offset, int xAdvance, int lineHeight, int base, LinkedList<UIKerningPair> kerning )
 	{
 		_font = font;
 
 		_code = code;
-		_letter = codeToChar( code );
+		_character = codeToChar( code );
 
 		_sourceRect = sourceRect;
-		_selectionRect = new Rectangle( 0, 0, xAdvance, lineHeight );
+		_selectionRect = new MRectangle( 0, 0, xAdvance, lineHeight );
 		_bounds = bounds;
 
-		_texture = new Texture( _font.getTextureData(), _sourceRect.x, _sourceRect.y, _sourceRect.width, _sourceRect.height );
+		_texture = new Texture( _font.getTextureData(), ( float ) _sourceRect.x, ( float ) _sourceRect.y, ( float ) _sourceRect.width, ( float ) _sourceRect.height );
 
 		_offset = offset;
 		_xAdvance = xAdvance;
@@ -72,16 +73,15 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 		_base = base;
 		_kerning = kerning;
 
-		setPosition( 0, 0 );
+		setTo( 0, 0 );
 	}
 
 	public UIGlyph clone()
 	{
-		Rectangle b = new Rectangle( _bounds.x, _bounds.y, _bounds.width, _bounds.height ); //_bounds.clone()
-		return new UIGlyph( _font, _code, _sourceRect, b, _offset, _xAdvance, _lineHeight, _base, _kerning );
+		return new UIGlyph( _font, _code, _sourceRect, _bounds.clone(), _offset, _xAdvance, _lineHeight, _base, _kerning );
 	}
 
-	public void setPosition( int x, int y )
+	public void setTo( int x, int y )
 	{
 		_selectionRect.x = x;
 		_selectionRect.y = y;
@@ -90,7 +90,7 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 		_bounds.y = getYOffset() + y;
 	}
 
-	public boolean containsPoint( Point point )
+	public boolean containsPoint( MPoint point )
 	{
 		int px = ( int ) ( point.x - _selectionRect.x );
 		int py = ( int ) ( point.y - _selectionRect.y );
@@ -101,7 +101,6 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 	public void dispose()
 	{
 		_font = null;
-		_letter = null;
 		_sourceRect = null;
 		_selectionRect = null;
 		_bounds = null;
@@ -144,17 +143,17 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 		return _code;
 	}
 
-	public String getLetter()
+	public char getCharacter()
 	{
-		return _letter;
+		return _character;
 	}
 
-	public Rectangle getSourceRect()
+	public MRectangle getSourceRect()
 	{
 		return _sourceRect;
 	}
 
-	public Rectangle getSelectionRect()
+	public MRectangle getSelectionRect()
 	{
 		return _selectionRect;
 	}
@@ -214,9 +213,8 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 	public String toString()
 	{
 		return "[UIGlyph" +
-				" id:" + getId() +
-				", code:" + getCode() +
-				", letter:" + getLetter() +
+				" code:" + getCode() +
+				", character:" + getCharacter() +
 				", width:" + getWidth() +
 				", height:" + getHeight() +
 				", lineHeight:" + getLineHeight() +

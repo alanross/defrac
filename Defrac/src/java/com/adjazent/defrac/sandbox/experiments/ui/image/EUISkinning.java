@@ -40,7 +40,7 @@ public final class EUISkinning extends Experiment implements IUIResourceLoaderQu
 	}
 
 	@Override
-	public void onResourceLoadingFailure()
+	public void onResourceLoadingFailure( Error error )
 	{
 		Log.info( Context.DEFAULT, this, "onResourceLoadingFailure" );
 	}

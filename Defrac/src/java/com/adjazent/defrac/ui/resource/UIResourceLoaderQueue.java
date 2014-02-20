@@ -152,7 +152,7 @@ public final class UIResourceLoaderQueue implements IJobObserver, IDisposable
 
 		while( --n > -1 )
 		{
-			_observer.get( n ).onResourceLoadingFailure();
+			_observer.get( n ).onResourceLoadingFailure( error );
 		}
 	}
 

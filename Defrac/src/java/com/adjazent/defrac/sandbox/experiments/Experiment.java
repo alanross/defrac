@@ -3,6 +3,8 @@ package com.adjazent.defrac.sandbox.experiments;
 import defrac.app.GenericApp;
 import defrac.display.Layer;
 import defrac.display.Stage;
+import defrac.event.StageEvent;
+import defrac.lang.Procedure;
 
 /**
  * @author Alan Ross
@@ -17,19 +19,28 @@ public class Experiment extends Layer
 	{
 	}
 
-	public final void init( Stage theStage, GenericApp theApp )
+	public final void init( Stage stage, GenericApp app )
 	{
-		this.stage = theStage;
-		this.app = theApp;
+		this.stage = stage;
+		this.app = app;
+
+		this.stage.onResize.attach( new Procedure<StageEvent.Resize>()
+			{
+				@Override
+				public void apply( StageEvent.Resize event )
+				{
+					resize();
+				}
+			} );
 
 		onInit();
 	}
 
-	public final void resizeTo( float width, float height )
+	public final void resize()
 	{
-		System.out.print( width + " x " + height );
+		System.out.print( stage.width() + " x " + stage.height() );
 
-		onResize( width, height );
+		onResize( stage.width(), stage.height() );
 	}
 
 	protected void onInit()

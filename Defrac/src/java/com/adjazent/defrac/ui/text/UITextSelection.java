@@ -6,14 +6,25 @@ package com.adjazent.defrac.ui.text;
  */
 public final class UITextSelection
 {
-	public int firstIndex = 0;
-	public int lastIndex = 0;
+	public int firstIndex;
+	public int lastIndex;
+
+	/**
+	 * Creates a new instance of UITextSelection.
+	 */
+	public UITextSelection( int firstIndex, int lastIndex )
+	{
+		this.firstIndex = firstIndex;
+		this.lastIndex = lastIndex;
+	}
 
 	/**
 	 * Creates a new instance of UITextSelection.
 	 */
 	public UITextSelection()
 	{
+		this.firstIndex = 0;
+		this.lastIndex = 0;
 	}
 
 	/**
@@ -22,7 +33,10 @@ public final class UITextSelection
 	@Override
 	public String toString()
 	{
-		return "[UITextSelection]";
+		return "[UITextSelection" +
+				", firstIndex:" + firstIndex +
+				", lastIndex:" + lastIndex +
+				"]";
 	}
 }
 

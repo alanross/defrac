@@ -9,11 +9,11 @@ import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.xml.XML;
 import com.adjazent.defrac.core.xml.XMLNode;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.texture.UITextureAtlas;
 import com.adjazent.defrac.ui.texture.UITextureManager;
 import com.adjazent.defrac.ui.utils.bitmap.UISlice9Grid;
 import defrac.display.TextureData;
-import defrac.geom.Rectangle;
 
 import java.util.LinkedList;
 
@@ -77,7 +77,7 @@ public final class UIResourceLoaderTexturePacker extends Job implements IUIResou
 		int top = Integer.parseInt( sprite.getAttribute( "top" ) );
 		int bottom = Integer.parseInt( sprite.getAttribute( "bottom" ) );
 
-		Rectangle rect = new Rectangle(
+		MRectangle rect = new MRectangle(
 				Integer.parseInt( sprite.getAttribute( "x" ) ),
 				Integer.parseInt( sprite.getAttribute( "y" ) ),
 				Integer.parseInt( sprite.getAttribute( "w" ) ),

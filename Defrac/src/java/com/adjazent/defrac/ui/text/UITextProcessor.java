@@ -1,11 +1,14 @@
 package com.adjazent.defrac.ui.text;
 
+
 import com.adjazent.defrac.core.error.OutOfBoundsError;
+import com.adjazent.defrac.core.utils.IDisposable;
+import com.adjazent.defrac.math.geom.MPoint;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
-import com.adjazent.defrac.ui.text.font.glyph.*;
-import defrac.geom.Point;
-import defrac.geom.Rectangle;
+import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
+import com.adjazent.defrac.ui.text.processing.*;
 
 import java.util.LinkedList;
 
@@ -13,182 +16,152 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UITextProcessor //implements IDisposable
+public final class UITextProcessor implements IDisposable
 {
-	private LinkedList<UIGlyph> _glyphsOriginal = new LinkedList<UIGlyph>();
-	private LinkedList<UIGlyph> _glyphsLayouted = new LinkedList<UIGlyph>();
+	private LinkedList<UIGlyph> _glyphs = new LinkedList<UIGlyph>();
+	private LinkedList<UIGlyph> _ellipsis = new LinkedList<UIGlyph>();
 
-	private Rectangle _boundsOriginal = new Rectangle();
-	private Rectangle _boundsLayouted = new Rectangle();
+	private String _text = new String();
 
+	private IUITextComposer _composer;
+	private UITextRenderer _renderer;
+	private UITextInteractor _interact;
 	private UITextFormat _format;
-	private UIFont _atlas;
+	private UIFont _font;
+	private UITextLayout _block;
 
-	private IUIGlyphLayouter _layouter;
-	private IUIGlyphRenderer _renderer;
-	private UIGlyphInteraction _interaction;
-
-	private String _text;
-
-	/**
-	 * Creates and returns a new instance of UITextProcessor.
-	 */
-	public static UITextProcessor createSingleLine( IUIGlyphRenderer renderer )
+	public static UITextProcessor create( UITextFormat format, UITextRenderer renderer, boolean singleLine )
 	{
-		return new UITextProcessor( new UIGlyphLayouterSingleLine(), new UIGlyphInteraction(), renderer );
+		IUITextComposer composer = ( singleLine ) ? new UITextComposerSingleLine() : new UITextComposerMultiLine();
+
+		UITextInteractor interactor = new UITextInteractor();
+
+		return new UITextProcessor( composer, renderer, interactor, format );
 	}
 
-	/**
-	 * Creates and returns a new instance of UITextProcessor.
-	 */
-	public static UITextProcessor createSingleLine( IUIGlyphRenderer renderer, UITextFormat format )
+	public UITextProcessor( IUITextComposer composer, UITextRenderer renderer, UITextInteractor interact, UITextFormat format )
 	{
-		UITextProcessor processor = new UITextProcessor( new UIGlyphLayouterSingleLine(), new UIGlyphInteraction(), renderer );
+		_composer = composer;
+		_renderer = renderer;
+		_interact = interact;
 
-		if( format != null )
+		setFormat( format );
+	}
+
+	public void setFormat( UITextFormat value )
+	{
+		_format = value.clone();
+
+		_font = UIFontManager.get().getFont( _format.fontId );
+
+		UIGlyph glyph = _font.getGlyphWithChar( '.' );
+
+		_ellipsis = new LinkedList<UIGlyph>();
+		_ellipsis.add( glyph.clone() );
+		_ellipsis.add( glyph.clone() );
+		_ellipsis.add( glyph.clone() );
+	}
+
+	public void setText( String value )
+	{
+		//value = value.replace( RegExp( /[\a\e\t]/gm),' ');
+
+		if( _composer instanceof UITextComposerSingleLine )
 		{
-			processor.setFormat( format );
+			//value = value.replace( RegExp( /[\f\r\v]/gm ), ' ' );
+			value = value.replace( '\f', ' ' );
+			value = value.replace( '\r', ' ' );
+			value = value.replace( '\n', ' ' );
+		}
+		else
+		{
+			value = value.replace( '\f', '\n' );
+			value = value.replace( '\r', '\n' );
+
+			//value = value.replace( RegExp( /[\f\r\v]/gm),'\n');
 		}
 
-		return processor;
-	}
+		_text = value;
 
-	/**
-	 * Creates a new instance of UITextProcessor.
-	 */
-	public UITextProcessor( IUIGlyphLayouter layouter, UIGlyphInteraction interaction, IUIGlyphRenderer renderer )
-	{
-		_layouter = layouter;
-		_interaction = interaction;
-		_renderer = renderer;
+		_glyphs.clear();
 
-		_text = new String();
-	}
-
-	/**
-	 * Sets the TextFormat. This function must be called before calling any
-	 * other such (setText) or layout.
-	 */
-	public void setFormat( UITextFormat textFormat )
-	{
-		_format = textFormat.clone();
-
-		_atlas = UIFontManager.get().getFont( _format.fontId );
-
-		UIGlyph dot = _atlas.getGlyph( '.' );
-
-		LinkedList<UIGlyph> dots = new LinkedList<UIGlyph>();
-		dots.add( dot );
-		dots.add( dot.clone() );
-		dots.add( dot.clone() );
-
-		_layouter.setEllipsis( dots, _format );
-
-		setText( _text );
-	}
-
-	/**
-	 * Set the text to be processed.
-	 */
-	public void setText( String str )
-	{
-		_text = str;
-
-		// clean the string before using it
-		//str = str.replace( RegExp( /[\f\r\v]/gm),"\n");
-		//str = str.replace( RegExp( /[\a\e\t]/gm)," ");
-
-		_glyphsOriginal.clear();
-
-		final int n = str.length();
+		final int n = value.length();
 
 		for( int i = 0; i < n; ++i )
 		{
-			_glyphsOriginal.addLast( _atlas.getGlyph( str.charAt( i ) ) );
+			_glyphs.addLast( _font.getGlyphWithChar( value.charAt( i ) ).clone() );
+		}
+	}
+
+	public void render()
+	{
+		render( Integer.MAX_VALUE, Integer.MAX_VALUE );
+	}
+
+
+	public void render( int maxWidth, int maxHeight )
+	{
+		if( maxWidth < 0 || maxHeight < 0 )
+		{
+			return;
 		}
 
-		_layouter.layoutGlyphs( _glyphsOriginal, _boundsOriginal, _format, Integer.MAX_VALUE, Integer.MAX_VALUE );
-	}
+		MRectangle size = new MRectangle( 0, 0, maxWidth, maxHeight );
 
-	/**
-	 * Layouts the glyphs. The visual representation is defined by the text format.
-	 * If maxWidth is setAnd the text requires more space than defined by maxWidth,
-	 * the text is cropped using ellipsis to fit in to maxWidth.
-	 */
-	public void layout()
-	{
-		layout( Integer.MAX_VALUE, Integer.MAX_VALUE );
-	}
+		_block = _composer.process( ( LinkedList<UIGlyph> ) _glyphs.clone(), _ellipsis, _font, _format, size );
 
-	/**
-	 * Layouts the glyphs. The visual representation is defined by the text format.
-	 * If maxWidth is setAnd the text requires more space than defined by maxWidth,
-	 * the text is cropped using ellipsis to fit in to maxWidth.
-	 */
-	public void layout( int maxWidth, int maxHeight )
-	{
-		_glyphsLayouted.clear();
-
-		// make a copy, the glyphs will have the position from layout result done when text was set.
-		_glyphsLayouted = new LinkedList<UIGlyph>( _glyphsOriginal );
-
-		_layouter.layoutGlyphs( _glyphsLayouted, _boundsLayouted, _format, maxWidth, maxHeight );
-
-		_renderer.renderGlyphs( _glyphsLayouted, _format, _boundsLayouted );
+		_renderer.process( _block, _format );
 	}
 
 	public void dispose()
 	{
-		_layouter = null;
-		_renderer = null;
-		_interaction = null;
-
+		_glyphs = null;
 		_text = null;
+		_block = null;
 
-		_glyphsOriginal = null;
-
-		_boundsOriginal = null;
-		_boundsLayouted = null;
+		_renderer = null;
+		_composer = null;
+		_interact = null;
 	}
 
-	public UIGlyph getGlyphUnderPoint( Point point )
+	public UIGlyph getGlyphUnderPoint( MPoint point )
 	{
-		return _interaction.getGlyphUnderPoint( _glyphsOriginal, point );
+		return _interact.getGlyphUnderPoint( _glyphs, point );
 	}
 
-	public void getWordUnderPoint( Point point, UITextSelection selection )
+	public void getWordUnderPoint( MPoint point, UITextSelection selection )
 	{
-		_interaction.getWordUnderPoint( _glyphsOriginal, point, selection );
+		_interact.getWordUnderPoint( _glyphs, point, selection );
 	}
 
-	public int getCursorIndex( Point point )
+	public int getCursorIndex( MPoint point )
 	{
-		return _interaction.getCursorIndexForPoint( _glyphsOriginal, point );
+		return _interact.getCursorIndexForPoint( _glyphs, point );
 	}
 
 	public UIGlyph getGlyphAt( int index )
 	{
-		if( index < 0 || index >= _glyphsOriginal.size() )
+		if( index < 0 || index >= _glyphs.size() )
 		{
-			throw new OutOfBoundsError( index, 0, _glyphsOriginal.size() );
+			throw new OutOfBoundsError( index, 0, _glyphs.size() );
 		}
 
-		return _glyphsOriginal.get( index );
-	}
-
-	public Rectangle getBoundsOriginal()
-	{
-		return _boundsOriginal;
-	}
-
-	public Rectangle getBoundsLayouted()
-	{
-		return _boundsLayouted;
+		return _glyphs.get( index );
 	}
 
 	public String getText()
 	{
 		return _text;
+	}
+
+	public int getTextWidth()
+	{
+		return ( _block != null ) ? ( int ) _block.bounds.width : 0;
+	}
+
+	public int getTextHeight()
+	{
+		return ( _block != null ) ? ( int ) _block.bounds.height : 0;
 	}
 
 	@Override

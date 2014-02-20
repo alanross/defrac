@@ -9,10 +9,12 @@ import com.adjazent.defrac.sandbox.experiments.lang.EDataTypes;
 import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
 import com.adjazent.defrac.sandbox.experiments.ui.canvas.ECanvas;
+import com.adjazent.defrac.sandbox.experiments.ui.components.EUIList;
 import com.adjazent.defrac.sandbox.experiments.ui.event.EUIEvent;
 import com.adjazent.defrac.sandbox.experiments.ui.font.EUIFonts;
 import com.adjazent.defrac.sandbox.experiments.ui.gl.EGSLS01;
 import com.adjazent.defrac.sandbox.experiments.ui.gl.EGSLS02;
+import com.adjazent.defrac.sandbox.experiments.ui.gl.EUICanvasPainter;
 import com.adjazent.defrac.sandbox.experiments.ui.image.EUIImages;
 import com.adjazent.defrac.sandbox.experiments.ui.image.EUISkinning;
 import com.adjazent.defrac.sandbox.experiments.ui.quad.EQuad;
@@ -47,10 +49,12 @@ public final class Sandbox extends AbstractSandbox
 		add( new ECanvas() );
 		add( new EGSLS01() );
 		add( new EGSLS02() );
+		add( new EUICanvasPainter() );
 		add( new EUISkinning() );
 		add( new EFlutterman() );
+		add( new EUIList() );
 
-		activate( EFlutterman.class );
+		activate( EUIList.class );
 	}
 
 	public static void main( final String[] args )

@@ -2,7 +2,7 @@ package com.adjazent.defrac.ui.utils.bitmap;
 
 import com.adjazent.defrac.core.error.NullError;
 import com.adjazent.defrac.core.error.ValueError;
-import defrac.geom.Rectangle;
+import com.adjazent.defrac.math.geom.MRectangle;
 
 /**
  * @author Alan Ross
@@ -15,7 +15,7 @@ public class UISlice9Grid
 	public int top;
 	public int bottom;
 
-	public static Rectangle[] createSlices( Rectangle rect, UISlice9Grid sliceGrid )
+	public static MRectangle[] createSlices( MRectangle rect, UISlice9Grid sliceGrid )
 	{
 		if( null == rect )
 		{
@@ -54,28 +54,28 @@ public class UISlice9Grid
 		final int offsetX = ( int ) rect.x;
 		final int offsetY = ( int ) rect.y;
 
-		Rectangle[] slices = new Rectangle[ 9 ];
+		MRectangle[] slices = new MRectangle[ 9 ];
 
 		//tl
-		slices[ 0 ] = new Rectangle( offsetX, offsetY, left, top );
+		slices[ 0 ] = new MRectangle( offsetX, offsetY, left, top );
 		//tc
-		slices[ 1 ] = new Rectangle( offsetX + left, offsetY, middleCenterWidth, top );
+		slices[ 1 ] = new MRectangle( offsetX + left, offsetY, middleCenterWidth, top );
 		//tr
-		slices[ 2 ] = new Rectangle( offsetX + offsetRight, offsetY, right, top );
+		slices[ 2 ] = new MRectangle( offsetX + offsetRight, offsetY, right, top );
 
 		//ml
-		slices[ 3 ] = new Rectangle( offsetX, offsetY + top, left, middleCenterHeight );
+		slices[ 3 ] = new MRectangle( offsetX, offsetY + top, left, middleCenterHeight );
 		//mc
-		slices[ 4 ] = new Rectangle( offsetX + left, offsetY + top, middleCenterWidth, middleCenterHeight );
+		slices[ 4 ] = new MRectangle( offsetX + left, offsetY + top, middleCenterWidth, middleCenterHeight );
 		//mr
-		slices[ 5 ] = new Rectangle( offsetX + offsetRight, offsetY + top, right, middleCenterHeight );
+		slices[ 5 ] = new MRectangle( offsetX + offsetRight, offsetY + top, right, middleCenterHeight );
 
 		//bl
-		slices[ 6 ] = new Rectangle( offsetX, offsetY + offsetBottom, left, bottom );
+		slices[ 6 ] = new MRectangle( offsetX, offsetY + offsetBottom, left, bottom );
 		//bc
-		slices[ 7 ] = new Rectangle( offsetX + left, offsetY + offsetBottom, middleCenterWidth, bottom );
+		slices[ 7 ] = new MRectangle( offsetX + left, offsetY + offsetBottom, middleCenterWidth, bottom );
 		//br
-		slices[ 8 ] = new Rectangle( offsetX + offsetRight, offsetY + offsetBottom, right, bottom );
+		slices[ 8 ] = new MRectangle( offsetX + offsetRight, offsetY + offsetBottom, right, bottom );
 
 		return slices;
 	}
