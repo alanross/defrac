@@ -1,7 +1,7 @@
 package com.adjazent.defrac.sandbox.experiments.war;
 
 import com.adjazent.defrac.core.error.AbstractFunctionError;
-import com.adjazent.defrac.sandbox.experiments.Experiment;
+import com.adjazent.defrac.sandbox.Experiment;
 
 /**
  * @author Alan Ross

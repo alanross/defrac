@@ -32,7 +32,9 @@ public final class UICellRendererFactory implements IUICellRendererFactory
 
 		UICellRenderer renderer = _rendererPool.pollLast();
 
-		renderer.setColor( ( index % 2 == 0 ) ? MColor.hsv2rgb( MRand.randomMinMax( 0, 360 ), 0.5, 1.0 ) : Integer.decode( "0x898989" ) );
+		int color = (255 << 24) | MColor.hsv2rgb( MRand.randomMinMax( 0, 360 ), 0.5, 0.5 );
+
+		renderer.setColor( ( index % 2 == 0 ) ? color : 0xFF898989 );
 
 		return renderer;
 	}

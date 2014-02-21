@@ -1,25 +1,18 @@
 package com.adjazent.defrac.sandbox;
 
 import com.adjazent.defrac.sandbox.experiments.core.job.EJob;
-import com.adjazent.defrac.sandbox.experiments.core.utils.EArrayUtils;
-import com.adjazent.defrac.sandbox.experiments.core.utils.EDateUtils;
-import com.adjazent.defrac.sandbox.experiments.core.utils.EStringUtils;
-import com.adjazent.defrac.sandbox.experiments.flutterman.EFlutterman;
+import com.adjazent.defrac.sandbox.experiments.core.EArrayUtils;
+import com.adjazent.defrac.sandbox.experiments.core.EDateUtils;
+import com.adjazent.defrac.sandbox.experiments.core.EStringUtils;
+import com.adjazent.defrac.sandbox.experiments.samples.flutterman.EFlutterman;
 import com.adjazent.defrac.sandbox.experiments.lang.EDataTypes;
 import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
-import com.adjazent.defrac.sandbox.experiments.ui.canvas.ECanvas;
-import com.adjazent.defrac.sandbox.experiments.ui.components.EUIList;
-import com.adjazent.defrac.sandbox.experiments.ui.event.EUIEvent;
-import com.adjazent.defrac.sandbox.experiments.ui.font.EUIFonts;
-import com.adjazent.defrac.sandbox.experiments.ui.gl.EGSLS01;
-import com.adjazent.defrac.sandbox.experiments.ui.gl.EGSLS02;
-import com.adjazent.defrac.sandbox.experiments.ui.gl.EUICanvasPainter;
-import com.adjazent.defrac.sandbox.experiments.ui.image.EUIImages;
-import com.adjazent.defrac.sandbox.experiments.ui.image.EUISkinning;
-import com.adjazent.defrac.sandbox.experiments.ui.quad.EQuad;
-import com.adjazent.defrac.sandbox.experiments.ui.resource.EUIResourceLoading;
-import com.adjazent.defrac.sandbox.experiments.ui.texture.ETextures;
+import com.adjazent.defrac.sandbox.experiments.samples.canvas.ECanvas;
+import com.adjazent.defrac.sandbox.experiments.ui.*;
+import com.adjazent.defrac.sandbox.experiments.samples.event.EUIEvent;
+import com.adjazent.defrac.sandbox.experiments.samples.EQuad;
+import com.adjazent.defrac.sandbox.experiments.samples.texture.ETextures;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
 import defrac.app.Bootstrap;
 
@@ -53,6 +46,7 @@ public final class Sandbox extends AbstractSandbox
 		add( new EUISkinning() );
 		add( new EFlutterman() );
 		add( new EUIList() );
+		add( new EScrollRect() );
 
 		activate( EUIList.class );
 	}

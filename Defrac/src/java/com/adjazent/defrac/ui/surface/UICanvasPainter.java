@@ -7,8 +7,8 @@ import defrac.gl.*;
 import defrac.lang.Procedure;
 
 import static com.adjazent.defrac.core.log.Log.info;
-import static com.adjazent.defrac.sandbox.experiments.ui.canvas.GLUtil.createShader;
-import static com.adjazent.defrac.sandbox.experiments.ui.canvas.GLUtil.linkProgram;
+import static com.adjazent.defrac.sandbox.experiments.samples.canvas.GLUtil.createShader;
+import static com.adjazent.defrac.sandbox.experiments.samples.canvas.GLUtil.linkProgram;
 
 /**
  * @author Alan Ross

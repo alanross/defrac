@@ -1,6 +1,6 @@
 package com.adjazent.defrac.sandbox.experiments.system;
 
-import com.adjazent.defrac.sandbox.experiments.Experiment;
+import com.adjazent.defrac.sandbox.Experiment;
 import defrac.event.ResourceEvent;
 import defrac.lang.Procedure;
 import defrac.resource.BinaryResource;

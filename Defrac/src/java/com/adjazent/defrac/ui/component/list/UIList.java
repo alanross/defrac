@@ -4,22 +4,24 @@ import com.adjazent.defrac.core.error.ElementAlreadyExistsError;
 import com.adjazent.defrac.core.error.ElementDoesNotExistError;
 import com.adjazent.defrac.core.error.GenericError;
 import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.stage.StageProvider;
 import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MRectangle;
 import defrac.display.DisplayObject;
 import defrac.display.Layer;
+import defrac.display.Quad;
 import defrac.event.StageEvent;
 import defrac.lang.Procedure;
 
 import java.util.LinkedList;
 
+import static com.adjazent.defrac.core.log.Log.info;
+
 /**
  * @author Alan Ross
  * @version 0.1
  */
-public final class UIList
+public final class UIList extends Layer
 {
 	private Procedure<StageEvent.Render> renderProcedure = new Procedure<StageEvent.Render>()
 	{
@@ -40,6 +42,7 @@ public final class UIList
 	private IUICellRendererFactory _factory;
 
 	private Layer _container = new Layer();
+	private Quad _background = new Quad( 1, 1, 0 );
 
 	private MRectangle _bounds = new MRectangle();
 	private int _itemsHeight = 0;
@@ -50,6 +53,9 @@ public final class UIList
 	public UIList( IUICellRendererFactory rendererFactory )
 	{
 		_factory = rendererFactory;
+
+		addChild( _background );
+		addChild( _container );
 	}
 
 	private UICellRenderer getAssociatedRenderer( UICellItem item )
@@ -71,11 +77,9 @@ public final class UIList
 	{
 		int result = 0;
 
-		int n = _items.size();
-
-		for( int i = 0; i < n; ++i )
+		for( UICellItem _item : _items )
 		{
-			result += _items.get( i ).getHeight() + _cellSpacing;
+			result += _item.getHeight() + _cellSpacing;
 		}
 
 		_itemsHeight = result;
@@ -110,13 +114,15 @@ public final class UIList
 		{
 			UICellItem item = _items.get( i );
 
+			info( Context.DEFAULT, this, i, item );
+
 			if( itemOffset + item.getHeight() < minView || itemOffset > maxView )
 			{
 				if( item.inViewRange )
 				{
 					renderer = getAssociatedRenderer( item );
 
-					Log.info( Context.DEFAULT, this, "REMOVE", renderer );
+					info( Context.DEFAULT, this, item, renderer );
 
 					renderer.onDetach();
 
@@ -124,13 +130,7 @@ public final class UIList
 
 					_renderer.remove( renderer );
 
-					if( !_container.contains( renderer.getDisplayObject() ) )
-					{
-						Log.info( Context.DEFAULT, this, "BOOM" );
-					}
-
 					_container.removeChild( renderer.getDisplayObject() );
-
 
 					_factory.release( renderer );
 				}
@@ -206,11 +206,6 @@ public final class UIList
 		return _items.get( index );
 	}
 
-	public void moveTo( int x, int y )
-	{
-		_container.moveTo( x, y );
-	}
-
 	public void resizeTo( int width, int height )
 	{
 		if( width < 1 || height < 1 )
@@ -220,14 +215,14 @@ public final class UIList
 
 		if( _bounds.width != width || _bounds.height != height )
 		{
-			_bounds.width = ( width );
-			_bounds.height = ( height );
+			_bounds.width = width;
+			_bounds.height = height;
 
-//			_container.graphics.clear();
-//			_container.graphics.beginFill( 0x454545 );
-//			_container.graphics.drawRect( 0, 0, width, height );
-//			_container.graphics.endFill();
-//			_container.scrollRect( new defrac.geom.Rectangle( ( float ) _bounds.x, ( float ) _bounds.y, ( float ) _bounds.width, ( float ) _bounds.height ) );
+			_background.width( width );
+			_background.height( height );
+			_background.color( 0xFF00FF00 );
+
+//			scrollRect( new defrac.geom.Rectangle( ( float ) 0, ( float ) 0, ( float ) width, ( float ) height ) );
 
 			requestRender();
 		}

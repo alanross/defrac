@@ -6,10 +6,9 @@ import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.UITextProcessor;
 import com.adjazent.defrac.ui.text.processing.UITextRenderer;
-import com.adjazent.defrac.ui.surface.UICanvasPainter;
-import defrac.display.Canvas;
 import defrac.display.DisplayObject;
 import defrac.display.Layer;
+import defrac.display.Quad;
 
 /**
  * @author Alan Ross
@@ -24,9 +23,7 @@ public class UICellRenderer
 
 	private Layer _container;
 
-	private UICanvasPainter _painter;
-	private Canvas _background;
-
+	private Quad _background;
 	private UITextProcessor _textProcessor;
 	private UITextRenderer _textRenderer;
 
@@ -37,23 +34,14 @@ public class UICellRenderer
 
 		_bounds = new MRectangle();
 
-		_painter = new UICanvasPainter();
-		_background = new Canvas( 100, 100, _painter );
-
-		UITextFormat textFormat = new UITextFormat( "Helvetica" );
+		_background = new Quad( 100, 100, 0xFFFF0000 );
 
 		_textRenderer = new UITextRenderer();
-		_textProcessor = UITextProcessor.create( textFormat, _textRenderer, true );
+		_textProcessor = UITextProcessor.create( new UITextFormat( "Helvetica" ), _textRenderer, true );
 		_textProcessor.setText( "UNDEFINED" );
-		_textProcessor.render();
 
 		_container.addChild( _background );
 		_container.addChild( _textRenderer );
-	}
-
-	private void repaint()
-	{
-		_painter.fillRect( 0, 0, 100, 100, _color );
 	}
 
 	public void onAttach( UICellItem data, int cellWidth, int cellHeight )
@@ -67,14 +55,12 @@ public class UICellRenderer
 		_bounds.width = cellWidth;
 		_bounds.height = cellHeight;
 
-		_background.scaleToSize( cellWidth, cellHeight );
-
 		_textProcessor.setText( _data.getText() + " - " + StringUtils.randomSequence( 5 ) );
 		_textProcessor.render();
-
 		_textRenderer.moveTo( 5, 5 );
 
-		repaint();
+		_background.width( cellWidth );
+		_background.height( cellHeight );
 	}
 
 	public void onDetach()
@@ -139,6 +125,7 @@ public class UICellRenderer
 	public void setColor( int value )
 	{
 		_color = value;
+		_background.color( _color );
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import com.adjazent.defrac.core.job.Job;
 import com.adjazent.defrac.core.job.JobQueue;
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.log.Log;
-import com.adjazent.defrac.sandbox.experiments.Experiment;
+import com.adjazent.defrac.sandbox.Experiment;
 
 /**
  * @author Alan Ross

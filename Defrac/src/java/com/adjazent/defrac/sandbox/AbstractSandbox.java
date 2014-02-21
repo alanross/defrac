@@ -7,7 +7,6 @@ import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.log.output.SilentLogOutput;
 import com.adjazent.defrac.core.log.output.SimpleLogOutput;
 import com.adjazent.defrac.core.stage.StageProvider;
-import com.adjazent.defrac.sandbox.experiments.Experiment;
 import defrac.app.GenericApp;
 import defrac.display.Layer;
 import defrac.display.Stats;
@@ -20,11 +19,11 @@ import java.util.Hashtable;
  */
 public class AbstractSandbox extends GenericApp
 {
-	protected Layer container;
-	protected Stats stats;
-
 	private Hashtable<String, Experiment> _experiments;
 	private Experiment _experiment;
+
+	private Layer _root;
+	private Stats _stats;
 
 	@Override
 	protected final void onCreate()
@@ -42,19 +41,15 @@ public class AbstractSandbox extends GenericApp
 		Context.setLevels( Context.NET, Level.TRACE, Level.FATAL );
 		Context.setLevels( Context.TIME, Level.TRACE, Level.FATAL );
 
-		container = addChild( new Layer() );
-		stats = addChild( new Stats() );
-		stats.moveTo( 10, 10 );
-
-//		container.centerRegistrationPoint().moveBy( 100, 100 );
+		_root = addChild( new Layer() );
+		_stats = addChild( new Stats() );
+		_stats.moveTo( 10, 10 );
 
 		onCreateComplete();
-
 	}
 
 	protected void onCreateComplete()
 	{
-
 	}
 
 	protected void add( Experiment experiment )
@@ -73,7 +68,7 @@ public class AbstractSandbox extends GenericApp
 	{
 		if( _experiment != null )
 		{
-			container.removeChild( _experiment );
+			_root.removeChild( _experiment );
 
 			_experiment = null;
 		}
@@ -82,7 +77,7 @@ public class AbstractSandbox extends GenericApp
 
 		if( key.indexOf( ' ' ) > -1 )
 		{
-			//clazz.toString() resturns "class com.package...."
+			//clazz.toString() returns "class com.package..."
 			key = key.substring( key.indexOf( ' ' ) + 1 );
 		}
 
@@ -95,7 +90,7 @@ public class AbstractSandbox extends GenericApp
 
 		Log.info( Context.DEFAULT, this, "Running: " + _experiment );
 
-		container.addChild( _experiment );
+		_root.addChild( _experiment );
 		_experiment.init( stage(), this );
 	}
 
