@@ -1,10 +1,9 @@
 package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.sandbox.Experiment;
-import com.adjazent.defrac.ui.utils.UIGLPainter;
 import com.adjazent.defrac.ui.utils.bitmap.UISimpleImage;
-import defrac.display.Canvas;
 import defrac.display.Layer;
+import defrac.display.Quad;
 import defrac.geom.Rectangle;
 
 /**
@@ -13,18 +12,6 @@ import defrac.geom.Rectangle;
  */
 public final class EScrollRect2 extends Experiment
 {
-	private Rectangle rectangle = new Rectangle( 0, 0, 990, 890 );
-
-	private Layer root = new Layer();
-	private Layer child = new Layer();
-
-	private UIGLPainter painter = new UIGLPainter();
-	private Canvas canvas = new Canvas( 100, 100, painter );
-	private UISimpleImage image = new UISimpleImage( "fonts/helvetica24.png" );
-
-	private float _offset = 100;
-	private float _dir = 1;
-
 	public EScrollRect2()
 	{
 	}
@@ -32,31 +19,38 @@ public final class EScrollRect2 extends Experiment
 	@Override
 	public void onInit()
 	{
-		canvas.moveTo( 100, 100 );
+		// Issue: applying scrollRect to a container
 
-		image.moveTo( 120, 120 );
-		painter.fillRect( 0, 0, 100, 100, 0xFFFF3388 );
+		UISimpleImage imageA = new UISimpleImage( "fonts/helvetica24.png" ); // image with transparency
+		imageA.moveTo( 120, 120 );
 
-		child.addChild( canvas );
-		child.addChild( image );
-		child.moveTo( 100, 100 );
+		UISimpleImage imageB = new UISimpleImage( "fonts/helvetica24.png" ); // image with transparency
+		imageB.moveTo( 120, 120 );
 
-		root.addChild( child );
-		root.scrollRect( rectangle );        // broken -> alpha channel?
+		Quad quadA = new Quad( 300, 200, 0xFF338822 );
+		quadA.moveTo( 80, 80 );
+
+		Quad quadB = new Quad( 300, 200, 0xFF338822 );
+		quadB.moveTo( 80, 80 );
+
+		Layer layerA = new Layer();
+		layerA.addChild( quadA );
+		layerA.addChild( imageA );
+		layerA.moveTo( 100, 100 );
+
+		Layer layerB = new Layer();
+		layerB.addChild( quadB );
+		layerB.addChild( imageB );
+		layerB.moveTo( 550, 100 );
+
+		Layer root = new Layer();
+		root.addChild( layerA );
+		root.addChild( layerB );
+
+		// broken -> alpha channel, also wrong scaling
+		layerA.scrollRect( new Rectangle( 0, 0, 1100, 700 ) );
 
 		addChild( root );
-	}
-
-	@Override
-	public void onEnterFrame()
-	{
-		if( _offset < 10 || _offset > 150 )
-		{
-			_dir *= -1;
-		}
-
-		_offset += _dir;
-
 	}
 
 	@Override

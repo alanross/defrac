@@ -11,7 +11,7 @@ import defrac.resource.StringResource;
 import static com.adjazent.defrac.sandbox.experiments.samples.canvas.GLUtil.createShader;
 import static com.adjazent.defrac.sandbox.experiments.samples.canvas.GLUtil.linkProgram;
 
-class CanvasRenderer implements Procedure<Canvas.Arguments>
+public class CanvasRenderer implements Procedure<Canvas.Arguments>
 {
 	UIEventManager eventManager;
 	Point mousePos = new Point();
@@ -32,7 +32,7 @@ class CanvasRenderer implements Procedure<Canvas.Arguments>
 				}
 			};
 
-	CanvasRenderer( UIEventManager eventManager )
+	public CanvasRenderer( UIEventManager eventManager )
 	{
 		this.eventManager = eventManager;
 

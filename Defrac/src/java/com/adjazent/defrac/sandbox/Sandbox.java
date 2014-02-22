@@ -49,7 +49,7 @@ public final class Sandbox extends AbstractSandbox
 		add( new EScrollRect() );
 		add( new EScrollRect2() );
 
-		activate( ECanvas.class );
+		activate( EScrollRect2.class );
 	}
 
 	public static void main( final String[] args )
