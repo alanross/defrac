@@ -1,4 +1,4 @@
-package com.adjazent.defrac.ui.surface;
+package com.adjazent.defrac.ui.utils;
 
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.math.MColor;
@@ -14,7 +14,7 @@ import static com.adjazent.defrac.sandbox.experiments.samples.canvas.GLUtil.link
  * @author Alan Ross
  * @version 0.1
  */
-public final class UICanvasPainter implements Procedure<Canvas.Arguments>
+public final class UIGLPainter implements Procedure<Canvas.Arguments>
 {
 	private static final String FRAGMENT_SHADER = "" +
 			"varying vec4 vColor;                                   \n" +
@@ -55,7 +55,7 @@ public final class UICanvasPainter implements Procedure<Canvas.Arguments>
 	private float[] _bounds = new float[ 12 ];
 	private float[] _colors = new float[ 6 ];
 
-	public UICanvasPainter()
+	public UIGLPainter()
 	{
 		_fragmentShaderResource = FRAGMENT_SHADER;
 		_vertexShaderResource = VERTEX_SHADER;
@@ -193,6 +193,6 @@ public final class UICanvasPainter implements Procedure<Canvas.Arguments>
 	@Override
 	public String toString()
 	{
-		return "[UICanvasPainter]";
+		return "[UIGLPainter]";
 	}
 }

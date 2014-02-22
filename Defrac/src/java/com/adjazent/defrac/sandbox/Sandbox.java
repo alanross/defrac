@@ -42,13 +42,14 @@ public final class Sandbox extends AbstractSandbox
 		add( new ECanvas() );
 		add( new EGSLS01() );
 		add( new EGSLS02() );
-		add( new EUICanvasPainter() );
+		add( new EUIGLPainter() );
 		add( new EUISkinning() );
 		add( new EFlutterman() );
 		add( new EUIList() );
 		add( new EScrollRect() );
+		add( new EScrollRect2() );
 
-		activate( EUIList.class );
+		activate( ECanvas.class );
 	}
 
 	public static void main( final String[] args )

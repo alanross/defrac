@@ -2,26 +2,26 @@ package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.math.MColor;
 import com.adjazent.defrac.sandbox.Experiment;
-import com.adjazent.defrac.ui.surface.UICanvasPainter;
+import com.adjazent.defrac.ui.utils.UIGLPainter;
 import defrac.display.Canvas;
 
 /**
  * @author Alan Ross
  * @version 0.1
  */
-public final class EUICanvasPainter extends Experiment
+public final class EUIGLPainter extends Experiment
 {
-	UICanvasPainter painter;
+	UIGLPainter painter;
 	Canvas canvas;
 
-	public EUICanvasPainter()
+	public EUIGLPainter()
 	{
 	}
 
 	@Override
 	protected void onInit()
 	{
-		painter = new UICanvasPainter();
+		painter = new UIGLPainter();
 		canvas = new Canvas( app.width(), app.height(), painter );
 
 		addChild( canvas );
@@ -34,6 +34,6 @@ public final class EUICanvasPainter extends Experiment
 	@Override
 	public String toString()
 	{
-		return "[EUICanvasPainter]";
+		return "[EUIGLPainter]";
 	}
 }

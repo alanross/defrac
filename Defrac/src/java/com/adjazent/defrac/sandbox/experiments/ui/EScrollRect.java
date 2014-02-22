@@ -1,10 +1,7 @@
 package com.adjazent.defrac.sandbox.experiments.ui;
 
-import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.sandbox.events.IEnterFrame;
-import com.adjazent.defrac.ui.utils.bitmap.UISimpleImage;
 import defrac.display.Layer;
 import defrac.display.Quad;
 import defrac.geom.Rectangle;
@@ -20,7 +17,6 @@ public final class EScrollRect extends Experiment implements IEnterFrame
 	private Quad quadA = new Quad( 100, 100, 0xFFCC8989 );
 	private Quad quadB = new Quad( 100, 100, 0xFF89CC89 );
 	private Quad quadC = new Quad( 100, 100, 0xFF8989CC );
-	private UISimpleImage image = new UISimpleImage( "fonts/helvetica24.png" );
 
 	private float _size = 100;
 	private float _dir = 1;
@@ -34,12 +30,10 @@ public final class EScrollRect extends Experiment implements IEnterFrame
 	{
 		quadB.moveTo( 50, 50 );
 		quadC.moveTo( 100, 100 );
-		image.moveTo( 80, 80 );
 
 		container.addChild( quadA );
 		container.addChild( quadB );
 		container.addChild( quadC );
-		container.addChild( image );
 		container.moveTo( 100, 100 );
 
 		addChild( container );
@@ -48,7 +42,6 @@ public final class EScrollRect extends Experiment implements IEnterFrame
 	@Override
 	public void onEnterFrame()
 	{
-		Log.info( Context.DEFAULT, this, container.width(), container.height() );
 		if( _size < 10 || _size > 150 )
 		{
 			_dir *= -1;
@@ -60,7 +53,6 @@ public final class EScrollRect extends Experiment implements IEnterFrame
 
 		container.scrollRect( rectangle );		// broken -> it scales??
 		quadA.scrollRect( rectangle );			// works like a charm
-		image.scrollRect( rectangle );			// works like a charm
 	}
 
 	/*
