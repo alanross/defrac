@@ -1,28 +1,32 @@
 package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.sandbox.Experiment;
+import com.adjazent.defrac.sandbox.events.IEnterFrame;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderTexturePacker;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.texture.UITextureAtlas;
 import com.adjazent.defrac.ui.texture.UITextureManager;
-import defrac.event.Event;
-import defrac.event.Events;
-import defrac.lang.Procedure;
 
-import javax.annotation.Nonnull;
+import static com.adjazent.defrac.core.log.Log.info;
 
 /**
  * @author Alan Ross
  * @version 0.1
  */
-public final class EUISkinning extends Experiment implements IUIResourceLoaderQueueObserver, Procedure<Event>
+public final class EUISkinning extends Experiment implements IUIResourceLoaderQueueObserver, IEnterFrame
 {
-	private UISurface _surface1;
-	private UISurface _surface2;
+	private UISurface _surfaceTexture;
+	private UISurface _surfaceTexture9;
+	private UISurface _surfaceColor;
+
+	private int counter = 0;
+	private int size = 200;
+	private int reverse = 1;
+	private boolean ready = false;
+
 
 	public EUISkinning()
 	{
@@ -42,42 +46,42 @@ public final class EUISkinning extends Experiment implements IUIResourceLoaderQu
 	@Override
 	public void onResourceLoadingFailure( Error error )
 	{
-		Log.info( Context.DEFAULT, this, "onResourceLoadingFailure" );
+		info( Context.DEFAULT, this, "onResourceLoadingFailure" );
 	}
 
 	@Override
 	public void onResourceLoadingSuccess()
 	{
-		Log.info( Context.DEFAULT, this, "onResourceLoadingSuccess" );
-
-		Log.info( Context.DEFAULT, this, "UITextureManager", UITextureManager.get().getAllElementsInfo() );
-
 		UITextureAtlas atlas = UITextureManager.get().getAtlas( "skin3" );
 
-		Log.info( Context.DEFAULT, this, "UITextureAtlas", atlas.getAllElementsInfo() );
+		info( Context.DEFAULT, this, "UITextureAtlas", atlas.getAllElementsInfo() );
 
-		_surface1 = new UISurface( atlas.getTexture( "rect6" ) );
-		_surface2 = new UISurface( atlas.getTexture( "rect1" ) );
+		_surfaceTexture = new UISurface( atlas.getTexture( "rect6" ) );
+		_surfaceTexture9 = new UISurface( atlas.getTexture( "rect1" ) );
+		_surfaceColor = new UISurface( 0xFFFF0000 );
 
-		addChild( _surface1 ).moveTo( 100.0f, 100.0f );
-		addChild( _surface2 ).moveTo( 100.0f, 350.0f );
+		addChild( _surfaceTexture ).moveTo( 100.0f, 100.0f );
+		addChild( _surfaceTexture9 ).moveTo( 100.0f, 350.0f );
+		addChild( _surfaceColor ).moveTo( 350.0f, 100.0f );
+		info( Context.DEFAULT, this, "----" );
 
-		Events.onEnterFrame.attach( this );
+		ready = true;
 	}
 
-	private int counter = 0;
-	private int size = 200;
-	private int reverse = 1;
-
 	@Override
-	public void apply( @Nonnull final Event event )
+	public void onEnterFrame()
 	{
+		if( !ready )
+		{
+			return;
+		}
 		if( counter++ == 1 )
 		{
 			size += reverse;
 
-			_surface1.resizeTo( size, size );
-			_surface2.resizeTo( size, size );
+			_surfaceTexture.scaleToSize( size, size );
+			_surfaceTexture9.scaleToSize( size, size );
+			_surfaceColor.scaleToSize( size, size );
 
 			if( size >= 220 )
 			{

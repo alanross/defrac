@@ -9,19 +9,22 @@ import defrac.display.Image;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISurfaceSkin implements IUISurfaceSkin
+public final class UISurfaceTextureSkin implements IUISurfaceSkin
 {
 	private Image _image = new Image();
 
-	public UISurfaceSkin()
+	public UISurfaceTextureSkin()
 	{
 	}
 
-	@Override
-	public void attach( UISurface surface, UITexture texture )
+	public void init( UITexture texture )
 	{
 		_image.texture( texture.getTexture() );
+	}
 
+	@Override
+	public void attach( UISurface surface )
+	{
 		surface.addChild( _image );
 	}
 
@@ -40,6 +43,6 @@ public final class UISurfaceSkin implements IUISurfaceSkin
 	@Override
 	public String toString()
 	{
-		return "[UISurfaceSkin]";
+		return "[UISurfaceTextureSkin]";
 	}
 }

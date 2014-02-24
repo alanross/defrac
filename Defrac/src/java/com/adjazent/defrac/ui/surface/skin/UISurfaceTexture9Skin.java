@@ -15,7 +15,7 @@ import defrac.display.TextureData;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISurfaceSkin9 implements IUISurfaceSkin
+public final class UISurfaceTexture9Skin implements IUISurfaceSkin
 {
 	private Image _tl = new Image();    //top left
 	private Image _tc = new Image();    //top center
@@ -37,7 +37,7 @@ public final class UISurfaceSkin9 implements IUISurfaceSkin
 	private int _minWidth = 0;
 	private int _minHeight = 0;
 
-	public UISurfaceSkin9()
+	public UISurfaceTexture9Skin()
 	{
 	}
 
@@ -81,11 +81,14 @@ public final class UISurfaceSkin9 implements IUISurfaceSkin
 		return new Texture( textureData, ( float ) rect.x, ( float ) rect.y, ( float ) rect.width, ( float ) rect.height );
 	}
 
-	@Override
-	public void attach( UISurface surface, UITexture texture )
+	public void init( UITexture texture )
 	{
 		prepare( texture.getTextureData(), texture.getSkinRect(), texture.getSliceGrid() );
+	}
 
+	@Override
+	public void attach( UISurface surface )
+	{
 		surface.addChild( _tl );
 		surface.addChild( _tc );
 		surface.addChild( _tr );
@@ -204,6 +207,6 @@ public final class UISurfaceSkin9 implements IUISurfaceSkin
 	@Override
 	public String toString()
 	{
-		return "[UISurfaceSkin9]";
+		return "[UISurfaceTexture9Skin]";
 	}
 }

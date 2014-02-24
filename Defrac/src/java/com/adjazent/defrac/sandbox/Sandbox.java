@@ -25,11 +25,15 @@ public final class Sandbox extends AbstractSandbox
 	@Override
 	protected void onCreateComplete()
 	{
+		//----------------------------- samples
+		add( new EQuad() );
+		add( new ETextures() );
+		add( new ECanvas() );
+		add( new EFlutterman() );
+		add( new EUIEvent() );
+		//----------------------------- experiments
 		add( new EXMLResource() );
 		add( new EFileResource() );
-		add( new EQuad() );
-		add( new EUIEvent() );
-		add( new ETextures() );
 		add( new EDataTypes() );
 		add( new EJob() );
 		add( new EUIImages() );
@@ -38,18 +42,17 @@ public final class Sandbox extends AbstractSandbox
 		add( new EArrayUtils() );
 		add( new EDateUtils() );
 		add( new EStringUtils() );
-		add( new Warzone() );
-		add( new ECanvas() );
 		add( new EGSLS01() );
 		add( new EGSLS02() );
 		add( new EUIGLPainter() );
-		add( new EUISkinning() );
-		add( new EFlutterman() );
-		add( new EUIList() );
 		add( new EScrollRect() );
 		add( new EScrollRect2() );
+		add( new EUISkinning() );
+		add( new EUIList() );
+		//----------------------------- warzone
+		add( new Warzone() );
 
-		activate( EScrollRect2.class );
+		activate( EUISkinning.class );
 	}
 
 	public static void main( final String[] args )
