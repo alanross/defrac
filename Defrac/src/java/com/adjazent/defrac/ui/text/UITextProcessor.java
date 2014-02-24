@@ -21,7 +21,9 @@ public final class UITextProcessor implements IDisposable
 	private LinkedList<UIGlyph> _glyphs = new LinkedList<UIGlyph>();
 	private LinkedList<UIGlyph> _ellipsis = new LinkedList<UIGlyph>();
 
-	private String _text = new String();
+	private String _text = "";
+
+	private MRectangle _bounds = new MRectangle();
 
 	private IUITextComposer _composer;
 	private UITextRenderer _renderer;
@@ -29,15 +31,6 @@ public final class UITextProcessor implements IDisposable
 	private UITextFormat _format;
 	private UIFont _font;
 	private UITextLayout _block;
-
-	public static UITextProcessor create( UITextFormat format, UITextRenderer renderer, boolean singleLine )
-	{
-		IUITextComposer composer = ( singleLine ) ? new UITextComposerSingleLine() : new UITextComposerMultiLine();
-
-		UITextInteractor interactor = new UITextInteractor();
-
-		return new UITextProcessor( composer, renderer, interactor, format );
-	}
 
 	public UITextProcessor( IUITextComposer composer, UITextRenderer renderer, UITextInteractor interact, UITextFormat format )
 	{
@@ -93,22 +86,14 @@ public final class UITextProcessor implements IDisposable
 		}
 	}
 
-	public void render()
+	public void setSize( int width, int height )
 	{
-		render( Integer.MAX_VALUE, Integer.MAX_VALUE );
+		_bounds.resizeTo( width, height );
 	}
 
-
-	public void render( int maxWidth, int maxHeight )
+	public void render()
 	{
-		if( maxWidth < 0 || maxHeight < 0 )
-		{
-			return;
-		}
-
-		MRectangle size = new MRectangle( 0, 0, maxWidth, maxHeight );
-
-		_block = _composer.process( ( LinkedList<UIGlyph> ) _glyphs.clone(), _ellipsis, _font, _format, size );
+		_block = _composer.process( ( LinkedList<UIGlyph> ) _glyphs.clone(), _ellipsis, _font, _format, _bounds );
 
 		_renderer.process( _block, _format );
 	}
@@ -162,6 +147,16 @@ public final class UITextProcessor implements IDisposable
 	public int getTextHeight()
 	{
 		return ( _block != null ) ? ( int ) _block.bounds.height : 0;
+	}
+
+	public int getWidth()
+	{
+		return ( int ) _bounds.width;
+	}
+
+	public int getHeight()
+	{
+		return ( int ) _bounds.height;
 	}
 
 	@Override

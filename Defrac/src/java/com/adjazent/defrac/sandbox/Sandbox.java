@@ -1,18 +1,18 @@
 package com.adjazent.defrac.sandbox;
 
-import com.adjazent.defrac.sandbox.experiments.core.job.EJob;
 import com.adjazent.defrac.sandbox.experiments.core.EArrayUtils;
 import com.adjazent.defrac.sandbox.experiments.core.EDateUtils;
 import com.adjazent.defrac.sandbox.experiments.core.EStringUtils;
-import com.adjazent.defrac.sandbox.experiments.samples.flutterman.EFlutterman;
+import com.adjazent.defrac.sandbox.experiments.core.job.EJob;
 import com.adjazent.defrac.sandbox.experiments.lang.EDataTypes;
+import com.adjazent.defrac.sandbox.experiments.samples.EQuad;
+import com.adjazent.defrac.sandbox.experiments.samples.canvas.ECanvas;
+import com.adjazent.defrac.sandbox.experiments.samples.event.EUIEvent;
+import com.adjazent.defrac.sandbox.experiments.samples.flutterman.EFlutterman;
+import com.adjazent.defrac.sandbox.experiments.samples.texture.ETextures;
 import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
-import com.adjazent.defrac.sandbox.experiments.samples.canvas.ECanvas;
 import com.adjazent.defrac.sandbox.experiments.ui.*;
-import com.adjazent.defrac.sandbox.experiments.samples.event.EUIEvent;
-import com.adjazent.defrac.sandbox.experiments.samples.EQuad;
-import com.adjazent.defrac.sandbox.experiments.samples.texture.ETextures;
 import com.adjazent.defrac.sandbox.experiments.war.EContainer;
 import com.adjazent.defrac.sandbox.experiments.war.EScrollRect;
 import com.adjazent.defrac.sandbox.experiments.war.EScrollRect2;
@@ -40,7 +40,7 @@ public final class Sandbox extends AbstractSandbox
 		add( new EDataTypes() );
 		add( new EJob() );
 		add( new EUIImages() );
-		add( new EUIFonts() );
+		add( new EUIText() );
 		add( new EUIResourceLoading() );
 		add( new EArrayUtils() );
 		add( new EDateUtils() );
@@ -48,15 +48,15 @@ public final class Sandbox extends AbstractSandbox
 		add( new EGSLS01() );
 		add( new EGSLS02() );
 		add( new EUIGLPainter() );
-		add( new EScrollRect() );
-		add( new EScrollRect2() );
 		add( new EUISkinning() );
 		add( new EUIList() );
-		add( new EContainer() );
 		//----------------------------- warzone
+		add( new EScrollRect() );
+		add( new EScrollRect2() );
+		add( new EContainer() );
 		add( new Warzone() );
 
-		activate( EContainer.class );
+		activate( EUIText.class );
 	}
 
 	public static void main( final String[] args )

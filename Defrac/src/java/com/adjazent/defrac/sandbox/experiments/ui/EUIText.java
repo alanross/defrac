@@ -15,7 +15,7 @@ import com.adjazent.defrac.ui.text.UITextSelection;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
-import com.adjazent.defrac.ui.text.processing.UITextRenderer;
+import com.adjazent.defrac.ui.text.processing.*;
 import defrac.display.Image;
 import defrac.display.Texture;
 import defrac.display.event.UIActionEvent;
@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class EUIFonts extends Experiment implements IUIResourceLoaderQueueObserver, Procedure<Event>
+public final class EUIText extends Experiment implements IUIResourceLoaderQueueObserver, Procedure<Event>
 {
 	UITextProcessor _textProcessor1;
 	UITextProcessor _textProcessor2;
@@ -39,7 +39,7 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 	UITextRenderer _renderer2;
 	UITextRenderer _renderer3;
 
-	public EUIFonts()
+	public EUIText()
 	{
 	}
 
@@ -91,11 +91,15 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 
 	private UITextProcessor createTextProcessor( UITextRenderer renderer, String text )
 	{
-		UITextFormat textFormat = new UITextFormat( "Helvetica" );
-
-		UITextProcessor textProcessor = UITextProcessor.create( textFormat, renderer, true );
+		UITextProcessor textProcessor = new UITextProcessor(
+				new UITextComposerSingleLine(),
+				renderer,
+				new UITextInteractor(),
+				new UITextFormat( "Helvetica" )
+		);
 
 		textProcessor.setText( text );
+		textProcessor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE );
 		textProcessor.render(); // no size restrictions
 
 		return textProcessor;
@@ -178,6 +182,6 @@ public final class EUIFonts extends Experiment implements IUIResourceLoaderQueue
 	@Override
 	public String toString()
 	{
-		return "[EUIFonts]";
+		return "[EUIText]";
 	}
 }

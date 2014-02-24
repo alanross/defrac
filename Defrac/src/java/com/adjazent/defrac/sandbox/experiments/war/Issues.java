@@ -14,6 +14,9 @@ public final class Issues
 {
 	public Issues()
 	{
+		// keydown is repeated every frame in web, but only triggered once in jvm
+
+
 		// get stage()
 		// background color
 		// quad vs layer

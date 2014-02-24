@@ -5,6 +5,8 @@ import com.adjazent.defrac.core.utils.StringUtils;
 import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.UITextProcessor;
+import com.adjazent.defrac.ui.text.processing.UITextComposerSingleLine;
+import com.adjazent.defrac.ui.text.processing.UITextInteractor;
 import com.adjazent.defrac.ui.text.processing.UITextRenderer;
 import defrac.display.DisplayObject;
 import defrac.display.Layer;
@@ -37,7 +39,9 @@ public class UICellRenderer
 
 		_textRenderer = new UITextRenderer();
 		_textRenderer.moveTo( 5, 5 );
-		_textProcessor = UITextProcessor.create( new UITextFormat( "Helvetica" ), _textRenderer, true );
+
+		_textProcessor = new UITextProcessor( new UITextComposerSingleLine(), _textRenderer, new UITextInteractor(), new UITextFormat( "Helvetica" ) );
+		_textProcessor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE );
 		_textProcessor.setText( UNDEFINED );
 
 		_container.addChild( _background );
@@ -56,6 +60,7 @@ public class UICellRenderer
 		_bounds.resizeTo( cellWidth, cellHeight );
 
 		_textProcessor.setText( _data.getText() + " - " + StringUtils.randomSequence( 5 ) );
+		_textProcessor.render();
 
 		_background.scaleToSize( cellWidth, cellHeight );
 	}
