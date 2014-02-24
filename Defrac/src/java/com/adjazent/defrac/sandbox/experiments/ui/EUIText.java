@@ -15,7 +15,9 @@ import com.adjazent.defrac.ui.text.UITextSelection;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
-import com.adjazent.defrac.ui.text.processing.*;
+import com.adjazent.defrac.ui.text.processing.UITextComposerSingleLine;
+import com.adjazent.defrac.ui.text.processing.UITextInteractor;
+import com.adjazent.defrac.ui.text.processing.UITextRenderer;
 import defrac.display.Image;
 import defrac.display.Texture;
 import defrac.display.event.UIActionEvent;
@@ -100,7 +102,6 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 
 		textProcessor.setText( text );
 		textProcessor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE );
-		textProcessor.render(); // no size restrictions
 
 		return textProcessor;
 	}
@@ -118,7 +119,6 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		if( step++ == 40 )
 		{
 			_textProcessor1.setText( "Hello Moko! " + StringUtils.randomSequence( 15 ) );
-			_textProcessor1.render();
 			step = 0;
 		}
 	}
@@ -147,10 +147,7 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 				String t2 = handleWordUnderPoint( p2 );
 
 				_textProcessor2.setText( t1 );
-				_textProcessor2.render();
-
 				_textProcessor3.setText( t2 );
-				_textProcessor3.render();
 			}
 		}
 	}

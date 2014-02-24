@@ -9,6 +9,8 @@ import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 import com.adjazent.defrac.ui.text.processing.*;
+import com.adjazent.defrac.ui.utils.render.IUIRenderListener;
+import com.adjazent.defrac.ui.utils.render.UIRenderRequest;
 
 import java.util.LinkedList;
 
@@ -16,7 +18,7 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UITextProcessor implements IDisposable
+public final class UITextProcessor implements IDisposable, IUIRenderListener
 {
 	private LinkedList<UIGlyph> _glyphs = new LinkedList<UIGlyph>();
 	private LinkedList<UIGlyph> _ellipsis = new LinkedList<UIGlyph>();
@@ -24,6 +26,8 @@ public final class UITextProcessor implements IDisposable
 	private String _text = "";
 
 	private MRectangle _bounds = new MRectangle();
+
+	private UIRenderRequest _renderRequest;
 
 	private IUITextComposer _composer;
 	private UITextRenderer _renderer;
@@ -37,6 +41,8 @@ public final class UITextProcessor implements IDisposable
 		_composer = composer;
 		_renderer = renderer;
 		_interact = interact;
+
+		_renderRequest = new UIRenderRequest( this );
 
 		setFormat( format );
 	}
@@ -53,6 +59,8 @@ public final class UITextProcessor implements IDisposable
 		_ellipsis.add( glyph.clone() );
 		_ellipsis.add( glyph.clone() );
 		_ellipsis.add( glyph.clone() );
+
+		_renderRequest.invalidate();
 	}
 
 	public void setText( String value )
@@ -84,11 +92,15 @@ public final class UITextProcessor implements IDisposable
 		{
 			_glyphs.addLast( _font.getGlyphWithChar( value.charAt( i ) ).clone() );
 		}
+
+		_renderRequest.invalidate();
 	}
 
 	public void setSize( int width, int height )
 	{
 		_bounds.resizeTo( width, height );
+
+		_renderRequest.invalidate();
 	}
 
 	public void render()
