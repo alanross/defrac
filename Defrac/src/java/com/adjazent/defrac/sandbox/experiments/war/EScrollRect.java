@@ -1,4 +1,4 @@
-package com.adjazent.defrac.sandbox.experiments.ui;
+package com.adjazent.defrac.sandbox.experiments.war;
 
 import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.sandbox.events.IEnterFrame;

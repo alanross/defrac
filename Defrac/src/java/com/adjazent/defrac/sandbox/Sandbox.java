@@ -13,6 +13,9 @@ import com.adjazent.defrac.sandbox.experiments.ui.*;
 import com.adjazent.defrac.sandbox.experiments.samples.event.EUIEvent;
 import com.adjazent.defrac.sandbox.experiments.samples.EQuad;
 import com.adjazent.defrac.sandbox.experiments.samples.texture.ETextures;
+import com.adjazent.defrac.sandbox.experiments.war.EContainer;
+import com.adjazent.defrac.sandbox.experiments.war.EScrollRect;
+import com.adjazent.defrac.sandbox.experiments.war.EScrollRect2;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
 import defrac.app.Bootstrap;
 
@@ -49,10 +52,11 @@ public final class Sandbox extends AbstractSandbox
 		add( new EScrollRect2() );
 		add( new EUISkinning() );
 		add( new EUIList() );
+		add( new EContainer() );
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( EUISkinning.class );
+		activate( EContainer.class );
 	}
 
 	public static void main( final String[] args )
