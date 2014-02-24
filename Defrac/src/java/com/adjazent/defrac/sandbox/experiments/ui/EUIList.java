@@ -3,7 +3,7 @@ package com.adjazent.defrac.sandbox.experiments.ui;
 import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.sandbox.events.IEnterFrame;
 import com.adjazent.defrac.sandbox.events.IKeyboard;
-import com.adjazent.defrac.ui.component.list.UICellItem;
+import com.adjazent.defrac.ui.component.list.UICellData;
 import com.adjazent.defrac.ui.component.list.UICellRendererFactory;
 import com.adjazent.defrac.ui.component.list.UIList;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
@@ -46,15 +46,14 @@ public final class EUIList extends Experiment implements IUIResourceLoaderQueueO
 		_list = new UIList( new UICellRendererFactory() );
 		_list.moveTo( 100.0f, 150.0f );
 		_list.resizeTo( 200, 350 );
+		_list.setBackground( 0xFFA2A2A2 );
 
 		addChild( _list );
 
-		final int n = 20;
-
-		for( int i = 0; i < n; ++i )
+		for( int i = 0; i < 30; ++i )
 		{
 			int h = 20;//20 + ( int ) ( Math.random() * 40 );
-			_list.addItem( new UICellItem( "" + i, h ) );
+			_list.addItem( new UICellData( "" + i, h ) );
 		}
 
 		_list.setOffset( 0 );

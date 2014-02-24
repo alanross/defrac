@@ -1,7 +1,6 @@
 package com.adjazent.defrac.ui.component.list;
 
-import com.adjazent.defrac.math.MColor;
-import com.adjazent.defrac.math.MRand;
+import com.adjazent.defrac.math.MMath;
 
 import java.util.LinkedList;
 
@@ -32,9 +31,7 @@ public final class UICellRendererFactory implements IUICellRendererFactory
 
 		UICellRenderer renderer = _rendererPool.pollLast();
 
-		int color = (255 << 24) | MColor.hsv2rgb( MRand.randomMinMax( 0, 360 ), 0.5, 0.5 );
-
-		renderer.setColor( ( index % 2 == 0 ) ? color : 0xFF898989 );
+		renderer.setColor( ( index % 2 == 0 ) ? ( ( int ) MMath.rand( 0xFF000000, 0xFFFFFFFF ) ) : 0xFF696969 );
 
 		return renderer;
 	}

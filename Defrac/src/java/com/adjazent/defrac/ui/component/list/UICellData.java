@@ -4,14 +4,14 @@ package com.adjazent.defrac.ui.component.list;
  * @author Alan Ross
  * @version 0.1
  */
-public class UICellItem
+public class UICellData
 {
 	boolean inViewRange = false;
 
 	private String _text;
 	private int _height;
 
-	public UICellItem( String text, int height )
+	public UICellData( String text, int height )
 	{
 		_text = text;
 		_height = height;
@@ -27,15 +27,10 @@ public class UICellItem
 		return _height;
 	}
 
-	public boolean getIsInViewRange()
-	{
-		return inViewRange;
-	}
-
 	@Override
 	public String toString()
 	{
-		return "[UICellItem  text" + _text + "]";
+		return "[UICellData text:" + _text + "]";
 	}
 }
 

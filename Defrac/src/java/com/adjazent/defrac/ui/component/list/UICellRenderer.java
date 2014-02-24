@@ -16,17 +16,16 @@ import defrac.display.Quad;
  */
 public class UICellRenderer
 {
-	private MRectangle _bounds;
-	private UICellItem _data;
+	private static final String UNDEFINED = "UNDEFINED";
 
-	private int _color = 0;
+	private MRectangle _bounds;
+	private UICellData _data;
 
 	private Layer _container;
 
 	private Quad _background;
 	private UITextProcessor _textProcessor;
 	private UITextRenderer _textRenderer;
-
 
 	public UICellRenderer()
 	{
@@ -37,14 +36,15 @@ public class UICellRenderer
 		_background = new Quad( 100, 100, 0xFFFF0000 );
 
 		_textRenderer = new UITextRenderer();
+		_textRenderer.moveTo( 5, 5 );
 		_textProcessor = UITextProcessor.create( new UITextFormat( "Helvetica" ), _textRenderer, true );
-		_textProcessor.setText( "UNDEFINED" );
+		_textProcessor.setText( UNDEFINED );
 
 		_container.addChild( _background );
 		_container.addChild( _textRenderer );
 	}
 
-	public void onAttach( UICellItem data, int cellWidth, int cellHeight )
+	public void onAttach( UICellData data, int cellWidth, int cellHeight )
 	{
 		if( _data != null )
 		{
@@ -52,15 +52,12 @@ public class UICellRenderer
 		}
 
 		_data = data;
-		_bounds.width = cellWidth;
-		_bounds.height = cellHeight;
+
+		_bounds.resizeTo( cellWidth, cellHeight );
 
 		_textProcessor.setText( _data.getText() + " - " + StringUtils.randomSequence( 5 ) );
-		_textProcessor.render();
-		_textRenderer.moveTo( 5, 5 );
 
-		_background.width( cellWidth );
-		_background.height( cellHeight );
+		_background.scaleToSize( cellWidth, cellHeight );
 	}
 
 	public void onDetach()
@@ -72,19 +69,23 @@ public class UICellRenderer
 
 		_data = null;
 
-		_bounds.width = 0;
-		_bounds.height = 0;
-		_textProcessor.setText( "UNDEFINED" );
+		_bounds.resizeTo( 0, 0 );
+		_textProcessor.setText( UNDEFINED );
 	}
 
-	public UICellItem getData()
+	public UICellData getData()
 	{
 		return _data;
 	}
 
-	public DisplayObject getDisplayObject()
+	public DisplayObject getContainer()
 	{
 		return _container;
+	}
+
+	public void setColor( int value )
+	{
+		_background.color( value );
 	}
 
 	public void setX( int value )
@@ -117,16 +118,6 @@ public class UICellRenderer
 		return ( int ) _bounds.height;
 	}
 
-	public int getColor()
-	{
-		return _color;
-	}
-
-	public void setColor( int value )
-	{
-		_color = value;
-		_background.color( _color );
-	}
 
 	@Override
 	public String toString()
