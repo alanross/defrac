@@ -9,6 +9,7 @@ import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderSparrowFont;
+import com.adjazent.defrac.ui.component.text.UILabel;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.UITextProcessor;
 import com.adjazent.defrac.ui.text.UITextSelection;
@@ -69,6 +70,13 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		_textProcessor3 = createTextProcessor( _renderer3, "Output" );
 
 		addGlyph( 'M', 50.0f, 350.0f );
+
+		UILabel label = new UILabel( new UITextFormat( "Helvetica" ) );
+
+		label.setText( "Hello Mokomo!" );
+		label.moveTo( 50.0f, 450.0f );
+
+		addChild( label );
 
 		Events.onEnterFrame.attach( this );
 	}

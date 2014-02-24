@@ -56,7 +56,7 @@ public final class Sandbox extends AbstractSandbox
 		add( new EContainer() );
 		add( new Warzone() );
 
-		activate( EUIText.class );
+		activate( EUIList.class );
 	}
 
 	public static void main( final String[] args )

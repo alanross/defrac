@@ -25,7 +25,7 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 	private String _text = "";
 
-	private MRectangle _bounds = new MRectangle();
+	private MRectangle _bounds = new MRectangle( 0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE );
 
 	private UIRenderRequest _renderRequest;
 
@@ -35,6 +35,24 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 	private UITextFormat _format;
 	private UIFont _font;
 	private UITextLayout _block;
+
+	public static UITextProcessor createSingleLine( UITextFormat format, UITextRenderer renderer )
+	{
+		IUITextComposer composer = new UITextComposerSingleLine();
+
+		UITextInteractor interactor = new UITextInteractor();
+
+		return new UITextProcessor( composer, renderer, interactor, format );
+	}
+
+	public static UITextProcessor createMultiLine( UITextFormat format, UITextRenderer renderer )
+	{
+		IUITextComposer composer = new UITextComposerMultiLine();
+
+		UITextInteractor interactor = new UITextInteractor();
+
+		return new UITextProcessor( composer, renderer, interactor, format );
+	}
 
 	public UITextProcessor( IUITextComposer composer, UITextRenderer renderer, UITextInteractor interact, UITextFormat format )
 	{
@@ -69,7 +87,10 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 		if( _composer instanceof UITextComposerSingleLine )
 		{
+			//NOTE: No RegEx support yet.
+
 			//value = value.replace( RegExp( /[\f\r\v]/gm ), ' ' );
+
 			value = value.replace( '\f', ' ' );
 			value = value.replace( '\r', ' ' );
 			value = value.replace( '\n', ' ' );
@@ -105,7 +126,9 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 	public void render()
 	{
-		_block = _composer.process( ( LinkedList<UIGlyph> ) _glyphs.clone(), _ellipsis, _font, _format, _bounds );
+		LinkedList<UIGlyph> copy = ( LinkedList<UIGlyph> ) _glyphs.clone();
+
+		_block = _composer.process( copy, _ellipsis, _font, _format, _bounds );
 
 		_renderer.process( _block, _format );
 	}
