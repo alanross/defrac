@@ -1,4 +1,4 @@
-package com.adjazent.defrac.ui.component.list;
+package com.adjazent.defrac.ui.widget.list;
 
 import com.adjazent.defrac.math.MMath;
 

@@ -1,4 +1,4 @@
-package com.adjazent.defrac.ui.component.text;
+package com.adjazent.defrac.ui.widget.text;
 
 import com.adjazent.defrac.core.error.GenericError;
 import com.adjazent.defrac.math.geom.MPoint;

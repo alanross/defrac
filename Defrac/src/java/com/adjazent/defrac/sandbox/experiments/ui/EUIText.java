@@ -9,7 +9,7 @@ import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderSparrowFont;
-import com.adjazent.defrac.ui.component.text.UILabel;
+import com.adjazent.defrac.ui.widget.text.UILabel;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.UITextProcessor;
 import com.adjazent.defrac.ui.text.UITextSelection;

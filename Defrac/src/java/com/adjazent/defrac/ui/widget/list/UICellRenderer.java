@@ -1,9 +1,9 @@
-package com.adjazent.defrac.ui.component.list;
+package com.adjazent.defrac.ui.widget.list;
 
 import com.adjazent.defrac.core.error.GenericError;
 import com.adjazent.defrac.core.utils.StringUtils;
 import com.adjazent.defrac.math.geom.MRectangle;
-import com.adjazent.defrac.ui.component.text.UILabel;
+import com.adjazent.defrac.ui.widget.text.UILabel;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import defrac.display.DisplayObject;
 import defrac.display.Layer;
