@@ -30,12 +30,12 @@ public final class Notifier implements IDisposable
 
 		if( null == observer )
 		{
-			throw new NullError( "observer can not be null" );
+			throw new NullError( this +" observer can not be null" );
 		}
 
 		if( -1 != _observers.indexOf( observer ) )
 		{
-			throw new ElementAlreadyExistsError( observer + " already exists" );
+			throw new ElementAlreadyExistsError( this +" " + observer + " already exists" );
 		}
 
 		_observers.addFirst( observer );
@@ -48,19 +48,19 @@ public final class Notifier implements IDisposable
 	{
 		if( null == observer )
 		{
-			throw new NullError( "observer can not be null" );
+			throw new NullError( this + " observer can not be null" );
 		}
 
 		if( null == _observers )
 		{
-			throw new ElementDoesNotExistError( observer + " does not exist" );
+			throw new ElementDoesNotExistError( this +" " + observer + " does not exist" );
 		}
 
 		final int index = _observers.indexOf( observer );
 
 		if( -1 == index )
 		{
-			throw new ElementDoesNotExistError( observer + " does not exist" );
+			throw new ElementDoesNotExistError( this +" " + observer + " does not exist" );
 		}
 
 		_observers.remove( observer );
@@ -73,7 +73,7 @@ public final class Notifier implements IDisposable
 	{
 		if( null == observer )
 		{
-			throw new NullError( "observer can not be null" );
+			throw new NullError( this + " observer can not be null" );
 		}
 
 		if( null == _observers )
@@ -86,7 +86,7 @@ public final class Notifier implements IDisposable
 		return ( -1 != index );
 	}
 
-	public void dispatch( INotifierEvent event, boolean resetEventAfterDispatch )
+	public void dispatch( INotifierEvent event, boolean resetEventAfterDispatch/*=true*/  )
 	{
 		// !important:
 		// the number of the observers is subject to change while
