@@ -50,13 +50,14 @@ public final class Sandbox extends AbstractSandbox
 		add( new EUIGLPainter() );
 		add( new EUISkinning() );
 		add( new EUIList() );
+		add( new EUIWidgets() );
 		//----------------------------- warzone
 		add( new EScrollRect() );
 		add( new EScrollRect2() );
 		add( new EContainer() );
 		add( new Warzone() );
 
-		activate( EUIList.class );
+		activate( EUIWidgets.class );
 	}
 
 	public static void main( final String[] args )
