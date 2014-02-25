@@ -18,13 +18,15 @@ public final class UITextComposerMultiLine implements IUITextComposer
 	{
 	}
 
-	private LinkedList<UIGlyph> splice( LinkedList<UIGlyph> glyphs, int i, int j )
+	private LinkedList<UIGlyph> splice( LinkedList<UIGlyph> glyphs, int startIndex, int deleteCount )
 	{
 		LinkedList<UIGlyph> result = new LinkedList<UIGlyph>();
 
-		for(; i <= j; i++ )
+		int n = startIndex + deleteCount;
+
+		for( int i = startIndex; i < n; i++ )
 		{
-			result.addLast( glyphs.remove( i ) );
+			result.addLast( glyphs.remove( startIndex ) );
 		}
 
 		return result;
@@ -55,7 +57,10 @@ public final class UITextComposerMultiLine implements IUITextComposer
 
 			int cutIndex = Math.max( ( ( glyphs.size() - 1 ) - ellipsis.size() ), 0 );
 
-			splice( glyphs, cutIndex, glyphs.size() - cutIndex );
+			while( glyphs.size() > cutIndex )
+			{
+				glyphs.removeLast();
+			}
 		}
 
 		return null;
@@ -124,17 +129,16 @@ public final class UITextComposerMultiLine implements IUITextComposer
 
 		MRectangle bounds = new MRectangle();
 
-		for( int i = 0; i < lines.size(); ++i )
+		for( UITextLine l : lines )
 		{
-			line = lines.get( i );
-
-			if( bounds.width < line.bounds.width )
+			if( bounds.width < l.bounds.width )
 			{
-				bounds.width = line.bounds.width;
+				bounds.width = l.bounds.width;
 			}
 
 			bounds.height += offsetStep;
 		}
+
 
 		return new UITextLayout( lines, bounds );
 	}

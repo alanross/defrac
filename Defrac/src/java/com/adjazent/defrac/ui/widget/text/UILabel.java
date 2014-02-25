@@ -31,12 +31,30 @@ public final class UILabel extends Layer implements IUITextRenderer
 	private Quad _background;
 	private Layer _container;
 
-	private boolean _autosize = true;
+	private boolean _autoSize = true;
 
 	public UILabel( UITextFormat textFormat )
 	{
+		init( textFormat, false );
+	}
+
+	public UILabel( UITextFormat textFormat, boolean multiLine )
+	{
+		init( textFormat, multiLine );
+	}
+
+	private void init( UITextFormat textFormat, boolean multiLine )
+	{
 		_bounds = new MRectangle();
-		_processor = UITextProcessor.createSingleLine( textFormat, this );
+
+		if( multiLine )
+		{
+			_processor = UITextProcessor.createMultiLine( textFormat, this );
+		}
+		else
+		{
+			_processor = UITextProcessor.createSingleLine( textFormat, this );
+		}
 
 		_background = new Quad( 1, 1, 0x0 );
 		_container = new Layer();
@@ -53,7 +71,7 @@ public final class UILabel extends Layer implements IUITextRenderer
 			removeChild( _images.removeLast() );
 		}
 
-		if( _autosize )
+		if( _autoSize )
 		{
 			_background.scaleToSize( ( float ) block.bounds.width, ( float ) block.bounds.height );
 		}
@@ -101,7 +119,7 @@ public final class UILabel extends Layer implements IUITextRenderer
 
 	public void setSize( float width, float height )
 	{
-		if( _autosize )
+		if( _autoSize )
 		{
 			throw new GenericError( this + " Can not set size while autosize is active." );
 		}
@@ -159,14 +177,14 @@ public final class UILabel extends Layer implements IUITextRenderer
 
 	public boolean getAutoSize()
 	{
-		return _autosize;
+		return _autoSize;
 	}
 
-	public void setAutosize( boolean value )
+	public void setAutoSize( boolean value )
 	{
-		_autosize = value;
+		_autoSize = value;
 
-		if( _autosize )
+		if( _autoSize )
 		{
 			_processor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE );
 		}
@@ -175,7 +193,6 @@ public final class UILabel extends Layer implements IUITextRenderer
 			_processor.setSize( ( int ) _bounds.width, ( int ) _bounds.height );
 		}
 	}
-
 
 	public void setBackground( int color )
 	{
