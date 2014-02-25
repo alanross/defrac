@@ -4,11 +4,11 @@ package com.adjazent.defrac.ui.surface;
  * @author Alan Ross
  * @version 0.1
  */
-public interface IUISurfaceSkin
+public interface IUISkin
 {
 	void attach( UISurface surface );
 
 	void detach( UISurface surface );
 
-	void resizeTo( int width, int height );
+	void resizeTo( float width, float height );
 }

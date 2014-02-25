@@ -1,6 +1,6 @@
 package com.adjazent.defrac.ui.surface.skin;
 
-import com.adjazent.defrac.ui.surface.IUISurfaceSkin;
+import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.texture.UITexture;
 
 /**
@@ -9,7 +9,7 @@ import com.adjazent.defrac.ui.texture.UITexture;
  */
 public final class UISurfaceSkinFactory
 {
-	public static IUISurfaceSkin create( UITexture texture )
+	public static IUISkin create( UITexture texture )
 	{
 		if( texture.getSliceGrid() == null )
 		{
@@ -25,12 +25,16 @@ public final class UISurfaceSkinFactory
 		}
 	}
 
-	public static IUISurfaceSkin create( int color )
+	public static IUISkin create( int color )
 	{
 		UISurfaceColorSkin skin = new UISurfaceColorSkin();
 		skin.init( color );
 
 		return skin;
+	}
+
+	public static void release( IUISkin skin )
+	{
 	}
 
 	private UISurfaceSkinFactory()

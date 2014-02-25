@@ -1,6 +1,6 @@
 package com.adjazent.defrac.ui.surface.skin;
 
-import com.adjazent.defrac.ui.surface.IUISurfaceSkin;
+import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.texture.UITexture;
 import defrac.display.Image;
@@ -9,7 +9,7 @@ import defrac.display.Image;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISurfaceTextureSkin implements IUISurfaceSkin
+public final class UISurfaceTextureSkin implements IUISkin
 {
 	private Image _image = new Image();
 
@@ -35,7 +35,7 @@ public final class UISurfaceTextureSkin implements IUISurfaceSkin
 	}
 
 	@Override
-	public void resizeTo( int width, int height )
+	public void resizeTo( float width, float height )
 	{
 		_image.scaleToSize( width, height );
 	}

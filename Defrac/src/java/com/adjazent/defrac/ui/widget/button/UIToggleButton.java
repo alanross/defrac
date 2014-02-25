@@ -38,11 +38,7 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 	@Override
 	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
 	{
-		// TODO: globalToLocal does not work yet
-		Point p = new Point( point.x, point.y );
-
-		//TODO: bounds should not contain x and y pos of surface
-		if( bounds.contains( p.x, p.y ) )
+		if( containsPoint( point.x, point.y ) )
 		{
 			return this;
 		}

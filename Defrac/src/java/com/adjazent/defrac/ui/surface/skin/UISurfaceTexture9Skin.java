@@ -3,7 +3,7 @@ package com.adjazent.defrac.ui.surface.skin;
 import com.adjazent.defrac.core.error.NullError;
 import com.adjazent.defrac.core.error.ValueError;
 import com.adjazent.defrac.math.geom.MRectangle;
-import com.adjazent.defrac.ui.surface.IUISurfaceSkin;
+import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.texture.UITexture;
 import com.adjazent.defrac.ui.utils.bitmap.UISlice9Grid;
@@ -15,7 +15,7 @@ import defrac.display.TextureData;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISurfaceTexture9Skin implements IUISurfaceSkin
+public final class UISurfaceTexture9Skin implements IUISkin
 {
 	private Image _tl = new Image();    //top left
 	private Image _tc = new Image();    //top center
@@ -119,7 +119,7 @@ public final class UISurfaceTexture9Skin implements IUISurfaceSkin
 	}
 
 	@Override
-	public void resizeTo( int width, int height )
+	public void resizeTo( float width, float height )
 	{
 		if( width <= 0 || height <= 0 )
 		{
@@ -138,10 +138,10 @@ public final class UISurfaceTexture9Skin implements IUISurfaceSkin
 					"Height:" + height + ", Top:" + _sliceTop + ", Bottom:" + _sliceBottom );
 		}
 
-		final int offsetRight = width - _sliceRight;
-		final int offsetBottom = height - _sliceBottom;
-		final int centerWidth = width - ( _sliceLeft + _sliceRight );
-		final int centerHeight = height - ( _sliceTop + _sliceBottom );
+		final int offsetRight = ( int ) (width - _sliceRight);
+		final int offsetBottom = ( int ) (height - _sliceBottom);
+		final int centerWidth = ( int ) (width - ( _sliceLeft + _sliceRight ));
+		final int centerHeight = ( int ) (height - ( _sliceTop + _sliceBottom ));
 
 		if( _tl != null )
 		{

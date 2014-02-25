@@ -66,16 +66,10 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		label.moveTo( 100, 100 );
 
 		// --------------------- TOGGLE BUTTON
-		toggleButton1 = new UIToggleButton(
-				skins.getTexture( "ButtonSceneSettingsDeselected" ),
-				skins.getTexture( "ButtonSceneSettingsSelected" )
-		);
+		toggleButton1 = new UIToggleButton( skins.getTexture( "ButtonSceneSettingsDeselected" ), skins.getTexture( "ButtonSceneSettingsSelected" ) );
 		toggleButton1.moveTo( 100, 150 );
 
-		toggleButton2 = new UIToggleButton(
-				skins.getTexture( "ButtonSceneSettingsDeselected" ),
-				skins.getTexture( "ButtonSceneSettingsSelected" )
-		);
+		toggleButton2 = new UIToggleButton( skins.getTexture( "ButtonSceneSettingsDeselected" ), skins.getTexture( "ButtonSceneSettingsSelected" ) );
 		toggleButton2.moveTo( 150, 150 );
 
 		toggleGroup = new UIToggleGroup( toggleButton1, toggleButton2 );
@@ -83,15 +77,11 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		// --------------------- BUTTON
 		button = new UIButton( skins.getTexture( "ButtonChallenge" ) );
 		button.moveTo( 100, 200 );
-		button.clickAction.add( this );
+		button.onClick.add( this );
 
 		// --------------------- SLIDER
-		slider = new UISlider(
-				skins.getTexture( "PlayOutSliderTrack" ),
-				skins.getTexture( "PlayOutSliderThumb" ),
-				skins.getTexture( "PlayOutSliderValue" )
-		);
-		slider.scaleToSize( 100, 17 );
+		slider = new UISlider( skins.getTexture( "PlayOutSliderTrack" ), skins.getTexture( "PlayOutSliderThumb" ), skins.getTexture( "PlayOutSliderValue" ) );
+		slider.resizeTo( 100, slider.height() );
 		slider.moveTo( 100, 250 );
 
 		addChild( label );

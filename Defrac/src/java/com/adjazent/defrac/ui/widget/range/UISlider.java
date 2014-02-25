@@ -37,11 +37,11 @@ public final class UISlider extends UISurface// implements IUIEventListener
 		super( skinTrack );
 
 		_surfaceKnob = new UISurface( skinThumb );
-		_surfaceKnob.scaleToSize( 17, 17 );
+//		_surfaceKnob.scaleToSize( 17, 17 );
 		_surfaceKnob.moveTo( 17, 0 );
 
 		_surfaceValue = new UISurface( skinValue );
-		_surfaceValue.scaleToSize( 17, 17 );
+//		_surfaceValue.scaleToSize( 17, 17 );
 
 		addChild( _surfaceValue );
 		addChild( _surfaceKnob );
@@ -149,7 +149,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 			pos = 2;
 		}
 
-		_surfaceValue.scaleToSize( ( int ) pos, ( int ) _surfaceValue.height() );
+		_surfaceValue.resizeTo( ( int ) pos, ( int ) _surfaceValue.height() );
 	}
 
 	public double getValue()

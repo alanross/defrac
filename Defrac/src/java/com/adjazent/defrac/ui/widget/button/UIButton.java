@@ -17,23 +17,17 @@ import javax.annotation.Nonnull;
  */
 public final class UIButton extends UISurface
 {
-	public final Action clickAction = new Action( UIActionType.BUTTON_CLICK );
+	public final Action onClick = new Action( UIActionType.BUTTON_CLICK );
 
 	public UIButton( UITexture skinNormal )
 	{
 		super( skinNormal );
-
-		scaleToSize( ( int ) skinNormal.getSkinRect().width, ( int ) skinNormal.getSkinRect().height );
 	}
 
 	@Override
 	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
 	{
-		// TODO: globalToLocal does not work yet
-		Point p = new Point( point.x, point.y );
-
-		//TODO: bounds should not contain x and y pos of surface
-		if( bounds.contains( p.x, p.y ) )
+		if( containsPoint( point.x, point.y ) )
 		{
 			return this;
 		}
@@ -48,7 +42,7 @@ public final class UIButton extends UISurface
 
 		if( event.type == UIEventType.ACTION_SINGLE && event.target == this )
 		{
-			clickAction.send( this );
+			onClick.send( this );
 		}
 	}
 

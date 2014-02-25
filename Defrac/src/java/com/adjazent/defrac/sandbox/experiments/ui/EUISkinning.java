@@ -79,9 +79,9 @@ public final class EUISkinning extends Experiment implements IUIResourceLoaderQu
 		{
 			size += reverse;
 
-			_surfaceTexture.scaleToSize( size, size );
-			_surfaceTexture9.scaleToSize( size, size );
-			_surfaceColor.scaleToSize( size, size );
+			_surfaceTexture.resizeTo( size, size );
+			_surfaceTexture9.resizeTo( size, size );
+			_surfaceColor.resizeTo( size, size );
 
 			if( size >= 220 )
 			{
