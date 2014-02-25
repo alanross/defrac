@@ -84,7 +84,7 @@ public class Action
 	@Override
 	public String toString()
 	{
-		return "[Action type: " + _type + "]";
+		return "[Action type:" + _type + ", origin:" + _origin + "]";
 	}
 }
 

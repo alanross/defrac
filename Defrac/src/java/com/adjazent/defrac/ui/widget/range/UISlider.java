@@ -17,8 +17,8 @@ import javax.annotation.Nonnull;
  */
 public final class UISlider extends UISurface// implements IUIEventListener
 {
-	public final Action changeAction = new Action( UIActionType.SLIDER_VALUE_CHANGED );
-	public final Action completeAction = new Action( UIActionType.SLIDER_VALUE_COMPLETED );
+	public final Action onValueChange = new Action( UIActionType.SLIDER_VALUE_CHANGED );
+	public final Action onValueComplete = new Action( UIActionType.SLIDER_VALUE_COMPLETED );
 
 	private UISurface _surfaceKnob;
 	private UISurface _surfaceValue;
@@ -37,11 +37,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 		super( skinTrack );
 
 		_surfaceKnob = new UISurface( skinThumb );
-//		_surfaceKnob.scaleToSize( 17, 17 );
-		_surfaceKnob.moveTo( 17, 0 );
-
 		_surfaceValue = new UISurface( skinValue );
-//		_surfaceValue.scaleToSize( 17, 17 );
 
 		addChild( _surfaceValue );
 		addChild( _surfaceKnob );
@@ -59,21 +55,21 @@ public final class UISlider extends UISurface// implements IUIEventListener
 			switch( event.type )
 			{
 				case UIEventType.ACTION_BEGIN:
-					onMouseDown( ( UIActionEvent ) event );
+					onDragBegin( ( UIActionEvent ) event );
 					break;
 
 				case UIEventType.ACTION_MOVE:
-					onMouseMove( ( UIActionEvent ) event );
+					onDragUpdate( ( UIActionEvent ) event );
 					break;
 
 				case UIEventType.ACTION_END:
-					onMouseUp( ( UIActionEvent ) event );
+					onDragEnd( ( UIActionEvent ) event );
 					break;
 			}
 		}
 	}
 
-	private void onMouseDown( UIActionEvent event )
+	private void onDragBegin( UIActionEvent event )
 	{
 		_mouseDown = true;
 
@@ -94,7 +90,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 		}
 	}
 
-	private void onMouseMove( UIActionEvent event )
+	private void onDragUpdate( UIActionEvent event )
 	{
 		//if( _mouseDown && event.currentTarget == stage )
 //		{
@@ -102,7 +98,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 //		}
 	}
 
-	private void onMouseUp( UIActionEvent event )
+	private void onDragEnd( UIActionEvent event )
 	{
 		_mouseDown = false;
 
@@ -113,7 +109,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 
 		if( _lastValue != _value )
 		{
-			completeAction.send( this );
+			onValueComplete.send( this );
 		}
 	}
 
@@ -174,14 +170,14 @@ public final class UISlider extends UISurface// implements IUIEventListener
 
 			valToPos( _value );
 
-			changeAction.send( this );
+			onValueChange.send( this );
 		}
 	}
 
 	@Override
 	public String toString()
 	{
-		return "[UISlider]";
+		return "[UISlider id:" + id + "]";
 	}
 }
 

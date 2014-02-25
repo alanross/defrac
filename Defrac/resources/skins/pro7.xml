@@ -19,8 +19,8 @@
     <sprite n="ButtonScene02Selected" x="379" y="426" w="94" h="23" left="0" right="0" top="0" bottom="0" />
     <sprite n="ButtonScene03Deselected" x="379" y="401" w="94" h="23" left="0" right="0" top="0" bottom="0" />
     <sprite n="ButtonScene03Selected" x="379" y="376" w="94" h="23" left="0" right="0" top="0" bottom="0" />
-    <sprite n="ButtonSceneSettingsDeselected" x="481" y="321" w="21" h="20" left="0" right="0" top="0" bottom="0" />
-    <sprite n="ButtonSceneSettingsSelected" x="481" y="299" w="21" h="20" left="0" right="0" top="0" bottom="0" />
+    <sprite n="ButtonSceneSettingsDeselected" x="481" y="299" w="21" h="20" left="0" right="0" top="0" bottom="0" />
+    <sprite n="ButtonSceneSettingsSelected" x="481" y="321" w="21" h="20" left="0" right="0" top="0" bottom="0" />
     <sprite n="ButtonSourceImagesDeselected" x="462" y="795" w="45" h="36" left="0" right="0" top="0" bottom="0" />
     <sprite n="ButtonSourceImagesSelected" x="462" y="757" w="45" h="36" left="0" right="0" top="0" bottom="0" />
     <sprite n="ButtonSourceLiveDeselected" x="237" y="695" w="45" h="36" left="0" right="0" top="0" bottom="0" />

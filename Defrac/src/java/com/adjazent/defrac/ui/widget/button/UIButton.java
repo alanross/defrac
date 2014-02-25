@@ -49,7 +49,7 @@ public final class UIButton extends UISurface
 	@Override
 	public String toString()
 	{
-		return "[UIButton]";
+		return "[UIButton id:" + id + "]";
 	}
 }
 

@@ -82,8 +82,8 @@ public class UISurface extends DisplayObjectContainer implements IDisposable
 
 	public DisplayObject resizeTo( float width, float height )
 	{
-		_aabb.resizeTo( width(), height() );
-		_skin.resizeTo( width(), height() );
+		_aabb.resizeTo( width, height );
+		_skin.resizeTo( width, height );
 
 		return this;
 	}

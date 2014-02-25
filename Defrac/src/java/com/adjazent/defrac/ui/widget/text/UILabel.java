@@ -16,14 +16,17 @@ import defrac.display.Layer;
  */
 public final class UILabel extends Layer
 {
-	UITextProcessor _processor;
-	UITextRenderer _renderer;
-	MRectangle _bounds = new MRectangle();
+	public String id = "";
+
+	private UITextProcessor _processor;
+	private UITextRenderer _renderer;
+	private MRectangle _bounds;
 
 	private boolean _autosize = false;
 
 	public UILabel( UITextFormat textFormat )
 	{
+		_bounds = new MRectangle();
 		_renderer = new UITextRenderer();
 		_processor = UITextProcessor.createSingleLine( textFormat, _renderer );
 
@@ -120,6 +123,6 @@ public final class UILabel extends Layer
 	@Override
 	public String toString()
 	{
-		return "[UILabel]";
+		return "[UILabel id:" + id + "]";
 	}
 }

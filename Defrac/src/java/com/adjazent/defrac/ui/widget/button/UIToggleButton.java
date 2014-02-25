@@ -1,10 +1,10 @@
 package com.adjazent.defrac.ui.widget.button;
 
+import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
-import com.adjazent.defrac.core.notification.signals.Signals;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.texture.UITexture;
-import com.adjazent.defrac.ui.widget.UISignalTypes;
+import com.adjazent.defrac.ui.widget.UIActionType;
 import defrac.display.event.UIEvent;
 import defrac.display.event.UIEventTarget;
 import defrac.display.event.UIEventType;
@@ -18,6 +18,9 @@ import javax.annotation.Nonnull;
  */
 public final class UIToggleButton extends UISurface implements ISignalSource
 {
+	public final Action onClick = new Action( UIActionType.BUTTON_CLICK );
+	public final Action onSelect = new Action( UIActionType.BUTTON_SELECT );
+
 	private UITexture _skinDeselected;
 	private UITexture _skinSelected;
 
@@ -57,7 +60,7 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 		}
 		if( event.type == UIEventType.ACTION_SINGLE && event.target == this )
 		{
-			Signals.send( UISignalTypes.BUTTON_CLICK, this );
+			onClick.send( this );
 		}
 	}
 
@@ -75,9 +78,9 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 
 		_selected = value;
 
-		setTexture( ( _selected ? _skinDeselected : _skinSelected ) );
+		setTexture( ( _selected ? _skinSelected : _skinDeselected ) );
 
-		Signals.send( ( _selected ) ? UISignalTypes.BUTTON_SELECT : UISignalTypes.BUTTON_DESELECT, this );
+		onSelect.send( this );
 	}
 
 	public boolean getLockIfSelected()
@@ -93,7 +96,7 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 	@Override
 	public String toString()
 	{
-		return "[UIToggleButton]";
+		return "[UIToggleButton id:" + id + ", selected:" + _selected + "]";
 	}
 }
 
