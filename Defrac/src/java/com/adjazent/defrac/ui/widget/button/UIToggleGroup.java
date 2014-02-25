@@ -1,8 +1,9 @@
-package com.adjazent.defrac.ui.widget.pro7;
+package com.adjazent.defrac.ui.widget.button;
 
 import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.core.notification.signals.Signals;
+import com.adjazent.defrac.ui.widget.UISignalTypes;
 
 import java.util.LinkedList;
 

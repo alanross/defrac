@@ -15,7 +15,9 @@ import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.texture.UITextureAtlas;
 import com.adjazent.defrac.ui.texture.UITextureManager;
-import com.adjazent.defrac.ui.widget.pro7.*;
+import com.adjazent.defrac.ui.widget.UISignalTypes;
+import com.adjazent.defrac.ui.widget.button.*;
+import com.adjazent.defrac.ui.widget.range.UISlider;
 import com.adjazent.defrac.ui.widget.text.UILabel;
 
 import static com.adjazent.defrac.core.log.Log.info;

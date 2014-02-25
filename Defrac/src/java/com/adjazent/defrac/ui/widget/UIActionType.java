@@ -1,4 +1,4 @@
-package com.adjazent.defrac.ui.widget.pro7;
+package com.adjazent.defrac.ui.widget;
 
 /**
  * @author Alan Ross
