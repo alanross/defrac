@@ -1,12 +1,19 @@
 package com.adjazent.defrac.sandbox;
 
 import com.adjazent.defrac.core.stage.StageProvider;
+import com.adjazent.defrac.math.geom.MPoint;
 import com.adjazent.defrac.sandbox.events.*;
 import defrac.app.GenericApp;
 import defrac.display.Layer;
+import defrac.display.Quad;
 import defrac.display.Stage;
+import defrac.display.event.UIActionEvent;
+import defrac.display.event.UIEvent;
+import defrac.display.event.UIEventType;
 import defrac.event.*;
 import defrac.lang.Procedure;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Alan Ross
@@ -14,6 +21,9 @@ import defrac.lang.Procedure;
  */
 public class Experiment extends Layer implements IAppResize
 {
+	protected final MPoint mousePos = new MPoint();
+	protected final Quad background = new Quad( 1, 1, 0xFF232323 );
+
 	protected Stage stage;
 	protected GenericApp app;
 
@@ -25,6 +35,9 @@ public class Experiment extends Layer implements IAppResize
 	{
 		this.stage = stage;
 		this.app = app;
+
+		this.addChild( background );
+		background.scaleToSize( stage.width(), stage.height() );
 
 		onInit();
 
@@ -40,7 +53,8 @@ public class Experiment extends Layer implements IAppResize
 				@Override
 				public void apply( StageEvent.Resize event )
 				{
-					onResize( StageProvider.stage.width(), StageProvider.stage.height() );
+					background.scaleToSize( stage.width(), stage.height() );
+					onResize( stage.width(), stage.height() );
 				}
 			} );
 		}
@@ -101,6 +115,18 @@ public class Experiment extends Layer implements IAppResize
 
 	protected void onInit()
 	{
+	}
+
+	@Override
+	protected void processEvent( @Nonnull final UIEvent event )
+	{
+		super.processEvent( event );
+
+		if( ( event.type & UIEventType.ACTION ) != 0 )
+		{
+			UIActionEvent actionEvent = ( UIActionEvent ) event;
+			mousePos.setTo( actionEvent.pos.x, actionEvent.pos.y );
+		}
 	}
 
 	public void onResize( float width, float height )

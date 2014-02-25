@@ -7,30 +7,86 @@ import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.UITextProcessor;
 import com.adjazent.defrac.ui.text.UITextSelection;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
-import com.adjazent.defrac.ui.text.processing.UITextRenderer;
+import com.adjazent.defrac.ui.text.processing.IUITextRenderer;
+import com.adjazent.defrac.ui.text.processing.UITextLayout;
+import com.adjazent.defrac.ui.text.processing.UITextLine;
+import defrac.display.Image;
 import defrac.display.Layer;
+import defrac.display.Quad;
+
+import java.util.LinkedList;
 
 /**
  * @author Alan Ross
  * @version 0.1
  */
-public final class UILabel extends Layer
+public final class UILabel extends Layer implements IUITextRenderer
 {
+	private final LinkedList<Image> _images = new LinkedList<Image>();
+
 	public String id = "";
 
 	private UITextProcessor _processor;
-	private UITextRenderer _renderer;
 	private MRectangle _bounds;
+	private Quad _background;
+	private Layer _container;
 
-	private boolean _autosize = false;
+	private boolean _autosize = true;
 
 	public UILabel( UITextFormat textFormat )
 	{
 		_bounds = new MRectangle();
-		_renderer = new UITextRenderer();
-		_processor = UITextProcessor.createSingleLine( textFormat, _renderer );
+		_processor = UITextProcessor.createSingleLine( textFormat, this );
 
-		addChild( _renderer );
+		_background = new Quad( 1, 1, 0x0 );
+		_container = new Layer();
+
+		addChild( _background );
+		addChild( _container );
+	}
+
+	@Override
+	public void process( UITextLayout block, UITextFormat format )
+	{
+		while( !_images.isEmpty() )
+		{
+			removeChild( _images.removeLast() );
+		}
+
+		if( _autosize )
+		{
+			_background.scaleToSize( ( float ) block.bounds.width, ( float ) block.bounds.height );
+		}
+		else
+		{
+			_background.scaleToSize( ( float ) _bounds.width, ( float ) _bounds.height );
+		}
+
+		if( block.bounds.width <= 0 || block.bounds.height <= 0 )
+		{
+			return;
+		}
+
+		int n = block.lines.size();
+
+		for( int i = 0; i < n; ++i )
+		{
+			UITextLine line = block.lines.get( i );
+
+			LinkedList<UIGlyph> glyphs = line.glyphs;
+
+			for( UIGlyph g : glyphs )
+			{
+				Image image = new Image( g.getTexture() );
+
+				image.moveTo( g.getX(), g.getY() );
+
+				_images.addLast( image );
+
+				addChild( image );
+			}
+		}
+
 	}
 
 	public void setFormat( UITextFormat value )
@@ -43,7 +99,7 @@ public final class UILabel extends Layer
 		_processor.setText( value );
 	}
 
-	public void setSize( int width, int height )
+	public void setSize( float width, float height )
 	{
 		if( _autosize )
 		{
@@ -118,6 +174,12 @@ public final class UILabel extends Layer
 		{
 			_processor.setSize( ( int ) _bounds.width, ( int ) _bounds.height );
 		}
+	}
+
+
+	public void setBackground( int color )
+	{
+		_background.color( color );
 	}
 
 	@Override

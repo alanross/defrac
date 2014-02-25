@@ -124,7 +124,7 @@ public final class UIList extends Layer implements IUIRenderListener
 
 					item.inViewRange = true;
 
-					renderer.onAttach( item, viewWidth, item.getHeight() );
+					renderer.onAttach( item, (float) viewWidth, (float) item.getHeight() );
 				}
 				else
 				{

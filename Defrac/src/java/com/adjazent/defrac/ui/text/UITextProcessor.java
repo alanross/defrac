@@ -30,13 +30,13 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 	private UIRenderRequest _renderRequest;
 
 	private IUITextComposer _composer;
-	private UITextRenderer _renderer;
+	private IUITextRenderer _renderer;
 	private UITextInteractor _interact;
 	private UITextFormat _format;
 	private UIFont _font;
 	private UITextLayout _block;
 
-	public static UITextProcessor createSingleLine( UITextFormat format, UITextRenderer renderer )
+	public static UITextProcessor createSingleLine( UITextFormat format, IUITextRenderer renderer )
 	{
 		IUITextComposer composer = new UITextComposerSingleLine();
 
@@ -45,7 +45,7 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		return new UITextProcessor( composer, renderer, interactor, format );
 	}
 
-	public static UITextProcessor createMultiLine( UITextFormat format, UITextRenderer renderer )
+	public static UITextProcessor createMultiLine( UITextFormat format, IUITextRenderer renderer )
 	{
 		IUITextComposer composer = new UITextComposerMultiLine();
 
@@ -54,7 +54,7 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		return new UITextProcessor( composer, renderer, interactor, format );
 	}
 
-	public UITextProcessor( IUITextComposer composer, UITextRenderer renderer, UITextInteractor interact, UITextFormat format )
+	public UITextProcessor( IUITextComposer composer, IUITextRenderer renderer, UITextInteractor interact, UITextFormat format )
 	{
 		_composer = composer;
 		_renderer = renderer;
@@ -117,7 +117,7 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		_renderRequest.invalidate();
 	}
 
-	public void setSize( int width, int height )
+	public void setSize( float width, float height )
 	{
 		_bounds.resizeTo( width, height );
 

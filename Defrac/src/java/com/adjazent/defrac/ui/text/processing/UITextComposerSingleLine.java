@@ -24,13 +24,18 @@ public final class UITextComposerSingleLine implements IUITextComposer
 
 		UITextLine line = UITextLine.build( glyphs, 0, format.tracking, Integer.MAX_VALUE );
 
+		if( line.bounds.y + line.bounds.height > maxSize.height )
+		{
+			return new UITextLayout( lines, new MRectangle() ); //empty
+		}
+
 		if( line.bounds.width > maxSize.width )
 		{
-			int diff = ( int ) Math.abs( line.bounds.width - maxSize.width );
+			double diff = Math.abs( line.bounds.width - maxSize.width );
 
 			if( diff < glyphs.size() * ( font.getSize() * 0.1 ) )
 			{
-				line = UITextLine.build( glyphs, 0, format.tracking - ( diff / glyphs.size() ), maxSize.width );
+				line = UITextLine.build( glyphs, 0, format.tracking - ( diff / ( double ) glyphs.size() ), maxSize.width );
 			}
 			else
 			{
@@ -45,10 +50,11 @@ public final class UITextComposerSingleLine implements IUITextComposer
 
 					cutIndex = Math.max( ( ( cutIndex != -1 ) ? cutIndex : ( glyphs.size() - 1 ) - ellipsis.size() ), 0 );
 
-					//glyphs.splice( cutIndex, glyphs.size() - cutIndex );
-					glyphs = ( LinkedList<UIGlyph> ) glyphs.subList( cutIndex, glyphs.size() - cutIndex ); // -------------------- WRONG
+					while( glyphs.size() > cutIndex )
+					{
+						glyphs.removeLast();
+					}
 
-					//glyphs = glyphs.concat( ellipsis );
 					glyphs.addAll( ellipsis );
 
 					if( glyphs.size() <= ellipsis.size() )

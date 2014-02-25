@@ -40,7 +40,7 @@ public class UICellRenderer
 		_container.addChild( _label );
 	}
 
-	public void onAttach( UICellData data, int cellWidth, int cellHeight )
+	public void onAttach( UICellData data, float cellWidth, float cellHeight )
 	{
 		if( _data != null )
 		{

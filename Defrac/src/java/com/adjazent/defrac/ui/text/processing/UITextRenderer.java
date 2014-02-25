@@ -11,7 +11,7 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UITextRenderer extends Layer
+public final class UITextRenderer extends Layer implements IUITextRenderer
 {
 	private LinkedList<Image> _images = new LinkedList<Image>();
 
@@ -19,28 +19,12 @@ public final class UITextRenderer extends Layer
 	{
 	}
 
-	private void clear()
+	public void process( UITextLayout block, UITextFormat format )
 	{
 		while( !_images.isEmpty() )
 		{
 			removeChild( _images.removeLast() );
 		}
-	}
-
-	private void addGlyph( UIGlyph glyph )
-	{
-		Image image = new Image( glyph.getTexture() );
-
-		image.moveTo( glyph.getX(), glyph.getY() );
-
-		_images.addLast( image );
-
-		addChild( image );
-	}
-
-	public void process( UITextLayout block, UITextFormat format )
-	{
-		clear();
 
 		if( block.bounds.width <= 0 || block.bounds.height <= 0 )
 		{
@@ -55,13 +39,15 @@ public final class UITextRenderer extends Layer
 
 			LinkedList<UIGlyph> glyphs = line.glyphs;
 
-			int m = glyphs.size();
-
-			for( int j = 0; j < m; ++j )
+			for( UIGlyph g : glyphs )
 			{
-				UIGlyph g = glyphs.get( j );
+				Image image = new Image( g.getTexture() );
 
-				addGlyph( g );
+				image.moveTo( g.getX(), g.getY() );
+
+				_images.addLast( image );
+
+				addChild( image );
 			}
 		}
 	}
