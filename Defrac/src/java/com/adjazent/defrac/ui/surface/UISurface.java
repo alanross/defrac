@@ -106,12 +106,24 @@ public class UISurface extends DisplayObjectContainer implements IDisposable
 		throw new UnsupportedOperationError( this );
 	}
 
-	public boolean containsPoint( float x, float y )
+	public boolean containsGlobalPoint( float x, float y )
 	{
 		// TODO: globalToLocal does not work yet
 		//Point p = new Point( point.x, point.y );
 
 		return _aabb.contains( x, y );
+	}
+
+	public DisplayObjectContainer getRoot()
+	{
+		DisplayObjectContainer o = this;
+
+		while( o.parent() != null )
+		{
+			o = o.parent();
+		}
+
+		return o;
 	}
 
 	@Override

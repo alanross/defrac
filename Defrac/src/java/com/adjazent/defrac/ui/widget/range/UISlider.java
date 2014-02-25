@@ -5,9 +5,8 @@ import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.texture.UITexture;
 import com.adjazent.defrac.ui.widget.UIActionType;
-import defrac.display.event.UIActionEvent;
-import defrac.display.event.UIEvent;
-import defrac.display.event.UIEventType;
+import defrac.display.event.*;
+import defrac.geom.Point;
 
 import javax.annotation.Nonnull;
 
@@ -15,7 +14,7 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISlider extends UISurface// implements IUIEventListener
+public final class UISlider extends UISurface implements UIProcessHook
 {
 	public final Action onValueChange = new Action( UIActionType.SLIDER_VALUE_CHANGED );
 	public final Action onValueComplete = new Action( UIActionType.SLIDER_VALUE_COMPLETED );
@@ -28,7 +27,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 	private double _value = 0.0;
 	private double _stepSize = 0.0;
 
-	private boolean _mouseDown;
+	private boolean _mouseDown = false;
 	private double _dragStart = 0.0;
 	private double _lastValue = 0.0;
 
@@ -46,7 +45,23 @@ public final class UISlider extends UISurface// implements IUIEventListener
 	}
 
 	@Override
-	protected void processEvent( @Nonnull final UIEvent event )
+	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
+	{
+		if( _surfaceKnob.containsGlobalPoint( point.x, point.y ) )
+		{
+			return _surfaceKnob;
+		}
+
+		if( containsGlobalPoint( point.x, point.y ) )
+		{
+			return this;
+		}
+
+		return null;
+	}
+
+	@Override
+	public void processEvent( @Nonnull final UIEvent event )
 	{
 		super.processEvent( event );
 
@@ -77,35 +92,35 @@ public final class UISlider extends UISurface// implements IUIEventListener
 
 		if( event.target == _surfaceKnob )
 		{
-//			_dragStart = _surfaceKnob.x() - event.pos.x;
-//
-//			if( !stage.hasEventListener( this ) )
-//			{
-//				stage.addEventListener( this );
-//			}
+			_dragStart = _surfaceKnob.x() - event.pos.x;
+
+			if( !getRoot().containsProcessHook( this ) )
+			{
+				getRoot().addProcessHook( this );
+			}
 		}
 		else
 		{
-//			posToVal( globalToLocal( event.pos ).x );
+			//posToVal( globalToLocal( event.pos ).x );
 		}
 	}
 
 	private void onDragUpdate( UIActionEvent event )
 	{
-		//if( _mouseDown && event.currentTarget == stage )
-//		{
-//			posToVal( _dragStart + event.pos.x );
-//		}
+		if( _mouseDown && event.currentTarget == getRoot() )
+		{
+			posToVal( ( float ) ( _dragStart + event.pos.x ) );
+		}
 	}
 
 	private void onDragEnd( UIActionEvent event )
 	{
 		_mouseDown = false;
 
-//		if( stage.hasEventListener( this ) )
-//		{
-//			stage.removeEventListener( this );
-//		}
+		if( getRoot().containsProcessHook( this ) )
+		{
+			getRoot().removeProcessHook( this );
+		}
 
 		if( _lastValue != _value )
 		{
@@ -113,7 +128,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 		}
 	}
 
-	private void posToVal( int pos )
+	private void posToVal( float pos )
 	{
 		final double size = width() - _surfaceKnob.width();
 
@@ -145,7 +160,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 			pos = 2;
 		}
 
-		_surfaceValue.resizeTo( ( int ) pos, ( int ) _surfaceValue.height() );
+		_surfaceValue.resizeTo( ( float ) pos, _surfaceValue.height() );
 	}
 
 	public double getValue()
@@ -177,7 +192,7 @@ public final class UISlider extends UISurface// implements IUIEventListener
 	@Override
 	public String toString()
 	{
-		return "[UISlider id:" + id + "]";
+		return "[UISlider id:" + id + ", value:" + _value + "]";
 	}
 }
 

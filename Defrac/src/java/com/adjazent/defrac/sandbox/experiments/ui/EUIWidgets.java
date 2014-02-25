@@ -113,6 +113,8 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		_slider = new UISlider( skins.getTexture( "PlayOutSliderTrack" ), skins.getTexture( "PlayOutSliderThumb" ), skins.getTexture( "PlayOutSliderValue" ) );
 		_slider.resizeTo( 100, _slider.height() );
 		_slider.moveTo( 50, 250 );
+		_slider.onValueChange.add( this );
+		_slider.onValueComplete.add( this );
 		_slider.id = "s1";
 
 		// --------------------- SURFACE
