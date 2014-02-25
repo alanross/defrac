@@ -25,7 +25,7 @@ public final class EUIImages extends Experiment
 	protected void onInit()
 	{
 		final TextureDataResource textureDataResource;
-		textureDataResource = TextureDataResource.from( "skins2.png" );
+		textureDataResource = TextureDataResource.from( "skins/skins2.png" );
 		textureDataResource.onStart.attach( new Procedure<ResourceEvent.Start>()
 		{
 			@Override

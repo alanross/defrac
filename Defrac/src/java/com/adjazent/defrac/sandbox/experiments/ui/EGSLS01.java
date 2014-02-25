@@ -10,8 +10,8 @@ import defrac.gl.*;
 import defrac.lang.Procedure;
 import defrac.resource.StringResource;
 
-import static com.adjazent.defrac.sandbox.experiments.samples.canvas.GLUtil.createShader;
-import static com.adjazent.defrac.sandbox.experiments.samples.canvas.GLUtil.linkProgram;
+import static com.adjazent.defrac.sandbox.samples.canvas.GLUtil.createShader;
+import static com.adjazent.defrac.sandbox.samples.canvas.GLUtil.linkProgram;
 
 /**
  * http://greggman.github.io/webgl-fundamentals/webgl/lessons/webgl-fundamentals.html

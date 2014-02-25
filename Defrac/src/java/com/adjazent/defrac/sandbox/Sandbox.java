@@ -5,18 +5,19 @@ import com.adjazent.defrac.sandbox.experiments.core.EDateUtils;
 import com.adjazent.defrac.sandbox.experiments.core.EStringUtils;
 import com.adjazent.defrac.sandbox.experiments.core.job.EJob;
 import com.adjazent.defrac.sandbox.experiments.lang.EDataTypes;
-import com.adjazent.defrac.sandbox.experiments.samples.EQuad;
-import com.adjazent.defrac.sandbox.experiments.samples.canvas.ECanvas;
-import com.adjazent.defrac.sandbox.experiments.samples.event.EUIEvent;
-import com.adjazent.defrac.sandbox.experiments.samples.flutterman.EFlutterman;
-import com.adjazent.defrac.sandbox.experiments.samples.texture.ETextures;
+import com.adjazent.defrac.sandbox.experiments.macros.EMacros;
 import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
 import com.adjazent.defrac.sandbox.experiments.ui.*;
-import com.adjazent.defrac.sandbox.experiments.war.EContainer;
-import com.adjazent.defrac.sandbox.experiments.war.EScrollRect;
-import com.adjazent.defrac.sandbox.experiments.war.EScrollRect2;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
+import com.adjazent.defrac.sandbox.issues.EContainer;
+import com.adjazent.defrac.sandbox.issues.EScrollRect;
+import com.adjazent.defrac.sandbox.issues.EScrollRect2;
+import com.adjazent.defrac.sandbox.samples.canvas.ECanvas;
+import com.adjazent.defrac.sandbox.samples.event.EUIEvent;
+import com.adjazent.defrac.sandbox.samples.flutterman.EFlutterman;
+import com.adjazent.defrac.sandbox.samples.quad.EQuad;
+import com.adjazent.defrac.sandbox.samples.texture.ETextures;
 import defrac.app.Bootstrap;
 
 /**
@@ -51,13 +52,14 @@ public final class Sandbox extends AbstractSandbox
 		add( new EUISkinning() );
 		add( new EUIList() );
 		add( new EUIWidgets() );
+		add( new EMacros() );
 		//----------------------------- warzone
 		add( new EScrollRect() );
 		add( new EScrollRect2() );
 		add( new EContainer() );
 		add( new Warzone() );
 
-		activate( EUIWidgets.class );
+		activate( EMacros.class );
 	}
 
 	public static void main( final String[] args )
