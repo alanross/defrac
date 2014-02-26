@@ -188,7 +188,7 @@ public final class UIList extends Layer implements IUIRenderListener
 			_bounds.resizeTo( width, height );
 			_background.scaleToSize( width, height );
 
-//			scrollRect( new defrac.geom.Rectangle( 0, 0, width, height ) );
+			scrollRect( new defrac.geom.Rectangle( 0, 0, width, height ) );
 
 			_renderRequest.invalidate();
 		}
