@@ -59,7 +59,7 @@ public final class UILoadTexJob extends Job
 			@Override
 			public void apply( ResourceEvent.Complete<TextureData> event )
 			{
-				_textureData = ( TextureData ) event.content;
+				_textureData = event.content;
 
 				complete();
 			}
