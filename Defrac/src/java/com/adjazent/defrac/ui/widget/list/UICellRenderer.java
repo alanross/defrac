@@ -35,6 +35,7 @@ public class UICellRenderer
 
 		_label = new UILabel( new UITextFormat( "Helvetica" ) );
 		_label.moveTo( 5, 5 );
+		_label.setAutoSize( true );
 
 		_container.addChild( _background );
 		_container.addChild( _label );
@@ -52,7 +53,7 @@ public class UICellRenderer
 		_bounds.resizeTo( cellWidth, cellHeight );
 
 		_label.setText( _data.getText() + " - " + StringUtils.randomSequence( 5 ) );
-		_label.setSize( cellWidth, cellHeight );
+		//_label.setSize( cellWidth, cellHeight );
 
 		_background.scaleToSize( cellWidth, cellHeight );
 	}
