@@ -163,7 +163,7 @@ public final class UIGLPainter implements Procedure<Canvas.Arguments>
 		{
 			_glRectBuffer = gl.createBuffer();
 			gl.bindBuffer( GL.ARRAY_BUFFER, _glRectBuffer );
-			gl.bufferData( GL.ARRAY_BUFFER, _bounds, GL.STATIC_DRAW );
+			gl.bufferData( GL.ARRAY_BUFFER, _bounds, 0, _bounds.length, GL.STATIC_DRAW );
 		}
 		else
 		{
@@ -177,7 +177,7 @@ public final class UIGLPainter implements Procedure<Canvas.Arguments>
 		{
 			_glColorBuffer = gl.createBuffer();
 			gl.bindBuffer( GL.ARRAY_BUFFER, _glColorBuffer );
-			gl.bufferData( GL.ARRAY_BUFFER, _colors, GL.STATIC_DRAW );
+			gl.bufferData( GL.ARRAY_BUFFER, _colors, 0, _colors.length, GL.STATIC_DRAW );
 		}
 		else
 		{
