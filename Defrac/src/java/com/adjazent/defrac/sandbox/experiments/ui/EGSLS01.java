@@ -164,6 +164,7 @@ public final class EGSLS01 extends Experiment implements Procedure<Canvas.Argume
 							80.0f, 20.0f,
 							80.0f, 30.0f
 					},
+					0, 12,
 					GL.STATIC_DRAW
 			);
 		}

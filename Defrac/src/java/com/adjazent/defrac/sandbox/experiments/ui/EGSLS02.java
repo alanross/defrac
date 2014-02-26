@@ -175,6 +175,7 @@ public final class EGSLS02 extends Experiment implements Procedure<Canvas.Argume
 						1.0f, 0.0f,
 						1.0f, 1.0f
 				},
+				0,12,
 				gl.STATIC_DRAW );
 
 		gl.enableVertexAttribArray( texCoordLocation );
@@ -228,7 +229,7 @@ public final class EGSLS02 extends Experiment implements Procedure<Canvas.Argume
 						x2, y1,
 						x2, y2
 				},
-				GL.STATIC_DRAW );
+				0, 12, GL.STATIC_DRAW );
 	}
 
 	@Override
