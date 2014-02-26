@@ -59,7 +59,7 @@ public final class Sandbox extends AbstractSandbox
 		add( new EContainer() );
 		add( new Warzone() );
 
-		activate( EMacros.class );
+		activate( EUIWidgets.class );
 	}
 
 	public static void main( final String[] args )
