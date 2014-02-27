@@ -1,6 +1,7 @@
 package com.adjazent.defrac.ui.widget.list;
 
-import com.adjazent.defrac.math.MMath;
+import com.adjazent.defrac.ui.surface.skin.UISkinFactory;
+import com.adjazent.defrac.ui.text.UITextFormat;
 
 import java.util.LinkedList;
 
@@ -12,9 +13,11 @@ public final class UICellRendererFactory implements IUICellRendererFactory
 {
 	private LinkedList<IUICellRenderer> _rendererPool = new LinkedList<IUICellRenderer>();
 	private int _rendererPoolGrowthRate = 8;
+	private UITextFormat _textFormat;
 
-	public UICellRendererFactory()
+	public UICellRendererFactory( UITextFormat textFormat )
 	{
+		_textFormat = textFormat;
 	}
 
 	public IUICellRenderer create( int rowIndex )
@@ -25,15 +28,15 @@ public final class UICellRendererFactory implements IUICellRendererFactory
 
 			while( --n > -1 )
 			{
-				_rendererPool.addLast( new UICellRenderer() );
+				_rendererPool.addLast( new UICellRenderer(
+						UISkinFactory.create( 0xFF494949 ),
+						UISkinFactory.create( 0xFF898989 ),
+						_textFormat
+				) );
 			}
 		}
 
-		IUICellRenderer renderer = _rendererPool.pollLast();
-
-		renderer.setBackgroundColor( ( rowIndex % 2 == 0 ) ? ( ( int ) MMath.rand( 0xFF000000, 0xFFFFFFFF ) ) : 0xFF696969 );
-
-		return renderer;
+		return _rendererPool.pollLast();
 	}
 
 	public void release( IUICellRenderer renderer )

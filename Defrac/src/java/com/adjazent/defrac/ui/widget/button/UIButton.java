@@ -1,8 +1,8 @@
 package com.adjazent.defrac.ui.widget.button;
 
 import com.adjazent.defrac.core.notification.action.Action;
+import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
-import com.adjazent.defrac.ui.texture.UITexture;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import defrac.display.event.UIEvent;
 import defrac.display.event.UIEventTarget;
@@ -19,7 +19,7 @@ public final class UIButton extends UISurface
 {
 	public final Action onClick = new Action( UIActionType.BUTTON_CLICK );
 
-	public UIButton( UITexture skinNormal )
+	public UIButton( IUISkin skinNormal )
 	{
 		super( skinNormal );
 	}

@@ -2,8 +2,8 @@ package com.adjazent.defrac.ui.widget.button;
 
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
+import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
-import com.adjazent.defrac.ui.texture.UITexture;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import defrac.display.event.UIEvent;
 import defrac.display.event.UIEventTarget;
@@ -21,13 +21,13 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 	public final Action onClick = new Action( UIActionType.BUTTON_CLICK );
 	public final Action onSelect = new Action( UIActionType.BUTTON_SELECT );
 
-	private UITexture _skinDeselected;
-	private UITexture _skinSelected;
+	private IUISkin _skinDeselected;
+	private IUISkin _skinSelected;
 
 	private boolean _selected;
 	private boolean _lockSelected;
 
-	public UIToggleButton( UITexture skinDeselected, UITexture skinSelected )
+	public UIToggleButton( IUISkin skinDeselected, IUISkin skinSelected )
 	{
 		super( skinDeselected );
 
@@ -75,7 +75,7 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 
 		_selected = value;
 
-		setTexture( ( _selected ? _skinSelected : _skinDeselected ) );
+		setSkin( ( _selected ? _skinSelected : _skinDeselected ) );
 
 		onSelect.send( this );
 	}

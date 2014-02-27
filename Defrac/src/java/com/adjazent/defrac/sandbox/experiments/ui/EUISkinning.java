@@ -7,6 +7,7 @@ import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderTexturePacker;
 import com.adjazent.defrac.ui.surface.UISurface;
+import com.adjazent.defrac.ui.surface.skin.UISkinFactory;
 import com.adjazent.defrac.ui.texture.UITextureAtlas;
 import com.adjazent.defrac.ui.texture.UITextureManager;
 
@@ -56,9 +57,9 @@ public final class EUISkinning extends Experiment implements IUIResourceLoaderQu
 
 		info( Context.DEFAULT, this, "UITextureAtlas", atlas.getAllElementsInfo() );
 
-		_surfaceTexture = new UISurface( atlas.getTexture( "rect6" ) );
-		_surfaceTexture9 = new UISurface( atlas.getTexture( "rect1" ) );
-		_surfaceColor = new UISurface( 0xFFFF0000 );
+		_surfaceTexture = new UISurface( UISkinFactory.create( atlas.getTexture( "rect6" ) ) );
+		_surfaceTexture9 = new UISurface( UISkinFactory.create( atlas.getTexture( "rect1" ) ) );
+		_surfaceColor = new UISurface( UISkinFactory.create( 0xFFFF0000 ) );
 
 		addChild( _surfaceTexture ).moveTo( 100.0f, 100.0f );
 		addChild( _surfaceTexture9 ).moveTo( 100.0f, 350.0f );

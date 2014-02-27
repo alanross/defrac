@@ -8,11 +8,11 @@ import defrac.display.Quad;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISurfaceColorSkin implements IUISkin
+public final class UIColorSkin implements IUISkin
 {
 	private Quad _quad = new Quad( 1, 1, 0 );
 
-	public UISurfaceColorSkin()
+	public UIColorSkin()
 	{
 	}
 
@@ -24,13 +24,13 @@ public final class UISurfaceColorSkin implements IUISkin
 	@Override
 	public void attach( UISurface surface )
 	{
-		surface.addChild( _quad );
+		surface.skinLayer.addChild( _quad );
 	}
 
 	@Override
 	public void detach( UISurface surface )
 	{
-		surface.removeChild( _quad );
+		surface.skinLayer.removeChild( _quad );
 	}
 
 	@Override
@@ -40,8 +40,20 @@ public final class UISurfaceColorSkin implements IUISkin
 	}
 
 	@Override
+	public float getDefaultWidth()
+	{
+		return 1;
+	}
+
+	@Override
+	public float getDefaultHeight()
+	{
+		return 1;
+	}
+
+	@Override
 	public String toString()
 	{
-		return "[UISurfaceColorSkin]";
+		return "[UIColorSkin]";
 	}
 }

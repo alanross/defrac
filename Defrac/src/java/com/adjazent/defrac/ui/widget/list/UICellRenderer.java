@@ -3,16 +3,14 @@ package com.adjazent.defrac.ui.widget.list;
 import com.adjazent.defrac.core.error.GenericError;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.action.IActionObserver;
-import com.adjazent.defrac.math.geom.MRectangle;
+import com.adjazent.defrac.ui.surface.IUISkin;
+import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import com.adjazent.defrac.ui.widget.text.UILabel;
 import defrac.display.DisplayObjectContainer;
-import defrac.display.Quad;
 import defrac.display.event.UIEvent;
-import defrac.display.event.UIEventTarget;
 import defrac.display.event.UIEventType;
-import defrac.geom.Point;
 
 import javax.annotation.Nonnull;
 
@@ -20,42 +18,32 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public class UICellRenderer extends DisplayObjectContainer implements IUICellRenderer, IActionObserver
+public class UICellRenderer extends UISurface implements IUICellRenderer, IActionObserver
 {
-	private static final String UNDEFINED = "UNDEFINED";
-
 	public final Action onClick = new Action( UIActionType.CELL_CLICK );
 
-	private MRectangle _bounds;
-	private UICellData _data;
-
-	private Quad _background;
+	private IUISkin _skinDeselected;
+	private IUISkin _skinSelected;
 	private UILabel _label;
 
-	public UICellRenderer()
+	private UICellData _data;
+
+	public UICellRenderer( IUISkin skinDeselected, IUISkin skinSelected, UITextFormat textFormat )
 	{
-		_bounds = new MRectangle();
+		super( skinDeselected );
 
-		_background = new Quad( 1, 1, 0x0 );
+		_skinDeselected = skinDeselected;
+		_skinSelected = skinSelected;
 
-		_label = new UILabel( new UITextFormat( "Helvetica" ) );
+		_label = new UILabel( textFormat );
 		_label.setAutoSize( false );
 
-		addChild( _background );
 		addChild( _label );
 	}
 
 	private void repaint()
 	{
-		_background.alpha( _data.getSelected() ? 1.0f : 0.5f );
-	}
-
-	@Override
-	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
-	{
-		Point local = this.globalToLocal( new Point( point.x, point.y ) );
-
-		return ( _bounds.contains( local.x, local.y ) ) ? this : null;
+		setSkin( ( _data.getSelected() ? _skinSelected : _skinDeselected ) );
 	}
 
 	@Override
@@ -76,10 +64,7 @@ public class UICellRenderer extends DisplayObjectContainer implements IUICellRen
 	@Override
 	public void onActionEvent( Action action )
 	{
-		if( action.getOrigin() == _data )
-		{
-			repaint();
-		}
+		repaint();
 	}
 
 	public void onAttach( UICellData data, float cellWidth, float cellHeight )
@@ -92,8 +77,7 @@ public class UICellRenderer extends DisplayObjectContainer implements IUICellRen
 		_data = data;
 		_data.onSelect.add( this );
 
-		_bounds.resizeTo( cellWidth, cellHeight );
-		_background.scaleToSize( cellWidth, cellHeight );
+		resizeTo( cellWidth, cellHeight );
 
 		_label.setText( _data.getText() );
 		_label.moveTo( 5, 5 );
@@ -112,9 +96,7 @@ public class UICellRenderer extends DisplayObjectContainer implements IUICellRen
 		_data.onSelect.remove( this );
 		_data = null;
 
-		_bounds.resizeTo( 0, 0 );
-		_background.scaleToSize( 0, 0 );
-		_label.setText( UNDEFINED );
+		_label.setText( "UNDEFINED" );
 	}
 
 	@Override
@@ -127,12 +109,6 @@ public class UICellRenderer extends DisplayObjectContainer implements IUICellRen
 	public DisplayObjectContainer getContainer()
 	{
 		return this;
-	}
-
-	@Override
-	public void setBackgroundColor( int value )
-	{
-		_background.color( value );
 	}
 
 	@Override

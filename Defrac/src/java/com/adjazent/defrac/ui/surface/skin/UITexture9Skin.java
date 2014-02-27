@@ -1,6 +1,5 @@
 package com.adjazent.defrac.ui.surface.skin;
 
-import com.adjazent.defrac.core.error.NullError;
 import com.adjazent.defrac.core.error.ValueError;
 import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.surface.IUISkin;
@@ -15,7 +14,7 @@ import defrac.display.TextureData;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISurfaceTexture9Skin implements IUISkin
+public final class UITexture9Skin implements IUISkin
 {
 	private Image _tl = new Image();    //top left
 	private Image _tc = new Image();    //top center
@@ -37,38 +36,10 @@ public final class UISurfaceTexture9Skin implements IUISkin
 	private int _minWidth = 0;
 	private int _minHeight = 0;
 
-	public UISurfaceTexture9Skin()
+	private MRectangle _skinRect;
+
+	public UITexture9Skin()
 	{
-	}
-
-	private void prepare( TextureData source, MRectangle rect, UISlice9Grid sliceGrid )
-	{
-		if( null == source )
-		{
-			throw new NullError( this + " Source can not be null" );
-		}
-
-		_sliceLeft = sliceGrid.left;
-		_sliceRight = sliceGrid.right;
-		_sliceTop = sliceGrid.top;
-		_sliceBottom = sliceGrid.bottom;
-
-		_minWidth = _sliceLeft + _sliceRight;
-		_minHeight = _sliceTop + _sliceBottom;
-
-		MRectangle[] slices = UISlice9Grid.createSlices( rect, sliceGrid );
-
-		_tl.texture( slice( source, slices[ 0 ] ) );
-		_tc.texture( slice( source, slices[ 1 ] ) );
-		_tr.texture( slice( source, slices[ 2 ] ) );
-
-		_ml.texture( slice( source, slices[ 3 ] ) );
-		_mc.texture( slice( source, slices[ 4 ] ) );
-		_mr.texture( slice( source, slices[ 5 ] ) );
-
-		_bl.texture( slice( source, slices[ 6 ] ) );
-		_bc.texture( slice( source, slices[ 7 ] ) );
-		_br.texture( slice( source, slices[ 8 ] ) );
 	}
 
 	private Texture slice( TextureData textureData, MRectangle rect )
@@ -83,39 +54,64 @@ public final class UISurfaceTexture9Skin implements IUISkin
 
 	public void init( UITexture texture )
 	{
-		prepare( texture.getTextureData(), texture.getSkinRect(), texture.getSliceGrid() );
+		TextureData source = texture.getTextureData();
+		UISlice9Grid sliceGrid = texture.getSliceGrid();
+
+		_skinRect = texture.getSkinRect();
+
+		_sliceLeft = sliceGrid.left;
+		_sliceRight = sliceGrid.right;
+		_sliceTop = sliceGrid.top;
+		_sliceBottom = sliceGrid.bottom;
+
+		_minWidth = _sliceLeft + _sliceRight;
+		_minHeight = _sliceTop + _sliceBottom;
+
+		MRectangle[] slices = UISlice9Grid.createSlices( _skinRect, sliceGrid );
+
+		_tl.texture( slice( source, slices[ 0 ] ) );
+		_tc.texture( slice( source, slices[ 1 ] ) );
+		_tr.texture( slice( source, slices[ 2 ] ) );
+
+		_ml.texture( slice( source, slices[ 3 ] ) );
+		_mc.texture( slice( source, slices[ 4 ] ) );
+		_mr.texture( slice( source, slices[ 5 ] ) );
+
+		_bl.texture( slice( source, slices[ 6 ] ) );
+		_bc.texture( slice( source, slices[ 7 ] ) );
+		_br.texture( slice( source, slices[ 8 ] ) );
 	}
 
 	@Override
 	public void attach( UISurface surface )
 	{
-		surface.addChild( _tl );
-		surface.addChild( _tc );
-		surface.addChild( _tr );
+		surface.skinLayer.addChild( _tl );
+		surface.skinLayer.addChild( _tc );
+		surface.skinLayer.addChild( _tr );
 
-		surface.addChild( _ml );
-		surface.addChild( _mc );
-		surface.addChild( _mr );
+		surface.skinLayer.addChild( _ml );
+		surface.skinLayer.addChild( _mc );
+		surface.skinLayer.addChild( _mr );
 
-		surface.addChild( _bl );
-		surface.addChild( _bc );
-		surface.addChild( _br );
+		surface.skinLayer.addChild( _bl );
+		surface.skinLayer.addChild( _bc );
+		surface.skinLayer.addChild( _br );
 	}
 
 	@Override
 	public void detach( UISurface surface )
 	{
-		surface.removeChild( _tl );
-		surface.removeChild( _tc );
-		surface.removeChild( _tr );
+		surface.skinLayer.removeChild( _tl );
+		surface.skinLayer.removeChild( _tc );
+		surface.skinLayer.removeChild( _tr );
 
-		surface.removeChild( _ml );
-		surface.removeChild( _mc );
-		surface.removeChild( _mr );
+		surface.skinLayer.removeChild( _ml );
+		surface.skinLayer.removeChild( _mc );
+		surface.skinLayer.removeChild( _mr );
 
-		surface.removeChild( _bl );
-		surface.removeChild( _bc );
-		surface.removeChild( _br );
+		surface.skinLayer.removeChild( _bl );
+		surface.skinLayer.removeChild( _bc );
+		surface.skinLayer.removeChild( _br );
 	}
 
 	@Override
@@ -138,10 +134,10 @@ public final class UISurfaceTexture9Skin implements IUISkin
 					"Height:" + height + ", Top:" + _sliceTop + ", Bottom:" + _sliceBottom );
 		}
 
-		final int offsetRight = ( int ) (width - _sliceRight);
-		final int offsetBottom = ( int ) (height - _sliceBottom);
-		final int centerWidth = ( int ) (width - ( _sliceLeft + _sliceRight ));
-		final int centerHeight = ( int ) (height - ( _sliceTop + _sliceBottom ));
+		final int offsetRight = ( int ) ( width - _sliceRight );
+		final int offsetBottom = ( int ) ( height - _sliceBottom );
+		final int centerWidth = ( int ) ( width - ( _sliceLeft + _sliceRight ) );
+		final int centerHeight = ( int ) ( height - ( _sliceTop + _sliceBottom ) );
 
 		if( _tl != null )
 		{
@@ -194,6 +190,18 @@ public final class UISurfaceTexture9Skin implements IUISkin
 		}
 	}
 
+	@Override
+	public float getDefaultWidth()
+	{
+		return ( float ) _skinRect.width;
+	}
+
+	@Override
+	public float getDefaultHeight()
+	{
+		return ( float ) _skinRect.height;
+	}
+
 	public int getMinWidth()
 	{
 		return _minWidth;
@@ -207,6 +215,6 @@ public final class UISurfaceTexture9Skin implements IUISkin
 	@Override
 	public String toString()
 	{
-		return "[UISurfaceTexture9Skin]";
+		return "[UITexture9Skin]";
 	}
 }

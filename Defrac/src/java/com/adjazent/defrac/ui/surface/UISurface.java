@@ -3,10 +3,10 @@ package com.adjazent.defrac.ui.surface;
 import com.adjazent.defrac.core.error.UnsupportedOperationError;
 import com.adjazent.defrac.core.utils.IDisposable;
 import com.adjazent.defrac.math.geom.MRectangle;
-import com.adjazent.defrac.ui.surface.skin.UISurfaceSkinFactory;
-import com.adjazent.defrac.ui.texture.UITexture;
+import com.adjazent.defrac.ui.surface.skin.UISkinFactory;
 import defrac.display.DisplayObject;
 import defrac.display.DisplayObjectContainer;
+import defrac.display.Layer;
 import defrac.display.event.UIEventTarget;
 import defrac.geom.Point;
 
@@ -14,30 +14,29 @@ import defrac.geom.Point;
  * @author Alan Ross
  * @version 0.1
  */
-public class UISurface extends DisplayObjectContainer implements IDisposable
+public class UISurface extends Layer implements IDisposable
 {
 	public String id = "";
+	public Layer skinLayer;
+	public Layer contentLayer;
 
 	private MRectangle _bounds;
 
 	private IUISkin _skin;
 
-	public UISurface( UITexture texture )
+	public UISurface( IUISkin skin )
 	{
 		super();
 
-		_bounds = new MRectangle( 0, 0, ( float ) texture.getSkinRect().width, ( float ) texture.getSkinRect().height );
+		skinLayer = new Layer();
+		contentLayer = new Layer();
 
-		setTexture( texture );
-	}
+		super.addChild( skinLayer );
+		super.addChild( contentLayer );
 
-	public UISurface( int color )
-	{
-		super();
+		_bounds = new MRectangle( 0, 0, skin.getDefaultWidth(), skin.getDefaultHeight() );
 
-		_bounds = new MRectangle( 0, 0, 1, 1 );
-
-		setColor( color );
+		attachSkin( skin );
 	}
 
 	private void detachSkin( IUISkin skin )
@@ -46,7 +45,7 @@ public class UISurface extends DisplayObjectContainer implements IDisposable
 		{
 			skin.detach( this );
 
-			UISurfaceSkinFactory.release( skin );
+			UISkinFactory.release( skin );
 		}
 	}
 
@@ -58,29 +57,25 @@ public class UISurface extends DisplayObjectContainer implements IDisposable
 	}
 
 	@Override
-	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
+	public UIEventTarget captureEventTarget( Point point )
 	{
 		Point local = this.globalToLocal( new Point( point.x, point.y ) );
 
 		return ( containsPoint( local.x, local.y ) ) ? this : null;
 	}
 
-	public void setTexture( UITexture texture )
+	public void setSkin( IUISkin skin )
 	{
 		detachSkin( _skin );
 
 		_skin = null;
 
-		attachSkin( UISurfaceSkinFactory.create( texture ) );
+		attachSkin( skin );
 	}
 
-	public void setColor( int color )
+	public IUISkin getSkin()
 	{
-		detachSkin( _skin );
-
-		_skin = null;
-
-		attachSkin( UISurfaceSkinFactory.create( color ) );
+		return _skin;
 	}
 
 	public void moveTo( int x, int y )
@@ -112,6 +107,55 @@ public class UISurface extends DisplayObjectContainer implements IDisposable
 	public DisplayObject scaleBy( float dx, float dy )
 	{
 		throw new UnsupportedOperationError( this );
+	}
+
+	@Override
+	public <D extends DisplayObject> D addChild(@javax.annotation.Nonnull D child)
+	{
+		return contentLayer.addChild( child );
+	}
+
+//	// for some reason overriding this will cause an stack overflow
+//	@Override
+//	public <D extends defrac.display.DisplayObject> D addChildAt(@javax.annotation.Nonnull D child, int index)
+//	{
+//		return contentLayer.addChildAt( child, index );
+//	}
+
+	@Override
+	public boolean contains(@javax.annotation.Nonnull defrac.display.DisplayObject child)
+	{
+		return contentLayer.contains( child );
+	}
+
+	@Override
+	public DisplayObject getChildAt(int index)
+	{
+		return contentLayer.getChildAt( index );
+	}
+
+	@Override
+	public int getChildIndex(@javax.annotation.Nonnull DisplayObject child)
+	{
+		return contentLayer.getChildIndex( child );
+	}
+
+	@Override
+	public <D extends defrac.display.DisplayObject> D removeChild(@javax.annotation.Nonnull D child)
+	{
+		return contentLayer.removeChild( child );
+	}
+
+	@Override
+	public defrac.display.DisplayObject removeChildAt(int index)
+	{
+		return contentLayer.removeChildAt( index );
+	}
+
+	@Override
+	public defrac.display.DisplayObjectContainer removeAllChildren()
+	{
+		return contentLayer.removeAllChildren();
 	}
 
 	public boolean containsPoint( float x, float y )

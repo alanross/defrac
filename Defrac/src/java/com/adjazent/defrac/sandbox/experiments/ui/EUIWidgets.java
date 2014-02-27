@@ -11,6 +11,7 @@ import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderSparrowFont;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderTexturePacker;
 import com.adjazent.defrac.ui.surface.UISurface;
+import com.adjazent.defrac.ui.surface.skin.UISkinFactory;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.texture.UITextureAtlas;
@@ -81,11 +82,17 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		addChild( _label );
 
 		// --------------------- TOGGLE BUTTON
-		_toggleButton1 = new UIToggleButton( skins.getTexture( "ButtonSceneSettingsDeselected" ), skins.getTexture( "ButtonSceneSettingsSelected" ) );
+		_toggleButton1 = new UIToggleButton(
+				UISkinFactory.create( skins.getTexture( "ButtonSceneSettingsDeselected" ) ),
+				UISkinFactory.create( skins.getTexture( "ButtonSceneSettingsSelected" ) )
+		);
 		_toggleButton1.moveTo( 50, 100 );
 		_toggleButton1.id = "tb1";
 
-		_toggleButton2 = new UIToggleButton( skins.getTexture( "ButtonSceneSettingsDeselected" ), skins.getTexture( "ButtonSceneSettingsSelected" ) );
+		_toggleButton2 = new UIToggleButton(
+				UISkinFactory.create( skins.getTexture( "ButtonSceneSettingsDeselected" ) ),
+				UISkinFactory.create( skins.getTexture( "ButtonSceneSettingsSelected" ) )
+		);
 		_toggleButton2.moveTo( 100, 100 );
 		_toggleButton2.id = "tb2";
 
@@ -93,13 +100,18 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		_toggleGroup.onSelect.add( this );
 
 		// --------------------- BUTTON
-		_button = new UIButton( skins.getTexture( "ButtonChallenge" ) );
+		_button = new UIButton(
+				UISkinFactory.create( skins.getTexture( "ButtonChallenge" ) ) );
 		_button.moveTo( 150, 100 );
 		_button.onClick.add( this );
 		_button.id = "b1";
 
 		// --------------------- SLIDER
-		_slider = new UISlider( skins.getTexture( "PlayOutSliderTrack" ), skins.getTexture( "PlayOutSliderThumb" ), skins.getTexture( "PlayOutSliderValue" ) );
+		_slider = new UISlider(
+				UISkinFactory.create( skins.getTexture( "PlayOutSliderTrack" ) ),
+				UISkinFactory.create( skins.getTexture( "PlayOutSliderThumb" ) ),
+				UISkinFactory.create( skins.getTexture( "PlayOutSliderValue" ) )
+		);
 		_slider.resizeTo( 100, _slider.height() );
 		_slider.moveTo( 600, 100 );
 		_slider.onValueChange.add( this );
@@ -107,7 +119,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		_slider.id = "s1";
 
 		// --------------------- LIST
-		_list = new UIList( new UICellRendererFactory() );
+		_list = new UIList( new UICellRendererFactory( new UITextFormat( "Helvetica" ) ) );
 		_list.moveTo( 50, 150 );
 		_list.resizeTo( 200, 350 );
 		_list.setBackground( 0xFFA2A2A2 );
@@ -119,7 +131,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		}
 
 		// --------------------- SURFACE
-		_surface = new UISurface( skins.getTexture( "AreaEmpty" ) );
+		_surface = new UISurface( UISkinFactory.create( skins.getTexture( "AreaEmpty" ) ) );
 		_surface.moveTo( 350, 150 );
 		_surface.resizeTo( 300, 100 );
 		_surface.id = "s1";

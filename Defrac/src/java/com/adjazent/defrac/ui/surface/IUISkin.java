@@ -11,4 +11,8 @@ public interface IUISkin
 	void detach( UISurface surface );
 
 	void resizeTo( float width, float height );
+
+	float getDefaultWidth();
+
+	float getDefaultHeight();
 }

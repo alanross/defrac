@@ -16,8 +16,6 @@ public interface IUICellRenderer
 
 	DisplayObjectContainer getContainer();
 
-	void setBackgroundColor( int color );
-
 	void setY( int value );
 
 	void setX( int value );

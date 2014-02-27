@@ -2,8 +2,8 @@ package com.adjazent.defrac.ui.widget.range;
 
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.math.MMath;
+import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
-import com.adjazent.defrac.ui.texture.UITexture;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import defrac.display.event.*;
 import defrac.geom.Point;
@@ -31,7 +31,7 @@ public final class UISlider extends UISurface implements UIProcessHook
 	private double _dragStart = 0.0;
 	private double _lastValue = 0.0;
 
-	public UISlider( UITexture skinTrack, UITexture skinThumb, UITexture skinValue )
+	public UISlider( IUISkin skinTrack, IUISkin skinThumb, IUISkin skinValue )
 	{
 		super( skinTrack );
 

@@ -7,19 +7,19 @@ import com.adjazent.defrac.ui.texture.UITexture;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UISurfaceSkinFactory
+public final class UISkinFactory
 {
 	public static IUISkin create( UITexture texture )
 	{
 		if( texture.getSliceGrid() == null )
 		{
-			UISurfaceTextureSkin skin = new UISurfaceTextureSkin();
+			UITextureSkin skin = new UITextureSkin();
 			skin.init( texture );
 			return skin;
 		}
 		else
 		{
-			UISurfaceTexture9Skin skin = new UISurfaceTexture9Skin();
+			UITexture9Skin skin = new UITexture9Skin();
 			skin.init( texture );
 			return skin;
 		}
@@ -27,7 +27,8 @@ public final class UISurfaceSkinFactory
 
 	public static IUISkin create( int color )
 	{
-		UISurfaceColorSkin skin = new UISurfaceColorSkin();
+		UIColorSkin skin = new UIColorSkin();
+
 		skin.init( color );
 
 		return skin;
@@ -37,13 +38,13 @@ public final class UISurfaceSkinFactory
 	{
 	}
 
-	private UISurfaceSkinFactory()
+	private UISkinFactory()
 	{
 	}
 
 	@Override
 	public String toString()
 	{
-		return "[UISurfaceSkinFactory]";
+		return "[UISkinFactory]";
 	}
 }
