@@ -54,8 +54,6 @@ public final class EUIImages extends Experiment
 				Image image = new Image( _texture );
 
 				addChild( image );
-
-				removeChild( image );
 			}
 		} );
 		textureDataResource.onError.attach( new Procedure<ResourceEvent.Error>()
