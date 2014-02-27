@@ -191,16 +191,6 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		return ( _block != null ) ? ( int ) _block.bounds.height : 0;
 	}
 
-	public int getWidth()
-	{
-		return ( int ) _bounds.width;
-	}
-
-	public int getHeight()
-	{
-		return ( int ) _bounds.height;
-	}
-
 	@Override
 	public String toString()
 	{
