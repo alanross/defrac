@@ -3,44 +3,42 @@ package com.adjazent.defrac.sandbox.experiments.ui;
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.utils.StringUtils;
+import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MPoint;
-import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.sandbox.Experiment;
+import com.adjazent.defrac.sandbox.events.IEnterFrame;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderSparrowFont;
-import com.adjazent.defrac.ui.widget.text.UILabel;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.UITextProcessor;
 import com.adjazent.defrac.ui.text.UITextSelection;
-import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
-import com.adjazent.defrac.ui.text.processing.UITextComposerSingleLine;
-import com.adjazent.defrac.ui.text.processing.UITextInteractor;
 import com.adjazent.defrac.ui.text.processing.UITextRenderer;
-import defrac.display.Image;
-import defrac.display.Texture;
-import defrac.display.event.UIActionEvent;
-import defrac.display.event.UIEventType;
-import defrac.event.Event;
-import defrac.event.Events;
-import defrac.lang.Procedure;
-
-import javax.annotation.Nonnull;
+import com.adjazent.defrac.ui.widget.text.UILabel;
 
 /**
  * @author Alan Ross
  * @version 0.1
  */
-public final class EUIText extends Experiment implements IUIResourceLoaderQueueObserver, Procedure<Event>
+public final class EUIText extends Experiment implements IUIResourceLoaderQueueObserver, IEnterFrame
 {
-	UITextProcessor _textProcessor1;
-	UITextProcessor _textProcessor2;
-	UITextProcessor _textProcessor3;
-	UITextRenderer _renderer1;
-	UITextRenderer _renderer2;
-	UITextRenderer _renderer3;
+	private UITextProcessor _processor;
+	private UITextRenderer _renderer;
+
+	private UITextProcessor _processorWord;
+	private UITextRenderer _rendererWord;
+
+	private UITextProcessor _processorChar;
+	private UITextRenderer _rendererChar;
+
+	private UILabel _labelSL1;
+	private UILabel _labelSL2;
+	private UILabel _labelML1;
+	private UILabel _labelML2;
+
+	private int _step = 0;
 
 	public EUIText()
 	{
@@ -51,7 +49,7 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		UIFontManager.initialize();
 
 		UIResourceLoaderQueue queue = new UIResourceLoaderQueue();
-		queue.add( new UIResourceLoaderSparrowFont( "fonts/helvetica64.png", "fonts/helvetica64.fnt", "helvetica" ) );
+		queue.add( new UIResourceLoaderSparrowFont( "fonts/helvetica24.png", "fonts/helvetica24.fnt", "Helvetica" ) );
 		queue.addObserver( this );
 		queue.load();
 	}
@@ -59,26 +57,49 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 	@Override
 	public void onResourceLoadingSuccess()
 	{
-		Log.info( Context.DEFAULT, this, "onResourceLoadingSuccess" );
+		UITextFormat format = new UITextFormat( "Helvetica" );
+		
+		_renderer = new UITextRenderer();
+		_processor = createTextProcessor( format, _renderer, "Hello Moko!" );
 
-		addChild( _renderer1 = new UITextRenderer() ).moveTo( 50.0f, 50.0f );
-		addChild( _renderer2 = new UITextRenderer() ).moveTo( 50.0f, 150.0f );
-		addChild( _renderer3 = new UITextRenderer() ).moveTo( 50.0f, 250.0f );
+		_rendererWord = new UITextRenderer();
+		_processorWord = createTextProcessor( format, _rendererWord, "Word:" );
 
-		_textProcessor1 = createTextProcessor( _renderer1, "Hello Moko!" );
-		_textProcessor2 = createTextProcessor( _renderer2, "Output" );
-		_textProcessor3 = createTextProcessor( _renderer3, "Output" );
+		_rendererChar = new UITextRenderer();
+		_processorChar = createTextProcessor( format, _rendererChar, "Char:" );
 
-		addGlyph( 'M', 50.0f, 350.0f );
+		_labelSL1 = new UILabel( format );
+		_labelSL1.setBackground( 0xFF888888 );
+		_labelSL1.setText( "Single, AutoSize, How Are You? Very GoodThankYou" );
+		_labelSL1.id = "sl1";
 
-		UILabel label = new UILabel( new UITextFormat( "Helvetica" ) );
+		_labelML1 = new UILabel( format, true );
+		_labelML1.setBackground( 0xFF888888 );
+		_labelML1.setText( "Multi, AutoSize, How Are You? Very GoodThankYou" );
+		_labelML1.id = "ml1";
 
-		label.setText( "Hello Mokomo!" );
-		label.moveTo( 50.0f, 450.0f );
+		_labelSL2 = new UILabel( format );
+		_labelSL2.setBackground( 0xFFFF0000 );
+		_labelSL2.setText( "Single, SetSize, How Are You? Very GoodThankYou" );
+		_labelSL2.setAutoSize( false );
+		_labelSL2.id = "sl2";
 
-		addChild( label );
+		_labelML2 = new UILabel( format, true );
+		_labelML2.setBackground( 0xFFFF0000 );
+		_labelML2.setText( "Multi, SetSize, How Are You? Very GoodThankYou" );
+		_labelML2.setAutoSize( false );
+		_labelML2.id = "ml2";
 
-		Events.onEnterFrame.attach( this );
+		addChild( _renderer ).moveTo( 50.0f, 50.0f );
+		addChild( _rendererWord ).moveTo( 50.0f, 100.0f );
+		addChild( _rendererChar ).moveTo( 50.0f, 150.0f );
+
+		addChild( _labelSL1 ).moveTo( 50, 200 );
+		addChild( _labelML1 ).moveTo( 50, 250 );
+		addChild( _labelSL2 ).moveTo( 700, 200 );
+		addChild( _labelML2 ).moveTo( 700, 250 );
+
+		activateEvents();
 	}
 
 	@Override
@@ -87,98 +108,56 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		Log.info( Context.DEFAULT, this, "onResourceLoadingFailure" );
 	}
 
-	private void addGlyph( char character, float posX, float posY )
+	private UITextProcessor createTextProcessor( UITextFormat format, UITextRenderer renderer, String text )
 	{
-		UIFont font = UIFontManager.get().getFont( "helvetica" );
-
-		UIGlyph g = font.getGlyphWithChar( character );
-
-		MRectangle r = g.getSourceRect();
-		Image image = new Image( new Texture( font.getTextureData(), ( float ) r.x, ( float ) r.y, ( float ) r.width, ( float ) r.height ) );
-
-		addChild( image ).moveTo( posX, posY );
-	}
-
-	private UITextProcessor createTextProcessor( UITextRenderer renderer, String text )
-	{
-		UITextProcessor textProcessor = new UITextProcessor(
-				new UITextComposerSingleLine(),
-				renderer,
-				new UITextInteractor(),
-				new UITextFormat( "Helvetica" )
-		);
+		UITextProcessor textProcessor = UITextProcessor.createSingleLine( format, renderer );
 
 		textProcessor.setText( text );
-		textProcessor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE );
+		textProcessor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE ); // similar to autosize
 
 		return textProcessor;
 	}
 
-	private int step = 0;
-	private defrac.geom.Point mousePos = new defrac.geom.Point();
-
 	@Override
-	public void apply( @Nonnull final Event event )
+	public void onEnterFrame()
 	{
-		stage.eventManager().pointerPos( mousePos, /*index=*/0 );
-
-		// mousePos for get glyph
-
-		if( step++ == 40 )
+		if( _step++ == 40 )
 		{
-			_textProcessor1.setText( "Hello Moko! " + StringUtils.randomSequence( 15 ) );
-			step = 0;
+			_processor.setText( "Hello Moko! " + StringUtils.randomSequence( 15 ) );
+			_step = 0;
 		}
+
+		float h = ( float ) MMath.clamp( mousePos.y - _labelML2.y(), 0, 200 );
+		_labelSL2.setSize( mousePos.x - _labelSL2.x(), 40 );
+		_labelML2.setSize( mousePos.x - _labelML2.x(), h );
+
+		_renderer.globalToLocal( mousePos );
+
+		MPoint p = new MPoint( mousePos.x, mousePos.y );
+
+		_processorWord.setText( "Word: " + getWordUnderPoint( p ) );
+		_processorChar.setText( "Char: " + getCharUnderPoint( p ) );
 	}
 
-	@Override
-	protected void processEvent( @javax.annotation.Nonnull defrac.display.event.UIEvent uiEvent )
+	private String getCharUnderPoint( MPoint p )
 	{
-		if( _textProcessor1 == null )
-		{
-			return;
-		}
-
-		if( uiEvent.type == UIEventType.ACTION_MOVE )
-		{
-			if( uiEvent instanceof UIActionEvent )
-			{
-				UIActionEvent actionEvent = ( UIActionEvent ) uiEvent;
-
-				defrac.geom.Point p = actionEvent.pos;
-
-				_renderer1.globalToLocal( p );
-
-				MPoint p2 = new MPoint( actionEvent.pos.x, actionEvent.pos.y );
-
-				String t1 = handleGlyphUnderPoint( p2 );
-				String t2 = handleWordUnderPoint( p2 );
-
-				_textProcessor2.setText( t1 );
-				_textProcessor3.setText( t2 );
-			}
-		}
-	}
-
-	private String handleGlyphUnderPoint( MPoint p )
-	{
-		UIGlyph g = _textProcessor1.getGlyphUnderPoint( p );
+		UIGlyph g = _processor.getGlyphUnderPoint( p );
 
 		return ( g != null ) ? Character.toString( g.getCharacter() ) : "";
 	}
 
-	private String handleWordUnderPoint( MPoint p )
+	private String getWordUnderPoint( MPoint p )
 	{
 		UITextSelection selection = new UITextSelection();
 
-		_textProcessor1.getWordUnderPoint( p, selection );
+		_processor.getWordUnderPoint( p, selection );
 
 		int i0 = selection.firstIndex;
 		int i1 = selection.lastIndex;
 
 		if( i0 != i1 )
 		{
-			return _textProcessor1.getText().substring( i0, i1 + 1 );
+			return _processor.getText().substring( i0, i1 + 1 );
 		}
 
 		return "";

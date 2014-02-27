@@ -3,7 +3,6 @@ package com.adjazent.defrac.sandbox.experiments.ui;
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.action.IActionObserver;
-import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.sandbox.events.IEnterFrame;
 import com.adjazent.defrac.sandbox.events.IKeyboard;
@@ -34,10 +33,7 @@ import static com.adjazent.defrac.core.log.Log.info;
  */
 public final class EUIWidgets extends Experiment implements IUIResourceLoaderQueueObserver, IActionObserver, IEnterFrame, IKeyboard
 {
-	private UILabel _labelSL1;
-	private UILabel _labelSL2;
-	private UILabel _labelML1;
-	private UILabel _labelML2;
+	private UILabel _label;
 	private UIButton _button;
 	private UIToggleButton _toggleButton1;
 	private UIToggleButton _toggleButton2;
@@ -45,8 +41,6 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 	private UISlider _slider;
 	private UISurface _surface;
 	private UIList _list;
-
-	private boolean _ready = false;
 
 	private final int SPEED_SLOW = 3;
 	private final int SPEED_FAST = 8;
@@ -78,39 +72,20 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		UITextureAtlas skins = UITextureManager.get().getAtlas( "skins" );
 
 		// --------------------- LABEL
-		_labelSL1 = new UILabel( new UITextFormat( "helvetica24" ) );
-		_labelSL1.setBackground( 0xFF888888 );
-		_labelSL1.setText( "Hello World How Are You? Very GoodThankYou" );
-		_labelSL1.moveTo( 50, 50 );
-		_labelSL1.id = "sl1";
+		_label = new UILabel( new UITextFormat( "Helvetica24" ) );
 
-		_labelML1 = new UILabel( new UITextFormat( "helvetica24" ), true );
-		_labelML1.setBackground( 0xFF888888 );
-		_labelML1.setText( "Hello World How Are You? Very GoodThankYou" );
-		_labelML1.moveTo( 50, 100 );
-		_labelML1.id = "ml1";
+		_label.setText( "Hello UILabel!" );
+		_label.moveTo( 50.0f, 50.0f );
 
-		_labelSL2 = new UILabel( new UITextFormat( "helvetica24" ) );
-		_labelSL2.setBackground( 0xFFFF0000 );
-		_labelSL2.setText( "Hello World How Are You? Very GoodThankYou" );
-		_labelSL2.setAutoSize( false );
-		_labelSL2.moveTo( 600, 50 );
-		_labelSL2.id = "sl2";
-
-		_labelML2 = new UILabel( new UITextFormat( "helvetica24" ), true );
-		_labelML2.setBackground( 0xFFFF0000 );
-		_labelML2.setText( "Hello World How Are You? Very GoodThankYou" );
-		_labelML2.setAutoSize( false );
-		_labelML2.moveTo( 600, 100 );
-		_labelML2.id = "ml2";
+		addChild( _label );
 
 		// --------------------- TOGGLE BUTTON
 		_toggleButton1 = new UIToggleButton( skins.getTexture( "ButtonSceneSettingsDeselected" ), skins.getTexture( "ButtonSceneSettingsSelected" ) );
-		_toggleButton1.moveTo( 50, 200 );
+		_toggleButton1.moveTo( 50, 100 );
 		_toggleButton1.id = "tb1";
 
 		_toggleButton2 = new UIToggleButton( skins.getTexture( "ButtonSceneSettingsDeselected" ), skins.getTexture( "ButtonSceneSettingsSelected" ) );
-		_toggleButton2.moveTo( 100, 200 );
+		_toggleButton2.moveTo( 100, 100 );
 		_toggleButton2.id = "tb2";
 
 		_toggleGroup = new UIToggleGroup( _toggleButton1, _toggleButton2 );
@@ -118,21 +93,21 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 
 		// --------------------- BUTTON
 		_button = new UIButton( skins.getTexture( "ButtonChallenge" ) );
-		_button.moveTo( 150, 200 );
+		_button.moveTo( 150, 100 );
 		_button.onClick.add( this );
 		_button.id = "b1";
 
 		// --------------------- SLIDER
 		_slider = new UISlider( skins.getTexture( "PlayOutSliderTrack" ), skins.getTexture( "PlayOutSliderThumb" ), skins.getTexture( "PlayOutSliderValue" ) );
 		_slider.resizeTo( 100, _slider.height() );
-		_slider.moveTo( 50, 250 );
+		_slider.moveTo( 600, 100 );
 		_slider.onValueChange.add( this );
 		_slider.onValueComplete.add( this );
 		_slider.id = "s1";
 
 		// --------------------- LIST
 		_list = new UIList( new UICellRendererFactory() );
-		_list.moveTo( 50, 300 );
+		_list.moveTo( 50, 150 );
 		_list.resizeTo( 200, 350 );
 		_list.setBackground( 0xFFA2A2A2 );
 
@@ -144,15 +119,11 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 
 		// --------------------- SURFACE
 		_surface = new UISurface( skins.getTexture( "AreaEmpty" ) );
-		_surface.moveTo( 300, 300 );
+		_surface.moveTo( 350, 150 );
 		_surface.resizeTo( 300, 100 );
 		_surface.id = "s1";
 
-
-		addChild( _labelSL1 );
-		addChild( _labelSL2 );
-		addChild( _labelML1 );
-		addChild( _labelML2 );
+		addChild( _label );
 		addChild( _toggleButton1 );
 		addChild( _toggleButton2 );
 		addChild( _button );
@@ -160,7 +131,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		addChild( _surface );
 		addChild( _list );
 
-		_ready = true;
+		activateEvents();
 	}
 
 	@Override
@@ -172,20 +143,13 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 	@Override
 	public void onEnterFrame()
 	{
-		if( _ready )
+		if( _keyCode == 38 )
 		{
-			float h = ( float ) MMath.clamp( mousePos.y - _labelML2.y(), 0, 200 );
-			_labelSL2.setSize( ( float ) mousePos.x - _labelSL2.x(), 40 );
-			_labelML2.setSize( ( float ) mousePos.x - _labelML2.x(), h );
-
-			if( _keyCode == 38 )
-			{
-				_list.setOffset( _list.getOffset() - _scrollSpeed );
-			}
-			if( _keyCode == 40 )
-			{
-				_list.setOffset( _list.getOffset() + _scrollSpeed );
-			}
+			_list.setOffset( _list.getOffset() - _scrollSpeed );
+		}
+		if( _keyCode == 40 )
+		{
+			_list.setOffset( _list.getOffset() + _scrollSpeed );
 		}
 	}
 
@@ -214,7 +178,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 	@Override
 	public void onActionEvent( Action action )
 	{
-		_labelSL1.setText( "Action received " + action.getOrigin() );
+		_label.setText( "Action received " + action.getOrigin() );
 	}
 
 

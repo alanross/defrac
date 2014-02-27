@@ -10,9 +10,6 @@ import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
 import com.adjazent.defrac.sandbox.experiments.ui.*;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
-import com.adjazent.defrac.sandbox.issues.EContainer;
-import com.adjazent.defrac.sandbox.issues.EScrollRect;
-import com.adjazent.defrac.sandbox.issues.EScrollRect2;
 import com.adjazent.defrac.sandbox.samples.canvas.ECanvas;
 import com.adjazent.defrac.sandbox.samples.event.EUIEvent;
 import com.adjazent.defrac.sandbox.samples.flutterman.EFlutterman;
@@ -54,9 +51,6 @@ public final class Sandbox extends AbstractSandbox
 		add( new EUIWidgets() );
 		add( new EMacros() );
 		//----------------------------- warzone
-		add( new EScrollRect() );
-		add( new EScrollRect2() );
-		add( new EContainer() );
 		add( new Warzone() );
 
 		activate( EUIWidgets.class );
