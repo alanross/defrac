@@ -64,13 +64,31 @@ public final class UITextInteractor
 		return null;
 	}
 
+	public void getCharUnderPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
+	{
+		int n = glyphs.size();
+
+		selection.firstIndex = -1;
+		selection.lastIndex = -1;
+
+		for( int i = 0; i < n; ++i )
+		{
+			if( glyphs.get( i ).containsPoint( point ) )
+			{
+				selection.firstIndex = i;
+				selection.lastIndex = i;
+				return;
+			}
+		}
+	}
+
 	public void getWordUnderPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
 	{
 		int n = glyphs.size();
-		UIGlyph glyph = null;
+		UIGlyph glyph;
 
-		selection.firstIndex = 0;
-		selection.lastIndex = 0;
+		selection.firstIndex = -1;
+		selection.lastIndex = -1;
 
 		for( int i = 0; i < n; ++i )
 		{

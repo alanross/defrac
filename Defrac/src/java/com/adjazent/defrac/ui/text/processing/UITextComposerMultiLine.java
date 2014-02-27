@@ -102,6 +102,10 @@ public final class UITextComposerMultiLine implements IUITextComposer
 					{
 						lines.addLast( line );
 					}
+					else
+					{
+						offset -= offsetStep;
+					}
 
 					truncateLine = true;
 					break;

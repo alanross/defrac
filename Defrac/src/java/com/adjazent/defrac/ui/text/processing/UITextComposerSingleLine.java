@@ -24,7 +24,7 @@ public final class UITextComposerSingleLine implements IUITextComposer
 
 		UITextLine line = UITextLine.build( glyphs, 0, format.tracking, Integer.MAX_VALUE );
 
-		if( line.bounds.y + line.bounds.height > maxSize.height )
+		if( line.bounds.height > maxSize.height )
 		{
 			return new UITextLayout( lines, new MRectangle() ); //empty
 		}

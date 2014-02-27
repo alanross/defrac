@@ -28,6 +28,7 @@ public final class UILabel extends Layer implements IUITextRenderer
 
 	private UITextProcessor _processor;
 	private MRectangle _bounds;
+	private Quad _selection;
 	private Quad _background;
 	private Layer _container;
 
@@ -57,9 +58,11 @@ public final class UILabel extends Layer implements IUITextRenderer
 		}
 
 		_background = new Quad( 1, 1, 0x0 );
+		_selection = new Quad( 1, 1, 0xFF000000 );
 		_container = new Layer();
 
 		addChild( _background );
+		addChild( _selection );
 		addChild( _container );
 	}
 
@@ -104,7 +107,6 @@ public final class UILabel extends Layer implements IUITextRenderer
 				addChild( image );
 			}
 		}
-
 	}
 
 	public void setFormat( UITextFormat value )
@@ -130,14 +132,59 @@ public final class UILabel extends Layer implements IUITextRenderer
 		}
 	}
 
-	public UIGlyph getGlyphUnderPoint( MPoint point )
+	public void setAutoSize( boolean value )
 	{
-		return _processor.getGlyphUnderPoint( point );
+		_autoSize = value;
+
+		if( _autoSize )
+		{
+			_processor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE );
+		}
+		else
+		{
+			_processor.setSize( ( int ) _bounds.width, ( int ) _bounds.height );
+		}
+	}
+
+	public void setSelection( UITextSelection selection )
+	{
+		// Note: We will have several rects for multiline, though not implemented yet
+		LinkedList<MRectangle> rectangles = _processor.getSelectionRect( selection );
+
+		if( rectangles.size() > 0 )
+		{
+			MRectangle r = rectangles.get( 0 );
+
+			_selection.visible( true );
+			_selection.moveTo( ( float ) r.x, ( float ) r.y );
+			_selection.scaleToSize( ( float ) r.width, ( float ) r.height );
+		}
+		else
+		{
+			_selection.visible( false );
+			_selection.moveTo( 0, 0 );
+			_selection.scaleToSize( 0, 0 );
+		}
+	}
+
+	public void getCursorRect( MPoint p, MRectangle r )
+	{
+		_processor.getCursorRect( p, r );
 	}
 
 	public void getWordUnderPoint( MPoint point, UITextSelection selection )
 	{
 		_processor.getWordUnderPoint( point, selection );
+	}
+
+	public void getCharUnderPoint( MPoint point, UITextSelection selection )
+	{
+		_processor.getCharUnderPoint( point, selection );
+	}
+
+	public UIGlyph getGlyphUnderPoint( MPoint point )
+	{
+		return _processor.getGlyphUnderPoint( point );
 	}
 
 	public int getCursorIndex( MPoint point )
@@ -167,12 +214,12 @@ public final class UILabel extends Layer implements IUITextRenderer
 
 	public int getWidth()
 	{
-		return _processor.getWidth();
+		return ( _autoSize ) ? _processor.getTextWidth() : ( int ) _bounds.width;
 	}
 
 	public int getHeight()
 	{
-		return _processor.getHeight();
+		return ( _autoSize ) ? _processor.getTextHeight() : ( int ) _bounds.height;
 	}
 
 	public boolean getAutoSize()
@@ -180,23 +227,14 @@ public final class UILabel extends Layer implements IUITextRenderer
 		return _autoSize;
 	}
 
-	public void setAutoSize( boolean value )
-	{
-		_autoSize = value;
-
-		if( _autoSize )
-		{
-			_processor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE );
-		}
-		else
-		{
-			_processor.setSize( ( int ) _bounds.width, ( int ) _bounds.height );
-		}
-	}
-
-	public void setBackground( int color )
+	public void setBackgroundColor( int color )
 	{
 		_background.color( color );
+	}
+
+	public void setSelectionColor( int color )
+	{
+		_selection.color( color );
 	}
 
 	@Override

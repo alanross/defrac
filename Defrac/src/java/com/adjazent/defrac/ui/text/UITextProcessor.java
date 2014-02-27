@@ -151,9 +151,52 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		_block = null;
 	}
 
+	public LinkedList<MRectangle> getSelectionRect( UITextSelection selection )
+	{
+		LinkedList<MRectangle> rectangles = new LinkedList<MRectangle>();
+
+		int i0 = selection.firstIndex;
+		int i1 = selection.lastIndex;
+
+		if( i0 != i1 )
+		{
+			MRectangle b0 = getGlyphAt( i0 ).getSelectionRect();
+			MRectangle b1 = getGlyphAt( i1 ).getSelectionRect();
+
+			rectangles.addLast( new MRectangle( b0.x, 0, b1.x + b1.width - b0.x, _font.getLineHeight() ) );
+		}
+		else if( i0 > -1 )
+		{
+			MRectangle b = getGlyphAt( i0 ).getSelectionRect();
+
+			rectangles.addLast( new MRectangle( b.x, 0, b.width, _font.getLineHeight() ) );
+		}
+
+		return rectangles;
+	}
+
+	public void getCursorRect( MPoint p, MRectangle r )
+	{
+		int index = getCursorIndex( p );
+
+		r.setTo( 0, 0, 1, _font.getLineHeight() );
+
+		if( index > -1 )
+		{
+			MRectangle b = getGlyphAt( index ).getSelectionRect();
+
+			r.moveTo( b.x, b.y );
+		}
+	}
+
 	public UIGlyph getGlyphUnderPoint( MPoint point )
 	{
 		return _interact.getGlyphUnderPoint( _glyphs, point );
+	}
+
+	public void getCharUnderPoint( MPoint point, UITextSelection selection )
+	{
+		_interact.getCharUnderPoint( _glyphs, point, selection );
 	}
 
 	public void getWordUnderPoint( MPoint point, UITextSelection selection )

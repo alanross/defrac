@@ -48,9 +48,9 @@ public final class UITextLine
 				bounds.width = glyph.getX() + glyph.getWidth();
 			}
 
-			if( bounds.height < oy - glyph.getYOffset() + glyph.getHeight() )
+			if( bounds.height < glyph.getHeight() )
 			{
-				bounds.height = oy - glyph.getYOffset() + glyph.getHeight();
+				bounds.height = glyph.getHeight();
 			}
 
 			if( ox + glyph.getWidth() > maxWidth )
