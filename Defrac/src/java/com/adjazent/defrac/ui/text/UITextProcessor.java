@@ -136,12 +136,19 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 	public void dispose()
 	{
 		_glyphs = null;
-		_text = null;
-		_block = null;
+		_ellipsis = null;
 
-		_renderer = null;
+		_text = null;
+
+		_bounds = null;
+
+		_renderRequest = null;
 		_composer = null;
+		_renderer = null;
 		_interact = null;
+		_format = null;
+		_font = null;
+		_block = null;
 	}
 
 	public UIGlyph getGlyphUnderPoint( MPoint point )
