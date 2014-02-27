@@ -23,7 +23,7 @@ public final class UITextLine
 	{
 		int n = glyphs.size();
 		int i = 0;
-		UIGlyph glyph = null;
+		UIGlyph glyph;
 
 		double ox = 0;
 		double oy = offsetY;
@@ -48,10 +48,9 @@ public final class UITextLine
 				bounds.width = glyph.getX() + glyph.getWidth();
 			}
 
-			// to be discussed if adding yOffset to bounds height makes sense
-			if( bounds.height < glyph.getYOffset() + glyph.getHeight() - oy )
+			if( bounds.height < oy - glyph.getYOffset() + glyph.getHeight() )
 			{
-				bounds.height = glyph.getYOffset() + glyph.getHeight() - oy;
+				bounds.height = oy - glyph.getYOffset() + glyph.getHeight();
 			}
 
 			if( ox + glyph.getWidth() > maxWidth )
