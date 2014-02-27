@@ -2,9 +2,9 @@ package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.log.Log;
-import com.adjazent.defrac.core.utils.StringUtils;
 import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MPoint;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.sandbox.events.IEnterFrame;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
@@ -17,6 +17,7 @@ import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 import com.adjazent.defrac.ui.text.processing.UITextRenderer;
 import com.adjazent.defrac.ui.widget.text.UILabel;
+import defrac.display.Quad;
 
 /**
  * @author Alan Ross
@@ -27,18 +28,14 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 	private UITextProcessor _processor;
 	private UITextRenderer _renderer;
 
-	private UITextProcessor _processorWord;
-	private UITextRenderer _rendererWord;
-
-	private UITextProcessor _processorChar;
-	private UITextRenderer _rendererChar;
-
 	private UILabel _labelSL1;
 	private UILabel _labelSL2;
 	private UILabel _labelML1;
 	private UILabel _labelML2;
 
-	private int _step = 0;
+	private Quad _word = new Quad( 1, 1, 0xFF886644 );
+	private Quad _char = new Quad( 1, 1, 0x88FF0000 );
+	private Quad _caret = new Quad( 1, 1, 0xFFFFFFFF );
 
 	public EUIText()
 	{
@@ -58,15 +55,12 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 	public void onResourceLoadingSuccess()
 	{
 		UITextFormat format = new UITextFormat( "Helvetica" );
-		
+
 		_renderer = new UITextRenderer();
-		_processor = createTextProcessor( format, _renderer, "Hello Moko!" );
+		_processor = UITextProcessor.createSingleLine( format, _renderer );
 
-		_rendererWord = new UITextRenderer();
-		_processorWord = createTextProcessor( format, _rendererWord, "Word:" );
-
-		_rendererChar = new UITextRenderer();
-		_processorChar = createTextProcessor( format, _rendererChar, "Char:" );
+		_processor.setText( "Hello World, How Are You?" );
+		_processor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE ); // similar to autosize
 
 		_labelSL1 = new UILabel( format );
 		_labelSL1.setBackground( 0xFF888888 );
@@ -90,14 +84,15 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		_labelML2.setAutoSize( false );
 		_labelML2.id = "ml2";
 
+		addChild( _word );
+		addChild( _char );
 		addChild( _renderer ).moveTo( 50.0f, 50.0f );
-		addChild( _rendererWord ).moveTo( 50.0f, 100.0f );
-		addChild( _rendererChar ).moveTo( 50.0f, 150.0f );
+		addChild( _caret );
 
-		addChild( _labelSL1 ).moveTo( 50, 200 );
-		addChild( _labelML1 ).moveTo( 50, 250 );
-		addChild( _labelSL2 ).moveTo( 700, 200 );
-		addChild( _labelML2 ).moveTo( 700, 250 );
+		addChild( _labelSL1 ).moveTo( 50, 100 );
+		addChild( _labelML1 ).moveTo( 50, 150 );
+		addChild( _labelSL2 ).moveTo( 700, 100 );
+		addChild( _labelML2 ).moveTo( 700, 150 );
 
 		activateEvents();
 	}
@@ -108,25 +103,9 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		Log.info( Context.DEFAULT, this, "onResourceLoadingFailure" );
 	}
 
-	private UITextProcessor createTextProcessor( UITextFormat format, UITextRenderer renderer, String text )
-	{
-		UITextProcessor textProcessor = UITextProcessor.createSingleLine( format, renderer );
-
-		textProcessor.setText( text );
-		textProcessor.setSize( Integer.MAX_VALUE, Integer.MAX_VALUE ); // similar to autosize
-
-		return textProcessor;
-	}
-
 	@Override
 	public void onEnterFrame()
 	{
-		if( _step++ == 40 )
-		{
-			_processor.setText( "Hello Moko! " + StringUtils.randomSequence( 15 ) );
-			_step = 0;
-		}
-
 		float h = ( float ) MMath.clamp( mousePos.y - _labelML2.y(), 0, 200 );
 		_labelSL2.setSize( mousePos.x - _labelSL2.x(), 40 );
 		_labelML2.setSize( mousePos.x - _labelML2.x(), h );
@@ -135,18 +114,16 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 
 		MPoint p = new MPoint( mousePos.x, mousePos.y );
 
-		_processorWord.setText( "Word: " + getWordUnderPoint( p ) );
-		_processorChar.setText( "Char: " + getCharUnderPoint( p ) );
+		handleWordSelection( p );
+
+		handleCharSelection( p );
+
+		//canvas.copyPixels( _renderer.bitmapData, _renderer.bitmapData.rect, _origin );
+
+		handleCaret( p );
 	}
 
-	private String getCharUnderPoint( MPoint p )
-	{
-		UIGlyph g = _processor.getGlyphUnderPoint( p );
-
-		return ( g != null ) ? Character.toString( g.getCharacter() ) : "";
-	}
-
-	private String getWordUnderPoint( MPoint p )
+	private void handleWordSelection( MPoint p )
 	{
 		UITextSelection selection = new UITextSelection();
 
@@ -157,10 +134,68 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 
 		if( i0 != i1 )
 		{
-			return _processor.getText().substring( i0, i1 + 1 );
+			UIGlyph g0 = _processor.getGlyphAt( i0 );
+			UIGlyph g1 = _processor.getGlyphAt( i1 );
+
+			MRectangle r = new MRectangle();
+			r.x = _renderer.x() + g0.getSelectionRect().x;
+			r.y = _renderer.y();
+			r.width = g1.getSelectionRect().x + g1.getSelectionRect().width - g0.getSelectionRect().x;
+			r.height = 24;
+
+			_word.moveTo( ( float ) r.x, ( float ) r.y );
+			_word.scaleToSize( ( float ) r.width, ( float ) r.height );
+		}
+		else
+		{
+			_word.moveTo( 0, 0 );
+			_word.scaleToSize( 0, 0 );
 		}
 
-		return "";
+	}
+
+	private void handleCharSelection( MPoint p )
+	{
+		// don"t do this before create was called, as create is also responsible for layouting the glyphs
+		UIGlyph glyph = _processor.getGlyphUnderPoint( p );
+
+		if( glyph != null )
+		{
+			MRectangle r = glyph.getSelectionRect().clone();
+
+			r.x += _renderer.x();
+			r.y += _renderer.y();
+
+			_char.moveTo( ( float ) r.x, ( float ) r.y );
+			_char.scaleToSize( ( float ) r.width, ( float ) r.height );
+		}
+		else
+		{
+			_char.moveTo( 0, 0 );
+			_char.scaleToSize( 0, 0 );
+		}
+	}
+
+	private void handleCaret( MPoint p )
+	{
+		int index = _processor.getCursorIndex( p );
+
+		if( index > -1 )
+		{
+			UIGlyph glyph = _processor.getGlyphAt( index );
+			MRectangle r = glyph.getSelectionRect().clone();
+
+			r.x = glyph.getSelectionRect().x + _renderer.x();
+			r.y = glyph.getSelectionRect().y + _renderer.y();
+
+			_caret.scaleToSize( 1, 24 );
+			_caret.moveTo( ( float ) ( r.x + r.width ), ( float ) r.y );
+		}
+		else
+		{
+			_caret.scaleToSize( 1, 24 );
+			_caret.moveTo( _renderer.x(), _renderer.y() );
+		}
 	}
 
 	@Override
