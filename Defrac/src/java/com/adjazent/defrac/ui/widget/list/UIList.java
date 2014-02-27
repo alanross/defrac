@@ -18,6 +18,8 @@ import java.util.LinkedList;
  */
 public final class UIList extends Layer implements IUIRenderListener
 {
+	public String id = "";
+
 	private LinkedList<UICellData> _items = new LinkedList<UICellData>();
 	private LinkedList<UICellRenderer> _renderer = new LinkedList<UICellRenderer>();
 	private IUICellRendererFactory _factory;
@@ -239,6 +241,6 @@ public final class UIList extends Layer implements IUIRenderListener
 	@Override
 	public String toString()
 	{
-		return "[UIList]";
+		return "[UIList id:" + id + "]";
 	}
 }
