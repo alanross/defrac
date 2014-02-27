@@ -23,6 +23,7 @@ import com.adjazent.defrac.ui.widget.list.UICellRendererFactory;
 import com.adjazent.defrac.ui.widget.list.UIList;
 import com.adjazent.defrac.ui.widget.range.UISlider;
 import com.adjazent.defrac.ui.widget.text.UILabel;
+import defrac.display.Layer;
 import defrac.event.KeyboardEvent;
 
 import static com.adjazent.defrac.core.log.Log.info;
@@ -43,7 +44,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 	private UIList _list;
 
 	private final int SPEED_SLOW = 3;
-	private final int SPEED_FAST = 8;
+	private final int SPEED_FAST = 12;
 
 	private int _scrollSpeed = SPEED_SLOW;
 	private int _keyCode;
@@ -111,10 +112,10 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		_list.resizeTo( 200, 350 );
 		_list.setBackground( 0xFFA2A2A2 );
 
-		for( int i = 0; i < 30; ++i )
+		for( int i = 0; i < 80; ++i )
 		{
 			int h = 20;//20 + ( int ) ( Math.random() * 40 );
-			_list.addItem( new UICellData( "" + i, h ) );
+			_list.addItem( new UICellData( "Cell Data: " + i, h ) );
 		}
 
 		// --------------------- SURFACE
@@ -123,13 +124,18 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		_surface.resizeTo( 300, 100 );
 		_surface.id = "s1";
 
-		addChild( _label );
-		addChild( _toggleButton1 );
-		addChild( _toggleButton2 );
-		addChild( _button );
-		addChild( _slider );
-		addChild( _surface );
-		addChild( _list );
+		Layer container = new Layer();
+		container.moveTo( 50, 50 );
+
+		container.addChild( _label );
+		container.addChild( _toggleButton1 );
+		container.addChild( _toggleButton2 );
+		container.addChild( _button );
+		container.addChild( _slider );
+		container.addChild( _surface );
+		container.addChild( _list );
+
+		addChild( container );
 
 		activateEvents();
 	}

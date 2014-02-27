@@ -27,12 +27,9 @@ public final class UIButton extends UISurface
 	@Override
 	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
 	{
-		if( containsGlobalPoint( point.x, point.y ) )
-		{
-			return this;
-		}
+		Point local = this.globalToLocal( new Point( point.x, point.y ) );
 
-		return null;
+		return ( containsPoint( local.x, local.y ) ) ? this : null;
 	}
 
 	@Override

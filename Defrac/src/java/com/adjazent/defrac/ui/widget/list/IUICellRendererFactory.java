@@ -6,7 +6,7 @@ package com.adjazent.defrac.ui.widget.list;
  */
 public interface IUICellRendererFactory
 {
-	UICellRenderer create( int index );
+	IUICellRenderer create( int rowIndex );
 
-	void release( UICellRenderer renderer );
+	void release( IUICellRenderer renderer );
 }

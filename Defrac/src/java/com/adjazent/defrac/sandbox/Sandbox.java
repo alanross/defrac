@@ -53,7 +53,7 @@ public final class Sandbox extends AbstractSandbox
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( EUIText.class );
+		activate( EUIWidgets.class );
 	}
 
 	public static void main( final String[] args )

@@ -21,7 +21,7 @@ public final class UIList extends Layer implements IUIRenderListener
 	public String id = "";
 
 	private LinkedList<UICellData> _items = new LinkedList<UICellData>();
-	private LinkedList<UICellRenderer> _renderer = new LinkedList<UICellRenderer>();
+	private LinkedList<IUICellRenderer> _renderer = new LinkedList<IUICellRenderer>();
 	private IUICellRendererFactory _factory;
 
 	private Layer _container = new Layer();
@@ -44,7 +44,7 @@ public final class UIList extends Layer implements IUIRenderListener
 		addChild( _container );
 	}
 
-	private UICellRenderer getAssociatedRenderer( UICellData data )
+	private IUICellRenderer getAssociatedRenderer( UICellData data )
 	{
 		int n = _renderer.size();
 
@@ -84,7 +84,7 @@ public final class UIList extends Layer implements IUIRenderListener
 		int itemOffset = 0;
 		int minView = _offset;
 		int maxView = _offset + viewHeight;
-		UICellRenderer renderer;
+		IUICellRenderer renderer;
 
 		for( int i = 0; i < numItems; ++i )
 		{

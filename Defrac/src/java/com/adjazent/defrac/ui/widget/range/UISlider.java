@@ -47,17 +47,15 @@ public final class UISlider extends UISurface implements UIProcessHook
 	@Override
 	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
 	{
-		if( _surfaceKnob.containsGlobalPoint( point.x, point.y ) )
+		Point local = this.globalToLocal( new Point( point.x, point.y ) );
+		Point local2 = _surfaceKnob.globalToLocal( new Point( point.x, point.y ) );
+
+		if( _surfaceKnob.containsPoint( local2.x, local2.y ) )
 		{
 			return _surfaceKnob;
 		}
 
-		if( containsGlobalPoint( point.x, point.y ) )
-		{
-			return this;
-		}
-
-		return null;
+		return ( containsPoint( local.x, local.y ) ) ? this : null;
 	}
 
 	@Override
@@ -101,7 +99,9 @@ public final class UISlider extends UISurface implements UIProcessHook
 		}
 		else
 		{
-			//posToVal( globalToLocal( event.pos ).x );
+			Point p = this.globalToLocal( new Point( event.pos.x, event.pos.y ) );
+
+			posToVal( p.x );
 		}
 	}
 
@@ -147,7 +147,7 @@ public final class UISlider extends UISurface implements UIProcessHook
 
 	private void valToPos( double v )
 	{
-		double size = width() - _surfaceKnob.width();
+		final double size = width() - _surfaceKnob.width();
 
 		double pos = MMath.round( ( v - _minValue ) * size / ( _maxValue - _minValue ) );
 

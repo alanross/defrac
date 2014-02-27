@@ -12,6 +12,9 @@ public final class UIActionType
 	public static final String SLIDER_VALUE_CHANGED = "SLIDER_VALUE_CHANGED";
 	public static final String SLIDER_VALUE_COMPLETED = "SLIDER_VALUE_CHANGED";
 
+	public static final String CELL_CLICK = "CELL_CLICK";
+	public static final String CELL_SELECT = "CELL_SELECT";
+
 	private UIActionType()
 	{
 	}

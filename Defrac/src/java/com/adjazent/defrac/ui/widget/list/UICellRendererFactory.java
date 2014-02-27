@@ -10,14 +10,14 @@ import java.util.LinkedList;
  */
 public final class UICellRendererFactory implements IUICellRendererFactory
 {
-	private LinkedList<UICellRenderer> _rendererPool = new LinkedList<UICellRenderer>();
+	private LinkedList<IUICellRenderer> _rendererPool = new LinkedList<IUICellRenderer>();
 	private int _rendererPoolGrowthRate = 8;
 
 	public UICellRendererFactory()
 	{
 	}
 
-	public UICellRenderer create( int index )
+	public IUICellRenderer create( int rowIndex )
 	{
 		if( 0 >= _rendererPool.size() )
 		{
@@ -29,14 +29,14 @@ public final class UICellRendererFactory implements IUICellRendererFactory
 			}
 		}
 
-		UICellRenderer renderer = _rendererPool.pollLast();
+		IUICellRenderer renderer = _rendererPool.pollLast();
 
-		renderer.setColor( ( index % 2 == 0 ) ? ( ( int ) MMath.rand( 0xFF000000, 0xFFFFFFFF ) ) : 0xFF696969 );
+		renderer.setBackgroundColor( ( rowIndex % 2 == 0 ) ? ( ( int ) MMath.rand( 0xFF000000, 0xFFFFFFFF ) ) : 0xFF696969 );
 
 		return renderer;
 	}
 
-	public void release( UICellRenderer renderer )
+	public void release( IUICellRenderer renderer )
 	{
 		_rendererPool.addLast( renderer );
 	}
