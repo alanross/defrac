@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Hello HTML5 Video</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<script>
+		var grabInterval;
+		var outContext;
+		var outCanvas;
+		var outImageData;
+
+		function screenGrab()
+		{
+			var video = document.getElementById( 'the_input' );
+			var output = document.getElementById( 'the_output' );
+
+			var outScaleFactor = 0.25;
+			var outWidth = video.videoWidth * outScaleFactor;
+			var outHeight = video.videoHeight * outScaleFactor;
+
+			outCanvas = document.createElement( 'canvas' );
+			outCanvas.width = outWidth;
+			outCanvas.height = outHeight;
+
+			outContext = outCanvas.getContext( '2d' );
+
+			outImageData = outContext.createImageData( outWidth, outHeight );
+
+			output.appendChild( outCanvas );
+
+			grabInterval = setInterval( function ()
+			{
+				outContext.drawImage( video, 0, 0, outWidth, outHeight );
+
+				outImageData = outContext.getImageData( 0, 0, outWidth, outHeight );
+
+				//-------------------------------
+				var data = outImageData.data;
+				var size = data.length;
+
+				for( var i = 0; i < size; i += 4 )
+				{
+					data[ i ] = 0;
+					data[ i + 2 ] = 0;
+				}
+
+				outContext.putImageData( outImageData, 0, 0 );
+				//-------------------------------
+
+			}, 50 );
+
+			myJSFunctionWithParam( "Hello" );
+			myJSFunctionWithParams( "Hello", "World" );
+			myJSFunctionWithReturnInt();
+			myJSFunctionWithReturnString();
+			myJSFunctionWithReturnByteArray();
+		}
+
+		function getPixel( bitmapData, x, y )
+		{
+			var data = bitmapData.data;
+			var pos = (x + y * bitmapData.width) * 4;
+			return {r:data[pos], g:data[pos + 1], b:data[pos + 2], a:data[pos + 3]}; //{r,g,b,a}
+		}
+
+		function setPixel( bitmapData, x, y, r, g, b, a )
+		{
+			var index = (x + y * bitmapData.width) * 4;
+			bitmapData.data[index + 0] = r;
+			bitmapData.data[index + 1] = g;
+			bitmapData.data[index + 2] = b;
+			bitmapData.data[index + 3] = a;
+		}
+
+		function copyPixel( srcBitmapData, sx, sy, dstBitmapData, dx, dy )
+		{
+			var sPos = (sx + sy * srcBitmapData.width) * 4;
+			var dPos = (dx + dy * dstBitmapData.width) * 4;
+			dstBitmapData.data[dPos] = srcBitmapData.data[sPos];     //R
+			dstBitmapData.data[dPos + 1] = srcBitmapData.data[sPos + 1]; //G
+			dstBitmapData.data[dPos + 2] = srcBitmapData.data[sPos + 2]; //B
+			dstBitmapData.data[dPos + 3] = srcBitmapData.data[sPos + 3]; //A
+		}
+
+		function myJSFunction()
+		{
+			console.log( "Called myJSFunction" );
+		}
+
+		function myJSFunctionWithParam( param )
+		{
+			console.log( "Called myJSFunctionWithParam:", param );
+		}
+
+		function myJSFunctionWithParams( param1, param2 )
+		{
+			console.log( "Called myJSFunctionWithParams:", param1, param2 );
+		}
+
+		function myJSFunctionWithReturnInt()
+		{
+			var i = 1;
+
+			console.log( "Called myJSFunctionWithReturnInt", i );
+
+			return i;
+		}
+
+		function myJSFunctionWithReturnString()
+		{
+			var str = "Hello World!";
+
+			console.log( "Called myJSFunctionWithReturnString", str );
+
+			return str;
+		}
+
+		function myJSFunctionWithReturnByteArray()
+		{
+			var size = 4;
+			var array = new Uint8Array( size );
+			//var array = [];
+			array[0] = 1;
+			array[1] = 1;
+			array[2] = 1;
+			array[3] = 1;
+
+			console.log( "Called myJSFunctionWithReturnByteArray", array );
+
+			return array;
+		}
+
+		function myJSFunctionFillByteArray( byteArray )
+		{
+			console.log( "Called myJSFunctionWithReturnByteArray", byteArray );
+		}
+	</script>
+	<script src="Defrac/defrac.js" async onload="main()"></script>
+	<style>
+		body, html {
+			background:#121212;
+			padding:0;
+			margin:0;
+			width:100%;
+			height:100%
+		}
+		#defrac-stage {
+			margin:0;
+			padding:0;
+			margin:0;
+			display:block;
+			width:100%;
+			height:100%
+		}
+		#defrac-div {
+			background:#000;
+			position:absolute;
+			top:50%;
+			left:50%;
+			width:1280px;
+			height:740px;
+			margin-left:-640px;
+			margin-top:-370px
+		}
+	</style>
+</head>
+
+<body>
+<body onload="screenGrab()">
+<video id="the_input" autoplay="true" loop="true">
+	<source src="video_640x360.mp4" type="video/mp4"/>
+	<source src="video_640x360.ogv" type="video/ogg"/>
+</video>
+<div id="the_output"></div>
+<div id="defrac-div">
+	<canvas id="defrac-stage"></canvas>
+</div>
+</body>
+</html>

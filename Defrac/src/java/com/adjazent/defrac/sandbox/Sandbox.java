@@ -10,6 +10,8 @@ import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
 import com.adjazent.defrac.sandbox.experiments.ui.*;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
+import com.adjazent.defrac.sandbox.issues.EAddChild;
+import com.adjazent.defrac.sandbox.issues.EResourcePath;
 import com.adjazent.defrac.sandbox.samples.canvas.ECanvas;
 import com.adjazent.defrac.sandbox.samples.event.EUIEvent;
 import com.adjazent.defrac.sandbox.samples.flutterman.EFlutterman;
@@ -45,15 +47,19 @@ public final class Sandbox extends AbstractSandbox
 		add( new EStringUtils() );
 		add( new EGSLS01() );
 		add( new EGSLS02() );
+		add( new EGLSLDynamicTexture() );
 		add( new EUIGLPainter() );
 		add( new EUISkinning() );
 		add( new EUIList() );
 		add( new EUIWidgets() );
 		add( new EMacros() );
+		//----------------------------- issues
+		add( new EAddChild() );
+		add( new EResourcePath() );
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( EUIWidgets.class );
+		activate( EGLSLDynamicTexture.class );
 	}
 
 	public static void main( final String[] args )
