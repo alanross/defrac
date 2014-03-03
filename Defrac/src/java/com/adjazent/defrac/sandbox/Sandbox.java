@@ -47,7 +47,7 @@ public final class Sandbox extends AbstractSandbox
 		add( new EStringUtils() );
 		add( new EGSLS01() );
 		add( new EGSLS02() );
-		add( new EGLSLDynamicTexture() );
+		add( new EVideo() );
 		add( new EUIGLPainter() );
 		add( new EUISkinning() );
 		add( new EUIList() );
@@ -59,7 +59,7 @@ public final class Sandbox extends AbstractSandbox
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( EGLSLDynamicTexture.class );
+		activate( EVideo.class );
 	}
 
 	public static void main( final String[] args )

@@ -14,7 +14,7 @@ import static com.adjazent.defrac.sandbox.samples.canvas.GLUtil.linkProgram;
  * @author Alan Ross
  * @version 0.1
  */
-public final class Video extends Canvas implements Procedure<Canvas.Arguments>
+public final class VideoCanvas extends Canvas implements Procedure<Canvas.Arguments>
 {
 	private static final String FRAGMENT_SHADER = "" +
 			"precision mediump float;                              \n" +
@@ -58,7 +58,7 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 	private int positionLocation;
 	private int texCoordLocation;
 
-	public Video( float width, float height )
+	public VideoCanvas( float width, float height )
 	{
 		super( width, height );
 
@@ -192,6 +192,6 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 	@Override
 	public String toString()
 	{
-		return "[Video]";
+		return "[VideoCanvas]";
 	}
 }
