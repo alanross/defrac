@@ -48,11 +48,23 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 	@MacroWeb( "com.adjazent.defrac.sandbox.experiments.ui.GLVideo.uploadVideoTexture" )
 	private static native boolean uploadVideoTexture( GL gl );
 
+	private GLProgram program;
+	private boolean reload;
+
+	private GLBuffer texCoordBuffer;
+	private GLBuffer vertexBuffer;
+
+	private GLUniformLocation resolutionLocation;
+	private int positionLocation;
+	private int texCoordLocation;
+
 	public Video( float width, float height )
 	{
 		super( width, height );
 
 		procedure( this );
+
+		reload = true;
 	}
 
 	public void load( String fileName )
@@ -65,26 +77,46 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 	{
 		GL gl = arguments.gl;
 
-		GLShader vertexShader = createShader( gl, VERTEX_SHADER, GL.VERTEX_SHADER );
-		if( null == vertexShader )
+		if( reload )
 		{
-			info( Context.UI, this, "VertexShaded error" );
-			return;
-		}
+			reload = false;
 
-		GLShader fragmentShader = createShader( gl, FRAGMENT_SHADER, GL.FRAGMENT_SHADER );
-		if( null == fragmentShader )
-		{
-			info( Context.UI, this, "FragmentShaded error" );
-			return;
-		}
+			if( null != program )
+			{
+				// We already have a working program, get rid of it
+				gl.deleteProgram( program );
+				program = null;
+			}
 
-		GLProgram program = gl.createProgram();
+			// Create a new vertex and fragment shader
+			GLShader vertexShader = createShader( gl, VERTEX_SHADER, GL.VERTEX_SHADER );
+			if( null == vertexShader )
+			{
+				info( Context.UI, this, "VertexShaded error" );
+				return;
+			}
 
-		if( !linkProgram( gl, program, vertexShader, fragmentShader, new String[]{ "a_position" } ) )
-		{
-			gl.deleteProgram( program );
-			return;
+			GLShader fragmentShader = createShader( gl, FRAGMENT_SHADER, GL.FRAGMENT_SHADER );
+			if( null == fragmentShader )
+			{
+				info( Context.UI, this, "FragmentShaded error" );
+				return;
+			}
+
+			// Create a new program
+			program = gl.createProgram();
+
+			// Link the program, this will do some cleanup of the shaders for us
+			if( !linkProgram( gl, program, vertexShader, fragmentShader, new String[]{ "position" } ) )
+			{
+				gl.deleteProgram( program );
+				program = null;
+				return;
+			}
+
+			resolutionLocation = gl.getUniformLocation( program, "u_resolution" );
+			positionLocation = gl.getAttribLocation( program, "a_position" );
+			texCoordLocation = gl.getAttribLocation( program, "a_texCoord" );
 		}
 
 		if( null == program )
@@ -96,22 +128,42 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 		gl.clear( GL.COLOR_BUFFER_BIT );
 		gl.useProgram( program );
 
-		int positionLocation = gl.getAttribLocation( program, "a_position" );
-		int texCoordLocation = gl.getAttribLocation( program, "a_texCoord" );
+		if( null == texCoordBuffer )
+		{
+			float[] uvs = createUvs();
+			texCoordBuffer = gl.createBuffer();
+			gl.bindBuffer( GL.ARRAY_BUFFER, texCoordBuffer );
+			gl.bufferData( GL.ARRAY_BUFFER, uvs, 0, uvs.length, gl.STATIC_DRAW );
+		}
+		else
+		{
+			gl.bindBuffer( GL.ARRAY_BUFFER, texCoordBuffer );
+		}
 
-		float[] uvs = new float[]{ 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
-
-		GLBuffer texCoordBuffer = gl.createBuffer();
-		gl.bindBuffer( GL.ARRAY_BUFFER, texCoordBuffer );
-		gl.bufferData( GL.ARRAY_BUFFER, uvs, 0, uvs.length, gl.STATIC_DRAW );
 		gl.enableVertexAttribArray( texCoordLocation );
 		gl.vertexAttribPointer( texCoordLocation, 2, gl.FLOAT, false, 0, 0 );
+
+		if( null == vertexBuffer )
+		{
+			float[] vertices = createVertices( 0, 0, width(), height() );
+			vertexBuffer = gl.createBuffer();
+			gl.bindBuffer( gl.ARRAY_BUFFER, vertexBuffer );
+			gl.bufferData( GL.ARRAY_BUFFER, vertices, 0, vertices.length, GL.STATIC_DRAW );
+		}
+		else
+		{
+			gl.bindBuffer( gl.ARRAY_BUFFER, vertexBuffer );
+		}
+
+		gl.enableVertexAttribArray( positionLocation );
+		gl.vertexAttribPointer( positionLocation, 2, gl.FLOAT, false, 0, 0 );
 
 		//------------ video texture
 		GLTexture texture = gl.createTexture();
 		gl.bindTexture( gl.TEXTURE_2D, texture );
-		//byte[] rgba = new byte[]{ ( byte ) 127, ( byte ) 127, ( byte ) 127, ( byte ) 127 };
-		//gl.uploadVideoTexture( GL.TEXTURE_2D, 0, GL.RGBA, 1, 1, 0, GL.RGBA, GL.UNSIGNED_BYTE, rgba );
+		 byte b = 0;
+		//byte[] rgba = new byte[]{ b, b, b, b };
+		//gl.texImage2D( GL.TEXTURE_2D, 0, GL.RGBA, 1, 1, 0, GL.RGBA, GL.UNSIGNED_BYTE, rgba );
 		uploadVideoTexture( gl );
 
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
@@ -120,26 +172,21 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
 		//------------
 
-		GLUniformLocation resolutionLocation = gl.getUniformLocation( program, "u_resolution" );
 		gl.uniform2f( resolutionLocation, width(), height() );
-		GLBuffer buffer = gl.createBuffer();
-		gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
-		gl.enableVertexAttribArray( positionLocation );
-		gl.vertexAttribPointer( positionLocation, 2, gl.FLOAT, false, 0, 0 );
-		setRectangle( gl, 0, 0, width(), height() );
 		gl.drawArrays( gl.TRIANGLES, 0, 6 );
 	}
 
-	private void setRectangle( GL gl, float x, float y, float width, float height )
+	private float[] createVertices( float x, float y, float width, float height )
 	{
-		float x1 = x;
-		float x2 = x + width;
-		float y1 = y;
-		float y2 = y + height;
+		float xw = x + width;
+		float yh = y + height;
 
-		float[] vertices = new float[]{ x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2 };
+		return new float[]{ x, y, xw, y, x, yh, x, yh, xw, y, xw, yh };
+	}
 
-		gl.bufferData( GL.ARRAY_BUFFER, vertices, 0, vertices.length, GL.STATIC_DRAW );
+	private float[] createUvs()
+	{
+		return new float[]{ 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
 	}
 
 	@Override
