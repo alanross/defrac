@@ -161,7 +161,7 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 		//------------ video texture
 		GLTexture texture = gl.createTexture();
 		gl.bindTexture( gl.TEXTURE_2D, texture );
-		 byte b = 0;
+		//byte b = 0;
 		//byte[] rgba = new byte[]{ b, b, b, b };
 		//gl.texImage2D( GL.TEXTURE_2D, 0, GL.RGBA, 1, 1, 0, GL.RGBA, GL.UNSIGNED_BYTE, rgba );
 		uploadVideoTexture( gl );
