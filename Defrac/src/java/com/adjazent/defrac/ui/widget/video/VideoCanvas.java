@@ -43,10 +43,12 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 	private static native boolean attachVideoElement( String fileName );
 
 	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.detachVideoElement" )
-	private static native boolean detachVideoElement( String fileName );
+	private static native boolean detachVideoElement();
 
 	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.uploadVideoTexture" )
 	private static native boolean uploadVideoTexture( GL gl );
+
+	private static final byte[] BLANK_PIXELS = new byte[]{ 0, 0, 0, 127 };
 
 	private GLProgram program;
 	private boolean reload;
@@ -58,17 +60,14 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 	private int positionLocation;
 	private int texCoordLocation;
 
-	public VideoCanvas( float width, float height )
+	public VideoCanvas( float width, float height, String fileName )
 	{
 		super( width, height );
 
 		procedure( this );
 
 		reload = true;
-	}
 
-	public void load( String fileName )
-	{
 		attachVideoElement( fileName );
 	}
 
@@ -158,13 +157,20 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 		gl.enableVertexAttribArray( positionLocation );
 		gl.vertexAttribPointer( positionLocation, 2, gl.FLOAT, false, 0, 0 );
 
-		//------------ video texture
 		GLTexture texture = gl.createTexture();
 		gl.bindTexture( gl.TEXTURE_2D, texture );
-		//byte b = 0;
-		//byte[] rgba = new byte[]{ b, b, b, b };
-		//gl.texImage2D( GL.TEXTURE_2D, 0, GL.RGBA, 1, 1, 0, GL.RGBA, GL.UNSIGNED_BYTE, rgba );
-		uploadVideoTexture( gl );
+
+		// still need function to check if js video is ready and playing
+		boolean videoAvailable = true;
+
+		if( videoAvailable )
+		{
+			uploadVideoTexture( gl );
+		}
+		else
+		{
+			gl.texImage2D( GL.TEXTURE_2D, 0, GL.RGBA, 1, 1, 0, GL.RGBA, GL.UNSIGNED_BYTE, BLANK_PIXELS );
+		}
 
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );

@@ -15,22 +15,40 @@ import defrac.lang.Procedure;
  */
 public final class VideoTexture
 {
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
+	private static native boolean canPlayVideo();
+
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
+	private static native boolean canPlayMP4();
+
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
+	private static native boolean canPlayOGV();
+
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
+	private static native boolean canPlayWEBM();
+
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.attachVideoElement" )
+	private static native boolean attachVideoElement( String fileName );
+
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.detachVideoElement" )
+	private static native boolean detachVideoElement();
+
 	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.uploadVideoTexture" )
 	private static native boolean uploadVideoTexture( GL gl );
 
 	private final TextureData _textureData;
 	private final Stage stage;
-	private final int width;
-	private final int height;
+	private final int textureWidth;
+	private final int textureHeight;
 
-	public VideoTexture( int width, int height )
+	public VideoTexture( int videoWidth, int videoHeight, String fileName )
 	{
-		this.width = width;
-		this.height = height;
+		this.textureWidth = videoWidth;
+		this.textureHeight = videoHeight;
 
 		this.stage = StageProvider.stage;
 
-		byte[] pixels = new byte[ width * height * 4 ];
+		byte[] pixels = new byte[ videoWidth * videoHeight * 4 ];
 
 		for( int i = 0; i < pixels.length; i += 4 )
 		{
@@ -42,8 +60,8 @@ public final class VideoTexture
 
 		_textureData = TextureData.Persistent.fromData(
 				pixels,
-				width,
-				height,
+				videoWidth,
+				videoHeight,
 				TextureDataFormat.RGBA,
 				TextureDataRepeat.REPEAT,
 				TextureDataSmoothing.NO_SMOOTHING
@@ -57,6 +75,9 @@ public final class VideoTexture
 				onEnterFrame();
 			}
 		} );
+
+		attachVideoElement( fileName );
+
 	}
 
 	private void onEnterFrame()
@@ -77,12 +98,12 @@ public final class VideoTexture
 
 	public Texture createTexture()
 	{
-		return new Texture( _textureData, 0, 0, width, height );
+		return new Texture( _textureData, 0, 0, textureWidth, textureHeight );
 	}
 
 	public Texture createTexture( float offsetX, float offsetY, float trimmedWidth, float trimmedHeight )
 	{
-		return new Texture( _textureData, 0, 0, width, height, 0, offsetX, offsetY, trimmedWidth, trimmedHeight );
+		return new Texture( _textureData, 0, 0, textureWidth, textureHeight, 0, offsetX, offsetY, trimmedWidth, trimmedHeight );
 	}
 
 	@Override

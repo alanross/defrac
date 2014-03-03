@@ -19,28 +19,34 @@ public final class EVideo extends Experiment
 	protected void onInit()
 	{
 		runVideoTexture();
+//		runVideoCanvas();
 	}
 
 	private void runVideoCanvas()
 	{
-		VideoCanvas videoCanvas = new VideoCanvas( 640, 360 );
-		videoCanvas.load( "video_640x360" );
+		VideoCanvas videoCanvas = new VideoCanvas( 640, 360, "video_640x360" );
 		videoCanvas.moveTo( 100, 100 );
 		addChild( videoCanvas );
 	}
 
 	private void runVideoTexture()
 	{
-		VideoTexture videoTexture = new VideoTexture( 640, 360 );
+		VideoTexture videoTexture = new VideoTexture( 640, 360, "video_640x360" );
 
-		Image img1 = new Image( videoTexture.createTexture() );
-		Image img2 = new Image( videoTexture.createTexture( 100, 100, 540, 260 ) );
+		Image img1 = new Image( videoTexture.createTexture( 0, 100, 210, 300 ) );
+		Image img2 = new Image( videoTexture.createTexture( 210, 100, 210, 300 ) );
+		Image img3 = new Image( videoTexture.createTexture( 420, 100, 210, 300 ) );
+		Image img4 = new Image( videoTexture.createTexture() );
 
-		img1.moveTo( 100, 100 );
-		img2.moveTo( 100, 101 );
+		img1.moveTo( 100, 50 );
+		img2.moveTo( 311, 50 );
+		img3.moveTo( 522, 50 );
+		img4.moveTo( 100, 370 );
 
 		addChild( img1 );
 		addChild( img2 );
+		addChild( img3 );
+		addChild( img4 );
 	}
 
 	@Override
