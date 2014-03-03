@@ -18,9 +18,9 @@ public final class EGLSLDynamicTexture extends Experiment
 	@Override
 	protected void onInit()
 	{
-		_video = new Video( app.width(), app.height() );
-
+		_video = new Video( 640, 360 );
 		_video.load( "video_640x360" );
+		_video.moveTo( 100, 100 );
 
 		addChild( _video );
 	}

@@ -1,7 +1,6 @@
 package com.adjazent.defrac.ui.widget.video;
 
 import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.stage.StageProvider;
 import defrac.annotation.MacroWeb;
 import defrac.display.Canvas;
 import defrac.gl.*;
@@ -122,16 +121,16 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 		//------------
 
 		GLUniformLocation resolutionLocation = gl.getUniformLocation( program, "u_resolution" );
-		gl.uniform2f( resolutionLocation, StageProvider.stage.width(), StageProvider.stage.height() );
+		gl.uniform2f( resolutionLocation, width(), height() );
 		GLBuffer buffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
 		gl.enableVertexAttribArray( positionLocation );
 		gl.vertexAttribPointer( positionLocation, 2, gl.FLOAT, false, 0, 0 );
-		setRectangle( gl, 100, 100, 200, 300 );
+		setRectangle( gl, 0, 0, width(), height() );
 		gl.drawArrays( gl.TRIANGLES, 0, 6 );
 	}
 
-	private void setRectangle( GL gl, int x, int y, int width, int height )
+	private void setRectangle( GL gl, float x, float y, float width, float height )
 	{
 		float x1 = x;
 		float x2 = x + width;
