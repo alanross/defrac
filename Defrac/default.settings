@@ -10,5 +10,8 @@
     "jvm"
   ],
   "debug": "true",
-  "web": {"js": "defrac.js"}
+  "web": {
+    "js": "defrac.js",
+    "debug": "true"
+  }
 }
