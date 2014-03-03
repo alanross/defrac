@@ -39,13 +39,13 @@ public final class Video extends Canvas implements Procedure<Canvas.Arguments>
 			"v_texCoord = a_texCoord;                              \n" +
 			"}";
 
-	@MacroWeb( "com.adjazent.defrac.sandbox.experiments.ui.GLVideo.attachVideoElement" )
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.attachVideoElement" )
 	private static native boolean attachVideoElement( String fileName );
 
-	@MacroWeb( "com.adjazent.defrac.sandbox.experiments.ui.GLVideo.detachVideoElement" )
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.detachVideoElement" )
 	private static native boolean detachVideoElement( String fileName );
 
-	@MacroWeb( "com.adjazent.defrac.sandbox.experiments.ui.GLVideo.uploadVideoTexture" )
+	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.uploadVideoTexture" )
 	private static native boolean uploadVideoTexture( GL gl );
 
 	private GLProgram program;

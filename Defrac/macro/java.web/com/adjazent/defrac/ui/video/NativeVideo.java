@@ -1,4 +1,4 @@
-package com.adjazent.defrac.sandbox.experiments.ui;
+package com.adjazent.defrac.ui.video;
 
 import defrac.compiler.Context;
 import defrac.compiler.macro.Macro;
@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class GLVideo extends Macro
+public final class NativeVideo extends Macro
 {
-	public GLVideo( @Nonnull Context context )
+	public NativeVideo( @Nonnull Context context )
 	{
 		super( context );
 	}
