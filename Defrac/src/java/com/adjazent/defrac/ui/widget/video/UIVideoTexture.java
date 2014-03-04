@@ -1,7 +1,6 @@
 package com.adjazent.defrac.ui.widget.video;
 
 import com.adjazent.defrac.core.stage.StageProvider;
-import defrac.annotation.MacroWeb;
 import defrac.display.*;
 import defrac.event.EnterFrameEvent;
 import defrac.event.Events;
@@ -13,35 +12,14 @@ import defrac.lang.Procedure;
  * @author Alan Ross
  * @version 0.1
  */
-public final class VideoTexture
+public final class UIVideoTexture
 {
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
-	private static native boolean canPlayVideo();
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
-	private static native boolean canPlayMP4();
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
-	private static native boolean canPlayOGV();
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.canPlayVideo" )
-	private static native boolean canPlayWEBM();
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.attachVideoElement" )
-	private static native boolean attachVideoElement( String fileName );
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.detachVideoElement" )
-	private static native boolean detachVideoElement();
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.uploadVideoTexture" )
-	private static native boolean uploadVideoTexture( GL gl );
-
 	private final TextureData _textureData;
 	private final Stage stage;
 	private final int textureWidth;
 	private final int textureHeight;
 
-	public VideoTexture( int videoWidth, int videoHeight, String fileName )
+	public UIVideoTexture( int videoWidth, int videoHeight, String videoUri )
 	{
 		this.textureWidth = videoWidth;
 		this.textureHeight = videoHeight;
@@ -76,8 +54,7 @@ public final class VideoTexture
 			}
 		} );
 
-		attachVideoElement( fileName );
-
+		UIVideoUtil.attachVideoElement( videoUri );
 	}
 
 	private void onEnterFrame()
@@ -88,12 +65,17 @@ public final class VideoTexture
 
 		gl.bindTexture( gl.TEXTURE_2D, texture );
 
-		uploadVideoTexture( gl );
+		if( UIVideoUtil.isReady() )
+		{
+			UIVideoUtil.uploadVideoTexture( gl );
+		}
 
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
+
+		gl.bindTexture( gl.TEXTURE_2D, null );
 	}
 
 	public Texture createTexture()
@@ -101,14 +83,14 @@ public final class VideoTexture
 		return new Texture( _textureData, 0, 0, textureWidth, textureHeight );
 	}
 
-	public Texture createTexture( float offsetX, float offsetY, float trimmedWidth, float trimmedHeight )
+	public Texture createTextureTile( float offsetX, float offsetY, float width, float height )
 	{
-		return new Texture( _textureData, 0, 0, textureWidth, textureHeight, 0, offsetX, offsetY, trimmedWidth, trimmedHeight );
+		return new Texture( _textureData, offsetX, offsetY, width, height );
 	}
 
 	@Override
 	public String toString()
 	{
-		return "[VideoTexture]";
+		return "[UIVideoTexture]";
 	}
 }

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<script src="Defrac/defrac.js" async onload="main()"></script>
+	<title>Defrac</title>
+	<style>
+		body, html {
+			background:#121212;
+			padding:0;
+			margin:0;
+			width:100%;
+			height:100%
+		}
+		canvas {
+			margin:0;
+			padding:0;
+			margin:0;
+			display:block;
+			width:100%;
+			height:100%
+		}
+		div {
+			background:#000;
+			position:absolute;
+			top:50%;
+			left:50%;
+			width:1280px;
+			height:740px;
+			margin-left:-640px;
+			margin-top:-370px
+		}
+	</style>
+	<script>
+		var _videoElement;
+		var _videoWidth = 640;
+		var _videoHeight = 380;
+		var _videoPixels;
+		var _videoTextureReadable;
+
+		var _gl;
+		var _glVideoTexture;
+		var _glFrameBuffer;
+
+		function init()
+		{
+			_videoElement = document.getElementById( "video" );
+
+			if( !_videoElement )
+			{
+				alert( "Unable to find video element" );
+				return
+			}
+
+			_gl = null;
+
+			try
+			{
+				var c = document.getElementById( "glcanvas" );
+				_gl = c.getContext( "experimental-webgl" );
+			}
+			catch( e )
+			{
+			}
+
+			if( !_gl )
+			{
+				alert( "Unable to initialize WebGL. Your browser may not support it." );
+				return;
+			}
+
+			_gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
+			_gl.clearDepth( 1.0 );
+			_gl.enable( _gl.DEPTH_TEST );
+			_gl.depthFunc( _gl.LEQUAL );
+
+			_videoPixels = new Uint8Array( new ArrayBuffer( _videoWidth * _videoHeight * 4 ) );
+
+			_glVideoTexture = _gl.createTexture();
+
+			updateTexture( _gl, _glVideoTexture, _videoElement );
+
+			// make a framebuffer
+			_glFrameBuffer = _gl.createFramebuffer();
+
+			// make this the current frame buffer
+			_gl.bindFramebuffer( _gl.FRAMEBUFFER, _glFrameBuffer );
+
+			// attach the texture to the framebuffer.
+			_gl.framebufferTexture2D( _gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, _glVideoTexture, 0 );
+
+			// check if you can read from this type of texture.
+			_videoTextureReadable = ( _gl.checkFramebufferStatus( _gl.FRAMEBUFFER ) == _gl.FRAMEBUFFER_COMPLETE );
+
+			_gl.bindFramebuffer( _gl.FRAMEBUFFER, null );
+
+			_videoElement.play();
+		}
+
+		function updateTexture( gl, glTexture, domElement )
+		{
+			gl.bindTexture( gl.TEXTURE_2D, glTexture );
+//			gl.pixelStorei( gl.UNPACK_FLIP_Y_WEBGL, true );
+			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, domElement );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
+			gl.bindTexture( gl.TEXTURE_2D, null );
+		}
+
+		function getVideoPixels( byteArray )
+		{
+			if( _videoTextureReadable )
+			{
+				updateTexture( _gl, _glVideoTexture, _videoElement );
+
+				_gl.bindFramebuffer( _gl.FRAMEBUFFER, _glFrameBuffer );
+
+				_gl.readPixels( 0, 0, _videoWidth, _videoHeight, _gl.RGBA, _gl.UNSIGNED_BYTE, _videoPixels );
+
+				byteArray.set( _videoPixels );
+
+				_gl.bindFramebuffer( _gl.FRAMEBUFFER, null );
+			}
+		}
+	</script>
+</head>
+<body onload="init()">
+<canvas id="glcanvas" width="640" height="480"></canvas>
+<div>
+	<canvas id="defrac-stage"></canvas>
+	<video id="video" controls muted preload>
+		<source src="video_640x360.mp4" type="video/mp4">
+		<source src="video_640x360.ogv" type="video/ogv">
+	</video>
+</div>
+</body>
+</html>

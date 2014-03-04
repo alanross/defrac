@@ -11,53 +11,76 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class NativeVideo extends Macro
+public final class UIVideoMacros extends Macro
 {
-	public NativeVideo( @Nonnull Context context )
+	public UIVideoMacros( @Nonnull Context context )
 	{
 		super( context );
 	}
 
 	@Nonnull
-	public MethodBody canPlayVideo()
+	public MethodBody supportsVideo()
 	{
 		// double ! turns return value into boolean
 		return MethodBody( Return( Untyped( "!!document.createElement('video').canPlayType" ) ) );
 	}
 
 	@Nonnull
-	public MethodBody canPlayMP4()
+	public MethodBody supportsMP4()
 	{
 		// return value, per crappy definition of js:
 		// "probably" if the browser is fairly confident it can play this format
 		// "maybe" if the browser thinks it might be able to play this format
 		// "" (an empty string) if the browser is certain it can’t play this format
-		return MethodBody( Return( Untyped( "!!document.createElement('video').canPlayType('video/mp4;')" ) ) );
+
+		return MethodBody(
+				Return( MethodCall(
+						StaticAccess( "defrac.lang.Bridge", "toString" ),
+						Untyped( "document.createElement('video').canPlayType('video/mp4;')" )
+				) )
+		);
 	}
 
 	@Nonnull
-	public MethodBody canPlayOGV()
-	{
-		return MethodBody( Return( Untyped( "!!document.createElement('video').canPlayType('video/ogg;')" ) ) );
-	}
-
-	@Nonnull
-	public MethodBody canPlayWEBM()
-	{
-		return MethodBody( Return( Untyped( "!!document.createElement('video').canPlayType('video/webm;')" ) ) );
-	}
-
-	@Nonnull
-	public MethodBody attachVideoElement( Parameter fileName )
+	public MethodBody supportsOGV()
 	{
 		return MethodBody(
-				Untyped( "var v = document.createElement('video');                 \n" +
+				Return( MethodCall(
+						StaticAccess( "defrac.lang.Bridge", "toString" ),
+						Untyped( "document.createElement('video').canPlayType('video/ogg;')" )
+				) )
+		);
+	}
+
+	@Nonnull
+	public MethodBody supportsWEBM()
+	{
+		return MethodBody(
+				Return( MethodCall(
+						StaticAccess( "defrac.lang.Bridge", "toString" ),
+						Untyped( "document.createElement('video').canPlayType('video/webm;')" )
+				) )
+		);
+	}
+
+	@Nonnull
+	public MethodBody isReady()
+	{
+		return MethodBody( Return( Untyped( "(document.getElementById( 'the_video' ).readyState == 4)" ) ) );
+	}
+
+	@Nonnull
+	public MethodBody attachVideoElement( Parameter fileUri )
+	{
+		return MethodBody(
+				Untyped( "" +
+						"var v = document.createElement('video');                  \n" +
 						"                                                          \n" +
 						"v.setAttribute( 'muted', true );                          \n" +
 						"v.setAttribute( 'preload', true );                        \n" +
 						"v.setAttribute( 'autoplay', true );                       \n" +
 						"v.setAttribute( 'loop', true );                           \n" +
-						"v.src = 'video_640x360.mp4';                              \n" + // to be replaced with filename
+						"v.src = ${0};                                             \n" +
 						"v.id = 'the_video';                                       \n" +
 						"v.play();                                                 \n" +
 						"                                                          \n" +
@@ -66,7 +89,7 @@ public final class NativeVideo extends Macro
 						"c.style.visibility = 'hidden';                            \n" +
 						"c.appendChild(v);                                         \n" +
 						"document.body.insertBefore( c, document.body.firstChild );\n",
-						fileName
+						MethodCall( StaticAccess( "defrac.lang.Bridge", "toJSString" ), ParameterAccess( fileUri ) )
 				)
 		);
 	}
@@ -75,7 +98,8 @@ public final class NativeVideo extends Macro
 	public MethodBody detachVideoElement()
 	{
 		return MethodBody(
-				Untyped( "var v = document.getElementById('the_video');            \n" +
+				Untyped( "" +
+						"var v = document.getElementById('the_video');             \n" +
 						"if( v ){ v.stop();}                                       \n" +
 						"                                                          \n" +
 						"var c = document.getElementById('the_video_container');   \n" +

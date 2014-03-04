@@ -1,7 +1,6 @@
 package com.adjazent.defrac.ui.widget.video;
 
 import com.adjazent.defrac.core.log.Context;
-import defrac.annotation.MacroWeb;
 import defrac.display.Canvas;
 import defrac.gl.*;
 import defrac.lang.Procedure;
@@ -14,7 +13,7 @@ import static com.adjazent.defrac.sandbox.samples.canvas.GLUtil.linkProgram;
  * @author Alan Ross
  * @version 0.1
  */
-public final class VideoCanvas extends Canvas implements Procedure<Canvas.Arguments>
+public final class UIVideoCanvas extends Canvas implements Procedure<Canvas.Arguments>
 {
 	private static final String FRAGMENT_SHADER = "" +
 			"precision mediump float;                              \n" +
@@ -39,15 +38,6 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 			"v_texCoord = a_texCoord;                              \n" +
 			"}";
 
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.attachVideoElement" )
-	private static native boolean attachVideoElement( String fileName );
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.detachVideoElement" )
-	private static native boolean detachVideoElement();
-
-	@MacroWeb( "com.adjazent.defrac.ui.video.NativeVideo.uploadVideoTexture" )
-	private static native boolean uploadVideoTexture( GL gl );
-
 	private static final byte[] BLANK_PIXELS = new byte[]{ 0, 0, 0, 127 };
 
 	private GLProgram program;
@@ -60,7 +50,7 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 	private int positionLocation;
 	private int texCoordLocation;
 
-	public VideoCanvas( float width, float height, String fileName )
+	public UIVideoCanvas( float width, float height, String fileName )
 	{
 		super( width, height );
 
@@ -68,7 +58,7 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 
 		reload = true;
 
-		attachVideoElement( fileName );
+		UIVideoUtil.attachVideoElement( fileName );
 	}
 
 	@Override
@@ -165,7 +155,7 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 
 		if( videoAvailable )
 		{
-			uploadVideoTexture( gl );
+			UIVideoUtil.uploadVideoTexture( gl );
 		}
 		else
 		{
@@ -198,6 +188,6 @@ public final class VideoCanvas extends Canvas implements Procedure<Canvas.Argume
 	@Override
 	public String toString()
 	{
-		return "[VideoCanvas]";
+		return "[UIVideoCanvas]";
 	}
 }

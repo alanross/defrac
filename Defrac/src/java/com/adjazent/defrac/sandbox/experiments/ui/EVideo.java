@@ -1,8 +1,8 @@
 package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.sandbox.Experiment;
-import com.adjazent.defrac.ui.widget.video.VideoCanvas;
-import com.adjazent.defrac.ui.widget.video.VideoTexture;
+import com.adjazent.defrac.ui.widget.video.UIVideoCanvas;
+import com.adjazent.defrac.ui.widget.video.UIVideoTexture;
 import defrac.display.Image;
 
 /**
@@ -11,6 +11,10 @@ import defrac.display.Image;
  */
 public final class EVideo extends Experiment
 {
+	final int videoWidth = 640;
+	final int videoHeight = 360;
+
+
 	public EVideo()
 	{
 	}
@@ -24,29 +28,38 @@ public final class EVideo extends Experiment
 
 	private void runVideoCanvas()
 	{
-		VideoCanvas videoCanvas = new VideoCanvas( 640, 360, "video_640x360" );
+		UIVideoCanvas videoCanvas = new UIVideoCanvas( videoWidth, videoHeight, "video_640x360.mp4" );
 		videoCanvas.moveTo( 100, 100 );
 		addChild( videoCanvas );
 	}
 
 	private void runVideoTexture()
 	{
-		VideoTexture videoTexture = new VideoTexture( 640, 360, "video_640x360" );
+		UIVideoTexture videoTexture = new UIVideoTexture( videoWidth, videoHeight, "video_640x360.mp4" );
 
-		Image img1 = new Image( videoTexture.createTexture( 0, 100, 210, 300 ) );
-		Image img2 = new Image( videoTexture.createTexture( 210, 100, 210, 300 ) );
-		Image img3 = new Image( videoTexture.createTexture( 420, 100, 210, 300 ) );
-		Image img4 = new Image( videoTexture.createTexture() );
+		int offsetX = 50;
+		int offsetY = 50;
 
-		img1.moveTo( 100, 50 );
-		img2.moveTo( 311, 50 );
-		img3.moveTo( 522, 50 );
-		img4.moveTo( 100, 370 );
+		int tileW = 60;
+		int tileH = 20;
 
-		addChild( img1 );
-		addChild( img2 );
-		addChild( img3 );
-		addChild( img4 );
+		int spacingX = 1;
+		int spacingY = 1;
+
+		int rows = ( int ) Math.floor( videoHeight / tileH );
+		int cols = ( int ) Math.floor( videoWidth / tileW );
+
+		for( int r = 0; r < rows; ++r )
+		{
+			for( int c = 0; c < cols; ++c )
+			{
+				int px = ( c * tileW );
+				int py = ( r * tileH );
+
+				Image img = new Image( videoTexture.createTextureTile( px, py, tileW, tileH ) );
+				addChild( img ).moveTo( px + ( c * spacingX ) + offsetX, py + ( r * spacingY ) + offsetY );
+			}
+		}
 	}
 
 	@Override
