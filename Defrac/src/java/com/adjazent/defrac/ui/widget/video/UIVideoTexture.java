@@ -33,7 +33,7 @@ public final class UIVideoTexture
 			pixels[ i ] = 0;
 			pixels[ i + 1 ] = 0;
 			pixels[ i + 2 ] = 0;
-			pixels[ i + 3 ] = 127;
+			pixels[ i + 3 ] = (byte)0xff;
 		}
 
 		_textureData = TextureData.Persistent.fromData(

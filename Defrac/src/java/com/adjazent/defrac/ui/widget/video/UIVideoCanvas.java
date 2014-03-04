@@ -38,7 +38,7 @@ public final class UIVideoCanvas extends Canvas implements Procedure<Canvas.Argu
 			"v_texCoord = a_texCoord;                              \n" +
 			"}";
 
-	private static final byte[] BLANK_PIXELS = new byte[]{ 0, 0, 0, 127 };
+	private static final byte[] BLANK_PIXELS = new byte[]{ 0, 0, 0, (byte)0xff };
 
 	private GLProgram program;
 	private boolean reload;
