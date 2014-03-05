@@ -54,7 +54,7 @@ public final class UIVideoTexture
 			}
 		} );
 
-		UIVideoUtil.attachVideoElement( videoUri );
+		UIVideoUtils.attachVideoElement( videoUri );
 	}
 
 	private void onEnterFrame()
@@ -65,9 +65,9 @@ public final class UIVideoTexture
 
 		gl.bindTexture( gl.TEXTURE_2D, texture );
 
-		if( UIVideoUtil.isReady() )
+		if( UIVideoUtils.isReady() )
 		{
-			UIVideoUtil.uploadVideoTexture( gl );
+			UIVideoUtils.uploadVideoTexture( gl );
 		}
 
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );

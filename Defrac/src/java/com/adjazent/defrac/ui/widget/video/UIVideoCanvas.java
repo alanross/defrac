@@ -58,7 +58,7 @@ public final class UIVideoCanvas extends Canvas implements Procedure<Canvas.Argu
 
 		reload = true;
 
-		UIVideoUtil.attachVideoElement( fileName );
+		UIVideoUtils.attachVideoElement( fileName );
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public final class UIVideoCanvas extends Canvas implements Procedure<Canvas.Argu
 
 		if( videoAvailable )
 		{
-			UIVideoUtil.uploadVideoTexture( gl );
+			UIVideoUtils.uploadVideoTexture( gl );
 		}
 		else
 		{

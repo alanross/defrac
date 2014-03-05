@@ -1,9 +1,13 @@
 package com.adjazent.defrac.sandbox.experiments.ui;
 
+import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.ui.widget.video.UIVideoCanvas;
 import com.adjazent.defrac.ui.widget.video.UIVideoTexture;
+import com.adjazent.defrac.ui.widget.video.UIVideoUtils;
 import defrac.display.Image;
+
+import static com.adjazent.defrac.core.log.Log.info;
 
 /**
  * @author Alan Ross
@@ -14,7 +18,6 @@ public final class EVideo extends Experiment
 	final int videoWidth = 640;
 	final int videoHeight = 360;
 
-
 	public EVideo()
 	{
 	}
@@ -22,20 +25,51 @@ public final class EVideo extends Experiment
 	@Override
 	protected void onInit()
 	{
-		runVideoTexture();
-//		runVideoCanvas();
+		if( !UIVideoUtils.supportsVideo() )
+		{
+			info( Context.DEFAULT, this, "Html5 video element not supported. Aborting." );
+			return;
+		}
+
+		String videoPath = "video_640x360";
+
+		int format = UIVideoUtils.getProbableVideoFormat();
+
+		if( format == -1 )
+		{
+			info( Context.DEFAULT, this, "No supported format found. Aborting" );
+			return;
+		}
+		if( format == UIVideoUtils.WEBM )
+		{
+			info( Context.DEFAULT, this, "Found WebM support, but have no video. Aborting." );
+			return;
+		}
+		if( format == UIVideoUtils.MP4 )
+		{
+			info( Context.DEFAULT, this, "Selected mp4 video format." );
+			videoPath += ".mp4";
+		}
+		if( format == UIVideoUtils.OGV )
+		{
+			info( Context.DEFAULT, this, "Selected ogv video format." );
+			videoPath += ".ogv";
+		}
+
+		runVideoTexture( videoPath );
+//		runVideoCanvas(videoPath);
 	}
 
-	private void runVideoCanvas()
+	private void runVideoCanvas( String videoPath )
 	{
-		UIVideoCanvas videoCanvas = new UIVideoCanvas( videoWidth, videoHeight, "video_640x360.mp4" );
+		UIVideoCanvas videoCanvas = new UIVideoCanvas( videoWidth, videoHeight, videoPath );
 		videoCanvas.moveTo( 100, 100 );
 		addChild( videoCanvas );
 	}
 
-	private void runVideoTexture()
+	private void runVideoTexture( String videoPath )
 	{
-		UIVideoTexture videoTexture = new UIVideoTexture( videoWidth, videoHeight, "video_640x360.mp4" );
+		UIVideoTexture videoTexture = new UIVideoTexture( videoWidth, videoHeight, videoPath );
 
 		int offsetX = 50;
 		int offsetY = 50;
