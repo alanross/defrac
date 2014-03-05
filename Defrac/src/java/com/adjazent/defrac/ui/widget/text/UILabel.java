@@ -59,6 +59,7 @@ public final class UILabel extends Layer implements IUITextRenderer
 
 		_background = new Quad( 1, 1, 0x0 );
 		_selection = new Quad( 1, 1, 0xFF000000 );
+		_selection.visible( false );
 		_container = new Layer();
 
 		addChild( _background );
