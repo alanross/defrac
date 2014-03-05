@@ -221,6 +221,11 @@ public final class UIList extends Layer implements IUIRenderListener
 		return _items.get( index );
 	}
 
+	public int getNumItems()
+	{
+		return _items.size();
+	}
+
 	public void resizeTo( int width, int height )
 	{
 		if( width < 1 || height < 1 )
