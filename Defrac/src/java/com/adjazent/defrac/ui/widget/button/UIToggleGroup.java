@@ -38,16 +38,14 @@ public final class UIToggleGroup implements IActionObserver
 	@Override
 	public void onActionEvent( Action action )
 	{
-		Object origin = action.getOrigin();
-
-		if( _buttons.indexOf( origin ) == -1 )
+		if( _buttons.indexOf( action.origin ) == -1 )
 		{
 			return;
 		}
 
-		if( action.getType() == UIActionType.BUTTON_SELECT )
+		if( action.type == UIActionType.BUTTON_SELECT )
 		{
-			if( origin != _current )
+			if( action.origin != _current )
 			{
 				if( _current != null )
 				{
@@ -56,7 +54,7 @@ public final class UIToggleGroup implements IActionObserver
 					_current.setSelected( false );
 				}
 
-				_current = ( UIToggleButton ) origin;
+				_current = ( UIToggleButton ) action.origin;
 
 				onSelect.send( _current );
 			}

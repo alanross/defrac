@@ -151,7 +151,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 	@Override
 	public void onActionEvent( Action action )
 	{
-		_label.setText( "Action received " + action.getOrigin() );
+		_label.setText( "Action received " + action.origin );
 	}
 
 	@Override

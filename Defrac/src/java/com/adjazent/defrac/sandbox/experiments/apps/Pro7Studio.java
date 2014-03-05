@@ -1,18 +1,18 @@
 package com.adjazent.defrac.sandbox.experiments.apps;
 
 import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.notification.action.Action;
-import com.adjazent.defrac.core.notification.action.IActionObserver;
+import com.adjazent.defrac.core.notification.signals.Signals;
 import com.adjazent.defrac.sandbox.Experiment;
+import com.adjazent.defrac.sandbox.experiments.apps.dnd.DnDManager;
+import com.adjazent.defrac.sandbox.experiments.apps.input.Pro7PanelInputTypeSelectorGroup;
+import com.adjazent.defrac.sandbox.experiments.apps.input.Pro7PanelInputs;
+import com.adjazent.defrac.sandbox.experiments.apps.playout.Pro7PanelPlayout;
+import com.adjazent.defrac.sandbox.experiments.apps.scenes.Pro7PanelScenes;
+import com.adjazent.defrac.sandbox.experiments.apps.settings.Pro7PanelSettings;
+import com.adjazent.defrac.sandbox.experiments.apps.theme.IPro7ThemeObserver;
+import com.adjazent.defrac.sandbox.experiments.apps.theme.Pro7Theme;
+import com.adjazent.defrac.sandbox.experiments.apps.video.Pro7VideoSourceManager;
 import com.adjazent.defrac.ui.surface.UISurface;
-import com.adjazent.defrac.ui.widget.button.UIButton;
-import com.adjazent.defrac.ui.widget.button.UIToggleButton;
-import com.adjazent.defrac.ui.widget.button.UIToggleGroup;
-import com.adjazent.defrac.ui.widget.list.UICellData;
-import com.adjazent.defrac.ui.widget.list.UIList;
-import com.adjazent.defrac.ui.widget.range.UISlider;
-import com.adjazent.defrac.ui.widget.text.UILabel;
-import defrac.display.Layer;
 
 import static com.adjazent.defrac.core.log.Log.info;
 
@@ -20,16 +20,16 @@ import static com.adjazent.defrac.core.log.Log.info;
  * @author Alan Ross
  * @version 0.1
  */
-public final class Pro7Studio extends Experiment implements IPro7CoreUIObserver, IActionObserver
+public final class Pro7Studio extends Experiment implements IPro7ThemeObserver
 {
-	private UILabel _label;
-	private UIButton _button;
-	private UIToggleButton _toggleButton1;
-	private UIToggleButton _toggleButton2;
-	private UIToggleGroup _toggleGroup;
-	private UISlider _slider;
-	private UISurface _surface;
-	private UIList _list;
+	private UISurface _background;
+
+	private UISurface _logo;
+	private Pro7PanelInputTypeSelectorGroup _inputGroup;
+	private Pro7PanelInputs _panelInputs;
+	private Pro7PanelScenes _panelScenes;
+	private Pro7PanelSettings _panelSettings;
+	private Pro7PanelPlayout _panelPlayout;
 
 	public Pro7Studio()
 	{
@@ -38,67 +38,61 @@ public final class Pro7Studio extends Experiment implements IPro7CoreUIObserver,
 	@Override
 	protected void onInit()
 	{
-		Pro7UI.initialize( this );
+		Pro7Theme.initialize( stage, this );
 	}
 
 	@Override
 	public void onPro7CoreUISetupSuccess()
 	{
-		_label = Pro7UI.get().createLabelBig();
-		_label.setText( "Hello UILabel!" );
-		_label.moveTo( 50, 50 );
+		Pro7VideoSourceManager.initialize();
 
-		_toggleButton1 = Pro7UI.get().createToggleButton( "ButtonSceneSettingsDeselected", "ButtonSceneSettingsSelected" );
-		_toggleButton1.moveTo( 50, 100 );
-		_toggleButton1.id = "tb1";
+		Signals.addType( Pro7SignalTypes.SCENE_EDIT_1 );
+		Signals.addType( Pro7SignalTypes.SCENE_EDIT_2 );
+		Signals.addType( Pro7SignalTypes.SCENE_EDIT_3 );
+		Signals.addType( Pro7SignalTypes.INPUT_TYPE_LIVE );
+		Signals.addType( Pro7SignalTypes.INPUT_TYPE_ON_DEMAND );
+		Signals.addType( Pro7SignalTypes.INPUT_TYPE_IMAGE );
+		Signals.addType( Pro7SignalTypes.INPUT_TYPE_USER );
+		Signals.addType( Pro7SignalTypes.SCENE_EDIT_SETTINGS_A );
+		Signals.addType( Pro7SignalTypes.SCENE_EDIT_SETTINGS_B );
+		Signals.addType( Pro7SignalTypes.BUTTON_SELECT );
+		Signals.addType( Pro7SignalTypes.BUTTON_DESELECT );
+		Signals.addType( Pro7SignalTypes.BUTTON_CLICK );
 
-		_toggleButton2 = Pro7UI.get().createToggleButton( "ButtonSceneSettingsDeselected", "ButtonSceneSettingsSelected" );
-		_toggleButton2.moveTo( 100, 100 );
-		_toggleButton2.id = "tb2";
+		_background = Pro7Theme.get().createSurface( "AppBackground" );
 
-		_toggleGroup = new UIToggleGroup( _toggleButton1, _toggleButton2 );
-		_toggleGroup.onSelect.add( this );
+		_logo = Pro7Theme.get().createSurface( "Logo", 0, 0, 154, 19 );
 
-		_button = Pro7UI.get().createButton( "ButtonChallenge" );
-		_button.moveTo( 150, 100 );
-		_button.onClick.add( this );
-		_button.id = "b1";
+		_inputGroup = new Pro7PanelInputTypeSelectorGroup();
+		_inputGroup.moveTo( 22, 12 );
 
-		_slider = Pro7UI.get().createSlider( "PlayOutSliderTrack", "PlayOutSliderThumb", "PlayOutSliderValue" );
-		_slider.resizeTo( 100, _slider.height() );
-		_slider.moveTo( 600, 100 );
-		_slider.onValueChange.add( this );
-		_slider.onValueComplete.add( this );
-		_slider.id = "s1";
+		_panelInputs = new Pro7PanelInputs();
+		_panelInputs.moveTo( 10, 60 );
 
-		_list = Pro7UI.get().createList();
-		_list.moveTo( 50, 150 );
-		_list.resizeTo( 200, 350 );
+		_panelScenes = new Pro7PanelScenes();
+		_panelScenes.moveTo( 10, 206 );
 
-		for( int i = 0; i < 80; ++i )
-		{
-			_list.addItem( new UICellData( "Cell Data: " + i, 20 ) );
-		}
+		_panelSettings = new Pro7PanelSettings();
+		_panelSettings.moveTo( 9, 496 );
 
-		_surface = Pro7UI.get().createSurface( "AreaEmpty" );
-		_surface.moveTo( 350, 150 );
-		_surface.resizeTo( 300, 100 );
-		_surface.id = "s1";
+		_panelPlayout = new Pro7PanelPlayout();
+		_panelPlayout.moveTo( 806, 60 );
 
-		Layer container = new Layer();
-		container.moveTo( 50, 50 );
+		addChild( _background );
+		addChild( _logo );
+		addChild( _inputGroup );
+		addChild( _panelInputs );
 
-		container.addChild( _label );
-		container.addChild( _toggleButton1 );
-		container.addChild( _toggleButton2 );
-		container.addChild( _button );
-		container.addChild( _slider );
-		container.addChild( _surface );
-		container.addChild( _list );
+		addChild( _panelScenes );
+		addChild( _panelSettings );
+		addChild( _panelPlayout );
 
-		addChild( container );
+		_inputGroup.selectLive();
+		_panelScenes.selectScene1();
 
-		activateEvents();
+		DnDManager.register( _panelInputs.getDemoContent1(), _panelScenes.getSceneSlot1(), _panelScenes.getSceneSlot2() );
+
+		onResize( stage.width(), stage.height() );
 	}
 
 	@Override
@@ -108,11 +102,11 @@ public final class Pro7Studio extends Experiment implements IPro7CoreUIObserver,
 	}
 
 	@Override
-	public void onActionEvent( Action action )
+	public void onResize( float width, float height )
 	{
-		_label.setText( "Action received " + action.getOrigin() );
+		_background.resizeTo( width, height );
+		_logo.moveTo( ( int ) ( ( width - _logo.width() ) * 0.5 ), 20 );
 	}
-
 
 	@Override
 	public String toString()

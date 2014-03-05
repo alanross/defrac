@@ -1,10 +1,10 @@
-package com.adjazent.defrac.sandbox.experiments.apps;
+package com.adjazent.defrac.sandbox.experiments.apps.theme;
 
 /**
  * @author Alan Ross
  * @version 0.1
  */
-public interface IPro7CoreUIObserver
+public interface IPro7ThemeObserver
 {
 	void onPro7CoreUISetupSuccess();
 

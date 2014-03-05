@@ -12,7 +12,9 @@ import com.adjazent.defrac.ui.widget.list.UICellData;
 import com.adjazent.defrac.ui.widget.text.UILabel;
 import defrac.display.DisplayObjectContainer;
 import defrac.display.event.UIEvent;
+import defrac.display.event.UIEventTarget;
 import defrac.display.event.UIEventType;
+import defrac.geom.Point;
 
 import javax.annotation.Nonnull;
 
@@ -46,6 +48,14 @@ public class MyCellRenderer extends UISurface implements IUICellRenderer, IActio
 	private void repaint()
 	{
 		setSkin( ( _data.getSelected() ? _skinSelected : _skinDeselected ) );
+	}
+
+	@Override
+	public UIEventTarget captureEventTarget( Point point )
+	{
+		Point local = this.globalToLocal( new Point( point.x, point.y ) );
+
+		return ( containsPoint( local.x, local.y ) ) ? this : null;
 	}
 
 	@Override

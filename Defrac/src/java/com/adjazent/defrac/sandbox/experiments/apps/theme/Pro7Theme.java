@@ -1,6 +1,7 @@
-package com.adjazent.defrac.sandbox.experiments.apps;
+package com.adjazent.defrac.sandbox.experiments.apps.theme;
 
 import com.adjazent.defrac.core.error.SingletonError;
+import com.adjazent.defrac.sandbox.experiments.apps.dnd.DnDManager;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderSparrowFont;
@@ -20,6 +21,7 @@ import com.adjazent.defrac.ui.widget.list.UIList;
 import com.adjazent.defrac.ui.widget.list.UIListInteractions;
 import com.adjazent.defrac.ui.widget.range.UISlider;
 import com.adjazent.defrac.ui.widget.text.UILabel;
+import defrac.display.Stage;
 
 import java.util.LinkedList;
 
@@ -27,38 +29,39 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class Pro7UI implements IUIResourceLoaderQueueObserver, IUICellRendererFactory
+public final class Pro7Theme implements IUIResourceLoaderQueueObserver, IUICellRendererFactory
 {
-	private static Pro7UI _instance;
+	private static Pro7Theme _instance;
 
 	private UITextureAtlas _atlas;
 
-	private final IPro7CoreUIObserver _observer;
+	private final IPro7ThemeObserver _observer;
 
 	private LinkedList<IUICellRenderer> _rendererPool = new LinkedList<IUICellRenderer>();
 	private int _rendererPoolGrowthRate = 8;
 
-	public static void initialize( IPro7CoreUIObserver observer )
+	public static void initialize( Stage stage ,IPro7ThemeObserver observer )
 	{
 		if( _instance != null )
 		{
-			throw new SingletonError( "Pro7UI" );
+			throw new SingletonError( "Pro7Theme" );
 		}
 
-		_instance = new Pro7UI( observer );
+		_instance = new Pro7Theme( stage, observer );
 	}
 
-	public static Pro7UI get()
+	public static Pro7Theme get()
 	{
 		return _instance;
 	}
 
-	private Pro7UI( IPro7CoreUIObserver observer )
+	private Pro7Theme( Stage stage, IPro7ThemeObserver observer )
 	{
 		_observer = observer;
 
 		UIFontManager.initialize();
 		UITextureManager.initialize();
+		DnDManager.initialize( stage );
 
 		loadAssets();
 	}
@@ -147,7 +150,7 @@ public final class Pro7UI implements IUIResourceLoaderQueueObserver, IUICellRend
 		return new UILabel( new UITextFormat( "Helvetica11" ) );
 	}
 
-	public UIButton createButton( String skinIdNormal )
+	public UIButton createButton( String skinIdNormal, String skinIdActive )
 	{
 		return new UIButton( UISkinFactory.create( _atlas.getTexture( skinIdNormal ) ) );
 	}
@@ -186,6 +189,6 @@ public final class Pro7UI implements IUIResourceLoaderQueueObserver, IUICellRend
 	@Override
 	public String toString()
 	{
-		return "[Pro7UI]";
+		return "[Pro7Theme]";
 	}
 }

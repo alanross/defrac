@@ -12,15 +12,15 @@ import java.util.LinkedList;
  */
 public class Action
 {
-	private String _type;
+	public final int type;
 
-	private Object _origin;
+	public Object origin;
 
 	private LinkedList<IActionObserver> _observer;
 
-	public Action( String type )
+	public Action( int type )
 	{
-		_type = type;
+		this.type = type;
 
 		_observer = new LinkedList<IActionObserver>();
 	}
@@ -52,7 +52,7 @@ public class Action
 
 	public void send( Object origin )
 	{
-		_origin = origin;
+		this.origin = origin;
 
 		int n = _observer.size();
 
@@ -66,25 +66,12 @@ public class Action
 	{
 		_observer.clear();
 		_observer = null;
-
-		_type = null;
-		_origin = null;
-	}
-
-	public String getType()
-	{
-		return _type;
-	}
-
-	public Object getOrigin()
-	{
-		return _origin;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "[Action type:" + _type + ", origin:" + _origin + "]";
+		return "[Action type:" + type + ", origin:" + origin + "]";
 	}
 }
 

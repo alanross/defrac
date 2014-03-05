@@ -6,14 +6,14 @@ package com.adjazent.defrac.ui.widget;
  */
 public final class UIActionType
 {
-	public static final String BUTTON_CLICK = "BUTTON_CLICK";
-	public static final String BUTTON_SELECT = "BUTTON_SELECT";
+	public static final int BUTTON_CLICK = 1;
+	public static final int BUTTON_SELECT = 2;
 
-	public static final String SLIDER_VALUE_CHANGED = "SLIDER_VALUE_CHANGED";
-	public static final String SLIDER_VALUE_COMPLETED = "SLIDER_VALUE_CHANGED";
+	public static final int SLIDER_VALUE_CHANGED = 3;
+	public static final int SLIDER_VALUE_COMPLETED = 4;
 
-	public static final String CELL_CLICK = "CELL_CLICK";
-	public static final String CELL_SELECT = "CELL_SELECT";
+	public static final int CELL_CLICK = 5;
+	public static final int CELL_SELECT = 6;
 
 	private UIActionType()
 	{

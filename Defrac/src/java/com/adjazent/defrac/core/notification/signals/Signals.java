@@ -2,7 +2,6 @@ package com.adjazent.defrac.core.notification.signals;
 
 import com.adjazent.defrac.core.error.ElementAlreadyExistsError;
 import com.adjazent.defrac.core.error.ElementDoesNotExistError;
-import com.adjazent.defrac.core.error.SingletonError;
 
 import java.util.LinkedList;
 
@@ -12,42 +11,14 @@ import java.util.LinkedList;
  */
 public final class Signals
 {
-	private static Signals _instance;
-
-	private static int __id = -1;
-
 	private static final LinkedList<ISignalReceiver> receivers = new LinkedList<ISignalReceiver>();
 	private static final LinkedList<Integer> types = new LinkedList<Integer>();
 
-	public static void initialize()
-	{
-		if( _instance != null )
-		{
-			throw new SingletonError( "Signals" );
-		}
-
-		_instance = new Signals();
-	}
-
-	public static int createTypeID()
-	{
-		__id++;
-
-		if( hasSignalType( __id ) )
-		{
-			throw new ElementAlreadyExistsError();
-		}
-
-		types.addFirst( __id );
-
-		return __id;
-	}
-
 	public static void send( int signalType, ISignalSource signalSource )
 	{
-		if( !hasSignalType( signalType ) )
+		if( !hasType( signalType ) )
 		{
-			throw new ElementAlreadyExistsError();
+			throw new ElementDoesNotExistError( "Signals send." );
 		}
 
 		int n = receivers.size();
@@ -58,7 +29,17 @@ public final class Signals
 		}
 	}
 
-	public static boolean hasSignalType( int type )
+	public static void addType( int signalType )
+	{
+		if( hasType( signalType ) )
+		{
+			throw new ElementAlreadyExistsError( "Signals addType: " + signalType );
+		}
+
+		types.addFirst( signalType );
+	}
+
+	public static boolean hasType( int type )
 	{
 		return ( -1 != types.indexOf( type ) );
 	}
