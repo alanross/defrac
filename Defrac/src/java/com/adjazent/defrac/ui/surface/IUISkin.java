@@ -15,4 +15,6 @@ public interface IUISkin
 	float getDefaultWidth();
 
 	float getDefaultHeight();
+
+	IUISkin clone();
 }

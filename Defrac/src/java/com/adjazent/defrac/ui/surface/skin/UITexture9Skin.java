@@ -36,7 +36,7 @@ public final class UITexture9Skin implements IUISkin
 	private int _minWidth = 0;
 	private int _minHeight = 0;
 
-	private MRectangle _skinRect;
+	private UITexture _texture;
 
 	public UITexture9Skin()
 	{
@@ -54,10 +54,10 @@ public final class UITexture9Skin implements IUISkin
 
 	public void init( UITexture texture )
 	{
+		_texture = texture;
+
 		TextureData source = texture.getTextureData();
 		UISlice9Grid sliceGrid = texture.getSliceGrid();
-
-		_skinRect = texture.getSkinRect();
 
 		_sliceLeft = sliceGrid.left;
 		_sliceRight = sliceGrid.right;
@@ -67,7 +67,7 @@ public final class UITexture9Skin implements IUISkin
 		_minWidth = _sliceLeft + _sliceRight;
 		_minHeight = _sliceTop + _sliceBottom;
 
-		MRectangle[] slices = UISlice9Grid.createSlices( _skinRect, sliceGrid );
+		MRectangle[] slices = UISlice9Grid.createSlices( texture.getSkinRect(), sliceGrid );
 
 		_tl.texture( slice( source, slices[ 0 ] ) );
 		_tc.texture( slice( source, slices[ 1 ] ) );
@@ -193,13 +193,13 @@ public final class UITexture9Skin implements IUISkin
 	@Override
 	public float getDefaultWidth()
 	{
-		return ( float ) _skinRect.width;
+		return ( float ) _texture.getSkinRect().width;
 	}
 
 	@Override
 	public float getDefaultHeight()
 	{
-		return ( float ) _skinRect.height;
+		return ( float ) _texture.getSkinRect().height;
 	}
 
 	public int getMinWidth()
@@ -210,6 +210,16 @@ public final class UITexture9Skin implements IUISkin
 	public int getMinHeight()
 	{
 		return _minHeight;
+	}
+
+	@Override
+	public IUISkin clone()
+	{
+		UITexture9Skin skin = new UITexture9Skin();
+
+		skin.init( _texture );
+
+		return skin;
 	}
 
 	@Override

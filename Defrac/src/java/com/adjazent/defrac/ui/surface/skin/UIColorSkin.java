@@ -11,6 +11,7 @@ import defrac.display.Quad;
 public final class UIColorSkin implements IUISkin
 {
 	private Quad _quad = new Quad( 1, 1, 0 );
+	private int _color = 0x0;
 
 	public UIColorSkin()
 	{
@@ -18,6 +19,7 @@ public final class UIColorSkin implements IUISkin
 
 	public void init( int color )
 	{
+		_color = color;
 		_quad.color( color );
 	}
 
@@ -49,6 +51,16 @@ public final class UIColorSkin implements IUISkin
 	public float getDefaultHeight()
 	{
 		return 1;
+	}
+
+	@Override
+	public IUISkin clone()
+	{
+		UIColorSkin skin = new UIColorSkin();
+
+		skin.init( _color );
+
+		return skin;
 	}
 
 	@Override

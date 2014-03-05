@@ -4,6 +4,7 @@ import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.texture.UITexture;
 import defrac.display.Image;
+import defrac.display.Texture;
 
 /**
  * @author Alan Ross
@@ -20,6 +21,11 @@ public final class UITextureSkin implements IUISkin
 	public void init( UITexture texture )
 	{
 		_image.texture( texture.getTexture() );
+	}
+
+	public void init( Texture texture )
+	{
+		_image.texture( texture );
 	}
 
 	@Override
@@ -50,6 +56,16 @@ public final class UITextureSkin implements IUISkin
 	public float getDefaultHeight()
 	{
 		return _image.texture().height;
+	}
+
+	@Override
+	public IUISkin clone()
+	{
+		UITextureSkin skin = new UITextureSkin();
+
+		skin.init( _image.texture() );
+
+		return skin;
 	}
 
 	@Override
