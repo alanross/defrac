@@ -91,6 +91,8 @@ public final class Pro7Studio extends Experiment implements IPro7ThemeObserver
 		_panelScenes.selectScene1();
 
 		DnDManager.register( _panelInputs.getDemoContent1(), _panelScenes.getSceneSlot1(), _panelScenes.getSceneSlot2() );
+		DnDManager.register( _panelInputs.getDemoContent2(), _panelScenes.getSceneSlot1(), _panelScenes.getSceneSlot2() );
+		DnDManager.register( _panelInputs.getDemoContent3(), _panelScenes.getSceneSlot1(), _panelScenes.getSceneSlot2() );
 
 		onResize( stage.width(), stage.height() );
 	}

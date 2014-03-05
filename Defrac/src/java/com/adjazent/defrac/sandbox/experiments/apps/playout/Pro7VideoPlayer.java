@@ -14,7 +14,6 @@ public final class Pro7VideoPlayer extends UISurface
 {
 	private UISlider _slider;
 	private Image _video;
-	private UISurface _videoArea;
 
 	public Pro7VideoPlayer()
 	{
