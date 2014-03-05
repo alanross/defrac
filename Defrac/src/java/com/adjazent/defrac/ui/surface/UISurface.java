@@ -10,6 +10,8 @@ import defrac.display.Layer;
 import defrac.display.event.UIEventTarget;
 import defrac.geom.Point;
 
+import java.util.Iterator;
+
 /**
  * @author Alan Ross
  * @version 0.1
@@ -23,6 +25,19 @@ public class UISurface extends Layer implements IDisposable
 	private MRectangle _bounds;
 
 	private IUISkin _skin;
+
+	public UISurface()
+	{
+		super();
+
+		skinLayer = new Layer();
+		contentLayer = new Layer();
+
+		super.addChild( skinLayer );
+		super.addChild( contentLayer );
+
+		_bounds = new MRectangle( 0, 0, 0, 0 );
+	}
 
 	public UISurface( IUISkin skin )
 	{
@@ -61,7 +76,24 @@ public class UISurface extends Layer implements IDisposable
 	{
 		Point local = this.globalToLocal( new Point( point.x, point.y ) );
 
-		return ( containsPoint( local.x, local.y ) ) ? this : null;
+		if( _bounds.contains( local.x, local.y ) )
+		{
+			Iterator<DisplayObject> it = contentLayer.iterator();
+
+			while( it.hasNext() )
+			{
+				DisplayObject d = it.next();
+
+				if( d.captureEventTarget( point ) != null )
+				{
+					return d;
+				}
+			}
+
+			return this;
+		}
+
+		return null;
 	}
 
 	public void setSkin( IUISkin skin )
@@ -86,7 +118,11 @@ public class UISurface extends Layer implements IDisposable
 	public DisplayObject resizeTo( float width, float height )
 	{
 		_bounds.resizeTo( width, height );
-		_skin.resizeTo( width, height );
+
+		if( _skin != null )
+		{
+			_skin.resizeTo( width, height );
+		}
 
 		return this;
 	}
@@ -110,7 +146,7 @@ public class UISurface extends Layer implements IDisposable
 	}
 
 	@Override
-	public <D extends DisplayObject> D addChild(@javax.annotation.Nonnull D child)
+	public <D extends DisplayObject> D addChild( @javax.annotation.Nonnull D child )
 	{
 		return contentLayer.addChild( child );
 	}
@@ -123,31 +159,31 @@ public class UISurface extends Layer implements IDisposable
 //	}
 
 	@Override
-	public boolean contains(@javax.annotation.Nonnull defrac.display.DisplayObject child)
+	public boolean contains( @javax.annotation.Nonnull defrac.display.DisplayObject child )
 	{
 		return contentLayer.contains( child );
 	}
 
 	@Override
-	public DisplayObject getChildAt(int index)
+	public DisplayObject getChildAt( int index )
 	{
 		return contentLayer.getChildAt( index );
 	}
 
 	@Override
-	public int getChildIndex(@javax.annotation.Nonnull DisplayObject child)
+	public int getChildIndex( @javax.annotation.Nonnull DisplayObject child )
 	{
 		return contentLayer.getChildIndex( child );
 	}
 
 	@Override
-	public <D extends defrac.display.DisplayObject> D removeChild(@javax.annotation.Nonnull D child)
+	public <D extends defrac.display.DisplayObject> D removeChild( @javax.annotation.Nonnull D child )
 	{
 		return contentLayer.removeChild( child );
 	}
 
 	@Override
-	public defrac.display.DisplayObject removeChildAt(int index)
+	public defrac.display.DisplayObject removeChildAt( int index )
 	{
 		return contentLayer.removeChildAt( index );
 	}
