@@ -5,7 +5,6 @@ import com.adjazent.defrac.sandbox.events.IEnterFrame;
 import com.adjazent.defrac.sandbox.events.IKeyboard;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.widget.list.UICellData;
-import com.adjazent.defrac.ui.widget.list.UICellRendererFactory;
 import com.adjazent.defrac.ui.widget.list.UIList;
 import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
 import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
@@ -44,7 +43,7 @@ public final class EUIList extends Experiment implements IUIResourceLoaderQueueO
 	@Override
 	public void onResourceLoadingSuccess()
 	{
-		_list = new UIList( new UICellRendererFactory( new UITextFormat( "Helvetica" ) ) );
+		_list = new UIList( new MyCellRendererFactory( new UITextFormat( "Helvetica" ) ) );
 		_list.moveTo( 100.0f, 150.0f );
 		_list.resizeTo( 200, 350 );
 		_list.setBackground( 0xFFA2A2A2 );

@@ -7,8 +7,11 @@ import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.utils.render.IUIRenderListener;
 import com.adjazent.defrac.ui.utils.render.UIRenderRequest;
+import defrac.display.DisplayObjectContainer;
 import defrac.display.Layer;
 import defrac.display.Quad;
+import defrac.display.event.UIEventTarget;
+import defrac.geom.Point;
 
 import java.util.LinkedList;
 
@@ -34,6 +37,8 @@ public final class UIList extends Layer implements IUIRenderListener
 	private int _offset = 0;
 	private int _cellSpacing = 1;
 
+	private UIListInteractions _interactions;
+
 	public UIList( IUICellRendererFactory rendererFactory )
 	{
 		_factory = rendererFactory;
@@ -42,6 +47,44 @@ public final class UIList extends Layer implements IUIRenderListener
 
 		addChild( _background );
 		addChild( _container );
+	}
+
+	public UIList( IUICellRendererFactory rendererFactory, UIListInteractions interactions )
+	{
+		_factory = rendererFactory;
+
+		_renderRequest = new UIRenderRequest( this );
+
+		addChild( _background );
+		addChild( _container );
+
+		_interactions = interactions;
+		_interactions.attach( this );
+	}
+
+	@Override
+	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
+	{
+		Point local = this.globalToLocal( new Point( point.x, point.y ) );
+
+		if( _bounds.contains( local.x, local.y ) )
+		{
+			int n = _renderer.size();
+
+			while( --n > -1 )
+			{
+				DisplayObjectContainer c = _renderer.get( n ).getContainer();
+
+				if( c.captureEventTarget( point ) != null )
+				{
+					return c;
+				}
+			}
+
+			return this;
+		}
+
+		return null;
 	}
 
 	private IUICellRenderer getAssociatedRenderer( UICellData data )
@@ -126,7 +169,7 @@ public final class UIList extends Layer implements IUIRenderListener
 
 					item.inViewRange = true;
 
-					renderer.onAttach( item, (float) viewWidth, (float) item.getHeight() );
+					renderer.onAttach( item, ( float ) viewWidth, ( float ) item.getHeight() );
 				}
 				else
 				{

@@ -1,5 +1,6 @@
 package com.adjazent.defrac.sandbox;
 
+import com.adjazent.defrac.sandbox.experiments.apps.Pro7Studio;
 import com.adjazent.defrac.sandbox.experiments.core.EArrayUtils;
 import com.adjazent.defrac.sandbox.experiments.core.EDateUtils;
 import com.adjazent.defrac.sandbox.experiments.core.EStringUtils;
@@ -53,13 +54,15 @@ public final class Sandbox extends AbstractSandbox
 		add( new EUIList() );
 		add( new EUIWidgets() );
 		add( new EMacros() );
+		//----------------------------- apps
+		add( new Pro7Studio() );
 		//----------------------------- issues
 		add( new EAddChild() );
 		add( new EResourcePath() );
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( EVideo.class );
+		activate( Pro7Studio.class );
 	}
 
 	public static void main( final String[] args )

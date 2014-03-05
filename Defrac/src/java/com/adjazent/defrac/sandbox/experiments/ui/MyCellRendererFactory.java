@@ -1,7 +1,9 @@
-package com.adjazent.defrac.ui.widget.list;
+package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.ui.surface.skin.UISkinFactory;
 import com.adjazent.defrac.ui.text.UITextFormat;
+import com.adjazent.defrac.ui.widget.list.IUICellRenderer;
+import com.adjazent.defrac.ui.widget.list.IUICellRendererFactory;
 
 import java.util.LinkedList;
 
@@ -9,13 +11,13 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UICellRendererFactory implements IUICellRendererFactory
+public final class MyCellRendererFactory implements IUICellRendererFactory
 {
 	private LinkedList<IUICellRenderer> _rendererPool = new LinkedList<IUICellRenderer>();
 	private int _rendererPoolGrowthRate = 8;
 	private UITextFormat _textFormat;
 
-	public UICellRendererFactory( UITextFormat textFormat )
+	public MyCellRendererFactory( UITextFormat textFormat )
 	{
 		_textFormat = textFormat;
 	}
@@ -28,7 +30,7 @@ public final class UICellRendererFactory implements IUICellRendererFactory
 
 			while( --n > -1 )
 			{
-				_rendererPool.addLast( new UICellRenderer(
+				_rendererPool.addLast( new MyCellRenderer(
 						UISkinFactory.create( 0xFF494949 ),
 						UISkinFactory.create( 0xFF898989 ),
 						_textFormat
@@ -47,7 +49,7 @@ public final class UICellRendererFactory implements IUICellRendererFactory
 	@Override
 	public String toString()
 	{
-		return "[UICellRendererFactory]";
+		return "[MyCellRendererFactory]";
 	}
 }
 

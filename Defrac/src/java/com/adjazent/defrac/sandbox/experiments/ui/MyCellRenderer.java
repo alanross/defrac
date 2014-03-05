@@ -1,4 +1,4 @@
-package com.adjazent.defrac.ui.widget.list;
+package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.core.error.GenericError;
 import com.adjazent.defrac.core.notification.action.Action;
@@ -7,6 +7,8 @@ import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.widget.UIActionType;
+import com.adjazent.defrac.ui.widget.list.IUICellRenderer;
+import com.adjazent.defrac.ui.widget.list.UICellData;
 import com.adjazent.defrac.ui.widget.text.UILabel;
 import defrac.display.DisplayObjectContainer;
 import defrac.display.event.UIEvent;
@@ -18,7 +20,7 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public class UICellRenderer extends UISurface implements IUICellRenderer, IActionObserver
+public class MyCellRenderer extends UISurface implements IUICellRenderer, IActionObserver
 {
 	public final Action onClick = new Action( UIActionType.CELL_CLICK );
 
@@ -28,7 +30,7 @@ public class UICellRenderer extends UISurface implements IUICellRenderer, IActio
 
 	private UICellData _data;
 
-	public UICellRenderer( IUISkin skinDeselected, IUISkin skinSelected, UITextFormat textFormat )
+	public MyCellRenderer( IUISkin skinDeselected, IUISkin skinSelected, UITextFormat textFormat )
 	{
 		super( skinDeselected );
 
@@ -126,6 +128,6 @@ public class UICellRenderer extends UISurface implements IUICellRenderer, IActio
 	@Override
 	public String toString()
 	{
-		return "[UICellRenderer text:" + _label.getText() + "]";
+		return "[MyCellRenderer text:" + _label.getText() + "]";
 	}
 }
