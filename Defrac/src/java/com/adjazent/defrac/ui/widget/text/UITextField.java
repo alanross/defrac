@@ -77,14 +77,29 @@ public final class UITextField extends UITextElement
 		int caretIndex = getCaretIndex();
 		StringBuilder s = new StringBuilder( getText() );
 
+		final int i0 = getSelectionFirst();
+		final int i1 = getSelectionLast();
+
+
 		if( keyCode < SPECIAL )
 		{
 			switch( keyCode )
 			{
 				case DEL:
-					s.deleteCharAt( caretIndex );
-					processor.setText( s.toString() );
-					setCaretIndex( --caretIndex );
+					if( i0 > -1 && i1 > 0 )
+					{
+						s.delete( i0, i1+1 );
+						processor.setText( s.toString() );
+						setSelection( -1, -1 );
+						setCaretIndex( i0 );
+					}
+					else if( caretIndex > -1 && s.length() > 0 )
+					{
+						s.deleteCharAt( caretIndex );
+						processor.setText( s.toString() );
+						setCaretIndex( --caretIndex );
+					}
+
 					return;
 
 				case LEFT:

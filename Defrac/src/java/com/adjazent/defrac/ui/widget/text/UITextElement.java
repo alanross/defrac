@@ -209,6 +209,8 @@ public abstract class UITextElement extends UISurface implements IUITextRenderer
 
 	public void setCaretIndex( int index )
 	{
+		index = MMath.clampInt( index, -1, processor.getTextLength() - 1 );
+
 		_caretIndex = index;
 
 		processor.requestRenderAction();
@@ -265,6 +267,16 @@ public abstract class UITextElement extends UISurface implements IUITextRenderer
 	public int getCaretIndex()
 	{
 		return _caretIndex;
+	}
+
+	public int getSelectionFirst()
+	{
+		return _selection.firstIndex;
+	}
+
+	public int getSelectionLast()
+	{
+		return _selection.lastIndex;
 	}
 
 	public void setSelectionColor( int color )
