@@ -46,6 +46,11 @@ public final class UIRenderRequest
 		_invalidated = false;
 	}
 
+	public boolean isDirty()
+	{
+		return _invalidated;
+	}
+
 	@Override
 	public String toString()
 	{
