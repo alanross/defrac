@@ -93,8 +93,7 @@ public final class UITextInteractor
 		int n = glyphs.size();
 		UIGlyph glyph;
 
-		selection.firstIndex = -1;
-		selection.lastIndex = -1;
+		selection.setTo( -1, -1 );
 
 		for( int i = 0; i < n; ++i )
 		{
@@ -104,13 +103,11 @@ public final class UITextInteractor
 			{
 				if( UIGlyphUtils.isWordSeparator( glyph ) )
 				{
-					selection.firstIndex = i;
-					selection.lastIndex = i;
+					selection.setTo( i, i );
 				}
 				else
 				{
-					selection.firstIndex = 0;
-					selection.lastIndex = n - 1;
+					selection.setTo( 0, n - 1 );
 
 					for( int min = i; min > -1; --min )
 					{
