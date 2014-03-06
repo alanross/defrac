@@ -66,7 +66,7 @@ public final class UITextComposerMultiLine implements IUITextComposer
 		return null;
 	}
 
-	public UITextLayout process( LinkedList<UIGlyph> glyphs, LinkedList<UIGlyph> ellipsis, UIFont font, UITextFormat format, MRectangle maxSize )
+	public UITextLayout layoutText( LinkedList<UIGlyph> glyphs, LinkedList<UIGlyph> ellipsis, UIFont font, UITextFormat format, MRectangle maxSize )
 	{
 		LinkedList<UITextLine> lines = new LinkedList<UITextLine>();
 		UITextLine line;
@@ -142,7 +142,6 @@ public final class UITextComposerMultiLine implements IUITextComposer
 
 			bounds.height += offsetStep;
 		}
-
 
 		return new UITextLayout( lines, bounds );
 	}

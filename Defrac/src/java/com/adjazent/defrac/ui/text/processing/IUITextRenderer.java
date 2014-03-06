@@ -8,6 +8,6 @@ import com.adjazent.defrac.ui.text.UITextFormat;
  */
 public interface IUITextRenderer
 {
-	public void process( UITextLayout block, UITextFormat format );
+	public void renderText( UITextLayout block, UITextFormat format );
 }
 

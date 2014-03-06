@@ -180,7 +180,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 	}
 
 	@Override
-	public void process( UITextLayout block, UITextFormat format )
+	public void renderText( UITextLayout block, UITextFormat format )
 	{
 		while( !_images.isEmpty() )
 		{

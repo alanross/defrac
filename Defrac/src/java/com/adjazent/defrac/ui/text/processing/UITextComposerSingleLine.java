@@ -18,7 +18,7 @@ public final class UITextComposerSingleLine implements IUITextComposer
 	{
 	}
 
-	public UITextLayout process( LinkedList<UIGlyph> glyphs, LinkedList<UIGlyph> ellipsis, UIFont font, UITextFormat format, MRectangle maxSize )
+	public UITextLayout layoutText( LinkedList<UIGlyph> glyphs, LinkedList<UIGlyph> ellipsis, UIFont font, UITextFormat format, MRectangle maxSize )
 	{
 		LinkedList<UITextLine> lines = new LinkedList<UITextLine>();
 

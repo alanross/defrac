@@ -128,9 +128,9 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 	{
 		LinkedList<UIGlyph> copy = ( LinkedList<UIGlyph> ) _glyphs.clone();
 
-		_block = _composer.process( copy, _ellipsis, _font, _format, _bounds );
+		_block = _composer.layoutText( copy, _ellipsis, _font, _format, _bounds );
 
-		_renderer.process( _block, _format );
+		_renderer.renderText( _block, _format );
 	}
 
 	public void dispose()
@@ -246,6 +246,11 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 	public int getTextHeight()
 	{
 		return ( _block != null ) ? ( int ) _block.bounds.height : 0;
+	}
+
+	public boolean isDirty()
+	{
+		return _renderRequest.isDirty();
 	}
 
 	@Override

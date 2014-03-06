@@ -13,6 +13,6 @@ import java.util.LinkedList;
  */
 public interface IUITextComposer
 {
-	UITextLayout process( LinkedList<UIGlyph> glyphs, LinkedList<UIGlyph> ellipsis, UIFont font, UITextFormat format, MRectangle maxSize );
+	UITextLayout layoutText( LinkedList<UIGlyph> glyphs, LinkedList<UIGlyph> ellipsis, UIFont font, UITextFormat format, MRectangle maxSize );
 }
 
