@@ -110,6 +110,11 @@ public final class UILabel extends Layer implements IUITextRenderer
 		}
 	}
 
+	@Override
+	public void renderTextDependantAction()
+	{
+	}
+
 	public void setFormat( UITextFormat value )
 	{
 		_processor.setFormat( value );

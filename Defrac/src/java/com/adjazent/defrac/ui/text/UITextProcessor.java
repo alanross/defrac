@@ -131,6 +131,7 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		_block = _composer.layoutText( copy, _ellipsis, _font, _format, _bounds );
 
 		_renderer.renderText( _block, _format );
+		_renderer.renderTextDependantAction();
 	}
 
 	public void dispose()
@@ -248,9 +249,12 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		return ( _block != null ) ? ( int ) _block.bounds.height : 0;
 	}
 
-	public boolean isDirty()
+	public void requestRenderAction()
 	{
-		return _renderRequest.isDirty();
+		if( !_renderRequest.isDirty() )
+		{
+			_renderer.renderTextDependantAction();
+		}
 	}
 
 	@Override

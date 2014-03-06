@@ -9,5 +9,7 @@ import com.adjazent.defrac.ui.text.UITextFormat;
 public interface IUITextRenderer
 {
 	public void renderText( UITextLayout block, UITextFormat format );
+
+	public void renderTextDependantAction();
 }
 
