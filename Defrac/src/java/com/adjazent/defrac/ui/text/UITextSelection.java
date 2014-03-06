@@ -27,6 +27,12 @@ public final class UITextSelection
 		this.lastIndex = 0;
 	}
 
+	public void setTo( int firstIndex, int lastIndex )
+	{
+		this.firstIndex = firstIndex;
+		this.lastIndex = lastIndex;
+	}
+
 	/**
 	 * Creates and returns a string representation of the UITextSelection object.
 	 */

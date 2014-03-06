@@ -220,6 +220,18 @@ public class UISurface extends Layer implements IDisposable
 	}
 
 	@Override
+	public float width()
+	{
+		return ( float ) _bounds.width;
+	}
+
+	@Override
+	public float height()
+	{
+		return ( float ) _bounds.height;
+	}
+
+	@Override
 	public String toString()
 	{
 		return "[UISurface id:" + id + "]";

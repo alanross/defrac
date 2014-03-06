@@ -1,7 +1,6 @@
 package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MPoint;
 import com.adjazent.defrac.math.geom.MRectangle;
@@ -101,15 +100,15 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		UITextSelection selection = new UITextSelection();
 
 		Point p1 = _labelSL1.globalToLocal( new Point( mousePos.x, mousePos.y ) );
-		_labelSL1.getWordUnderPoint( new MPoint( p1.x, p1.y ), selection );
+		_labelSL1.selectWordAtPoint( new MPoint( p1.x, p1.y ), selection );
 		_labelSL1.setSelection( selection );
 
 		Point p2 = _labelML1.globalToLocal( new Point( mousePos.x, mousePos.y ) );
-		_labelML1.getCharUnderPoint( new MPoint( p2.x, p2.y ), selection );
+		_labelML1.selectCharAtPoint( new MPoint( p2.x, p2.y ), selection );
 		_labelML1.setSelection( selection );
 
 		MRectangle caretRect = new MRectangle();
-		_labelSL1.getCursorRect( new MPoint( p1.x, p1.y ), caretRect );
+		_labelSL1.getCaretRect( new MPoint( p1.x, p1.y ), caretRect );
 		_caret.moveTo( ( float ) caretRect.x + _labelSL1.x(), ( float ) caretRect.y + _labelSL1.y() );
 		_caret.scaleToSize( ( float ) caretRect.width, ( float ) caretRect.height );
 	}

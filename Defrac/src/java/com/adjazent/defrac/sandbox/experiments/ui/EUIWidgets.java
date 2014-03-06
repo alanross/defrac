@@ -24,6 +24,7 @@ import com.adjazent.defrac.ui.widget.list.UIList;
 import com.adjazent.defrac.ui.widget.list.UIListInteractions;
 import com.adjazent.defrac.ui.widget.range.UISlider;
 import com.adjazent.defrac.ui.widget.text.UILabel;
+import com.adjazent.defrac.ui.widget.text.UITextField;
 import defrac.display.Layer;
 
 import static com.adjazent.defrac.core.log.Log.info;
@@ -42,6 +43,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 	private UISlider _slider;
 	private UISurface _surface;
 	private UIList _list;
+	private UITextField _textField;
 
 	public EUIWidgets()
 	{
@@ -126,6 +128,11 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		_surface.resizeTo( 300, 100 );
 		_surface.id = "s1";
 
+		_textField = new UITextField( UISkinFactory.create( skins.getTexture( "TextInputBackground" ) ), new UITextFormat( "Helvetica24" ) );
+		_textField.moveTo( 350, 270 );
+		_textField.resizeTo( 300, 100 );
+		_textField.setText( "WHEWHEHello World" );
+
 		Layer container = new Layer();
 
 		container.moveTo( 50, 50 );
@@ -136,6 +143,7 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		container.addChild( _slider );
 		container.addChild( _surface );
 		container.addChild( _list );
+		container.addChild( _textField );
 
 		addChild( container );
 

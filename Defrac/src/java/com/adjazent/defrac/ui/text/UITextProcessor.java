@@ -153,19 +153,20 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 	public LinkedList<MRectangle> getSelectionRect( UITextSelection selection )
 	{
+		// starting to think a little about multi line support
 		LinkedList<MRectangle> rectangles = new LinkedList<MRectangle>();
 
 		int i0 = selection.firstIndex;
 		int i1 = selection.lastIndex;
 
-		if( i0 != i1 )
+		if( i0 != i1 )    // more than one char
 		{
 			MRectangle b0 = getGlyphAt( i0 ).getSelectionRect();
 			MRectangle b1 = getGlyphAt( i1 ).getSelectionRect();
 
 			rectangles.addLast( new MRectangle( b0.x, 0, b1.x + b1.width - b0.x, _font.getLineHeight() ) );
 		}
-		else if( i0 > -1 )
+		else if( i0 > -1 )    //exactly one char
 		{
 			MRectangle b = getGlyphAt( i0 ).getSelectionRect();
 
@@ -175,38 +176,46 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		return rectangles;
 	}
 
-	public void getCursorRect( MPoint p, MRectangle r )
+	public void getCaretRectAtPoint( MPoint p, MRectangle caretRect )
 	{
-		int index = getCursorIndex( p );
+		getCaretRectAtIndex( getCaretIndexAtPoint( p ), caretRect );
+	}
 
-		r.setTo( 0, 0, 1, _font.getLineHeight() );
+	public void getCaretRectAtIndex( int index, MRectangle caretRect )
+	{
+		caretRect.setTo( 0, 0, 1, _font.getLineHeight() );
 
 		if( index > -1 )
 		{
 			MRectangle b = getGlyphAt( index ).getSelectionRect();
 
-			r.moveTo( b.x, b.y );
+			caretRect.moveTo( b.x + b.width, b.y );
 		}
 	}
 
-	public UIGlyph getGlyphUnderPoint( MPoint point )
+	public int getCaretIndexAtPoint( MPoint point )
 	{
-		return _interact.getGlyphUnderPoint( _glyphs, point );
+		return _interact.getCaretIndexAtPoint( _glyphs, point );
 	}
 
-	public void getCharUnderPoint( MPoint point, UITextSelection selection )
+	public UIGlyph getGlyphAtPoint( MPoint point )
 	{
-		_interact.getCharUnderPoint( _glyphs, point, selection );
+		return _interact.getGlyphAtPoint( _glyphs, point );
 	}
 
-	public void getWordUnderPoint( MPoint point, UITextSelection selection )
+	public int getCharIndexAtPoint( MPoint point )
 	{
-		_interact.getWordUnderPoint( _glyphs, point, selection );
+		return _interact.getCharIndexAtPoint( _glyphs, point );
 	}
 
-	public int getCursorIndex( MPoint point )
+	public void selectCharAtPoint( MPoint point, UITextSelection selection )
 	{
-		return _interact.getCursorIndexForPoint( _glyphs, point );
+		_interact.selectCharAtPoint( _glyphs, point, selection );
+	}
+
+	public void selectWordAtPoint( MPoint point, UITextSelection selection )
+	{
+		_interact.selectWordAtPoint( _glyphs, point, selection );
 	}
 
 	public UIGlyph getGlyphAt( int index )
@@ -222,6 +231,11 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 	public String getText()
 	{
 		return _text;
+	}
+
+	public int getTextLength()
+	{
+		return _text.length();
 	}
 
 	public int getTextWidth()

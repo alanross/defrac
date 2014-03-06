@@ -19,7 +19,7 @@ public final class UITextInteractor
 	{
 	}
 
-	public int getCursorIndexForPoint( LinkedList<UIGlyph> glyphs, MPoint point )
+	public int getCaretIndexAtPoint( LinkedList<UIGlyph> glyphs, MPoint point )
 	{
 		int n = glyphs.size();
 
@@ -33,23 +33,16 @@ public final class UITextInteractor
 			{
 				MRectangle b = glyph.getSelectionRect();
 
-				int x = ( int ) ( point.x - ( b.x + b.width * 0.5 ) );
+				double x = point.x - ( b.x + b.width * 0.5 );
 
-				if( x < 0 )
-				{
-					return i - 1; // can and should result in -1;
-				}
-				else
-				{
-					return i;
-				}
+				return ( x < 0 ) ? i - 1 : i; // can and should result in -1;
 			}
 		}
 
-		return -1;
+		return n - 1;
 	}
 
-	public UIGlyph getGlyphUnderPoint( LinkedList<UIGlyph> glyphs, MPoint point )
+	public int getCharIndexAtPoint( LinkedList<UIGlyph> glyphs, MPoint point )
 	{
 		int n = glyphs.size();
 
@@ -57,14 +50,27 @@ public final class UITextInteractor
 		{
 			if( glyphs.get( i ).containsPoint( point ) )
 			{
-				return glyphs.get( i );
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	public UIGlyph getGlyphAtPoint( LinkedList<UIGlyph> glyphs, MPoint point )
+	{
+		for( UIGlyph glyph : glyphs )
+		{
+			if( glyph.containsPoint( point ) )
+			{
+				return glyph;
 			}
 		}
 
 		return null;
 	}
 
-	public void getCharUnderPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
+	public void selectCharAtPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
 	{
 		int n = glyphs.size();
 
@@ -82,7 +88,7 @@ public final class UITextInteractor
 		}
 	}
 
-	public void getWordUnderPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
+	public void selectWordAtPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
 	{
 		int n = glyphs.size();
 		UIGlyph glyph;

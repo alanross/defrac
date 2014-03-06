@@ -168,29 +168,29 @@ public final class UILabel extends Layer implements IUITextRenderer
 		}
 	}
 
-	public void getCursorRect( MPoint p, MRectangle r )
+	public void getCaretRect( MPoint p, MRectangle r )
 	{
-		_processor.getCursorRect( p, r );
+		_processor.getCaretRectAtPoint( p, r );
 	}
 
-	public void getWordUnderPoint( MPoint point, UITextSelection selection )
+	public void selectWordAtPoint( MPoint point, UITextSelection selection )
 	{
-		_processor.getWordUnderPoint( point, selection );
+		_processor.selectWordAtPoint( point, selection );
 	}
 
-	public void getCharUnderPoint( MPoint point, UITextSelection selection )
+	public void selectCharAtPoint( MPoint point, UITextSelection selection )
 	{
-		_processor.getCharUnderPoint( point, selection );
+		_processor.selectCharAtPoint( point, selection );
 	}
 
-	public UIGlyph getGlyphUnderPoint( MPoint point )
+	public UIGlyph getGlyphAtPoint( MPoint point )
 	{
-		return _processor.getGlyphUnderPoint( point );
+		return _processor.getGlyphAtPoint( point );
 	}
 
-	public int getCursorIndex( MPoint point )
+	public int getCaretIndexForPoint( MPoint point )
 	{
-		return _processor.getCursorIndex( point );
+		return _processor.getCaretIndexAtPoint( point );
 	}
 
 	public UIGlyph getGlyphAt( int index )
