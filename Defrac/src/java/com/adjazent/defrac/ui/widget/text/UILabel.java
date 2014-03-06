@@ -1,18 +1,19 @@
 package com.adjazent.defrac.ui.widget.text;
 
 import com.adjazent.defrac.core.error.GenericError;
-import com.adjazent.defrac.math.geom.MPoint;
 import com.adjazent.defrac.math.geom.MRectangle;
+import com.adjazent.defrac.ui.surface.IUISkin;
+import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.UITextProcessor;
-import com.adjazent.defrac.ui.text.UITextSelection;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 import com.adjazent.defrac.ui.text.processing.IUITextRenderer;
 import com.adjazent.defrac.ui.text.processing.UITextLayout;
 import com.adjazent.defrac.ui.text.processing.UITextLine;
 import defrac.display.Image;
 import defrac.display.Layer;
-import defrac.display.Quad;
+import defrac.display.event.UIEventTarget;
+import defrac.geom.Point;
 
 import java.util.LinkedList;
 
@@ -20,27 +21,39 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UILabel extends Layer implements IUITextRenderer
+public final class UILabel extends UISurface implements IUITextRenderer
 {
 	private final LinkedList<Image> _images = new LinkedList<Image>();
 
-	public String id = "";
-
 	private UITextProcessor _processor;
 	private MRectangle _bounds;
-	private Quad _selection;
-	private Quad _background;
 	private Layer _container;
 
 	private boolean _autoSize = true;
 
 	public UILabel( UITextFormat textFormat )
 	{
+		super();
+
+		init( textFormat, false );
+	}
+
+	public UILabel( UITextFormat textFormat, IUISkin skin )
+	{
+		super( skin );
+
 		init( textFormat, false );
 	}
 
 	public UILabel( UITextFormat textFormat, boolean multiLine )
 	{
+		init( textFormat, multiLine );
+	}
+
+	public UILabel( UITextFormat textFormat, boolean multiLine, IUISkin skin )
+	{
+		super( skin );
+
 		init( textFormat, multiLine );
 	}
 
@@ -57,14 +70,17 @@ public final class UILabel extends Layer implements IUITextRenderer
 			_processor = UITextProcessor.createSingleLine( textFormat, this );
 		}
 
-		_background = new Quad( 1, 1, 0x0 );
-		_selection = new Quad( 1, 1, 0xFF000000 );
-		_selection.visible( false );
 		_container = new Layer();
 
-		addChild( _background );
-		addChild( _selection );
 		addChild( _container );
+	}
+
+	@Override
+	public UIEventTarget captureEventTarget( Point point )
+	{
+		Point local = this.globalToLocal( new Point( point.x, point.y ) );
+
+		return ( _bounds.contains( local.x, local.y ) ) ? this : null;
 	}
 
 	@Override
@@ -77,11 +93,11 @@ public final class UILabel extends Layer implements IUITextRenderer
 
 		if( _autoSize )
 		{
-			_background.scaleToSize( ( float ) block.bounds.width, ( float ) block.bounds.height );
+			resizeTo( ( float ) block.bounds.width, ( float ) block.bounds.height );
 		}
 		else
 		{
-			_background.scaleToSize( ( float ) _bounds.width, ( float ) _bounds.height );
+			resizeTo( ( float ) _bounds.width, ( float ) _bounds.height );
 		}
 
 		if( block.bounds.width <= 0 || block.bounds.height <= 0 )
@@ -89,12 +105,10 @@ public final class UILabel extends Layer implements IUITextRenderer
 			return;
 		}
 
-		int n = block.lines.size();
+		LinkedList<UITextLine> lines = block.lines;
 
-		for( int i = 0; i < n; ++i )
+		for( UITextLine line : lines )
 		{
-			UITextLine line = block.lines.get( i );
-
 			LinkedList<UIGlyph> glyphs = line.glyphs;
 
 			for( UIGlyph g : glyphs )
@@ -152,55 +166,9 @@ public final class UILabel extends Layer implements IUITextRenderer
 		}
 	}
 
-	public void setSelection( UITextSelection selection )
+	public boolean getAutoSize()
 	{
-		// Note: We will have several rects for multiline, though not implemented yet
-		LinkedList<MRectangle> rectangles = _processor.getSelectionRect( selection );
-
-		if( rectangles.size() > 0 )
-		{
-			MRectangle r = rectangles.get( 0 );
-
-			_selection.visible( true );
-			_selection.moveTo( ( float ) r.x, ( float ) r.y );
-			_selection.scaleToSize( ( float ) r.width, ( float ) r.height );
-		}
-		else
-		{
-			_selection.visible( false );
-			_selection.moveTo( 0, 0 );
-			_selection.scaleToSize( 0, 0 );
-		}
-	}
-
-	public void getCaretRect( MPoint p, MRectangle r )
-	{
-		_processor.getCaretRectAtPoint( p, r );
-	}
-
-	public void selectWordAtPoint( MPoint point, UITextSelection selection )
-	{
-		_processor.selectWordAtPoint( point, selection );
-	}
-
-	public void selectCharAtPoint( MPoint point, UITextSelection selection )
-	{
-		_processor.selectCharAtPoint( point, selection );
-	}
-
-	public UIGlyph getGlyphAtPoint( MPoint point )
-	{
-		return _processor.getGlyphAtPoint( point );
-	}
-
-	public int getCaretIndexForPoint( MPoint point )
-	{
-		return _processor.getCaretIndexAtPoint( point );
-	}
-
-	public UIGlyph getGlyphAt( int index )
-	{
-		return _processor.getGlyphAt( index );
+		return _autoSize;
 	}
 
 	public String getText()
@@ -218,29 +186,16 @@ public final class UILabel extends Layer implements IUITextRenderer
 		return _processor.getTextHeight();
 	}
 
-	public int getWidth()
+	@Override
+	public float width()
 	{
 		return ( _autoSize ) ? _processor.getTextWidth() : ( int ) _bounds.width;
 	}
 
-	public int getHeight()
+	@Override
+	public float height()
 	{
 		return ( _autoSize ) ? _processor.getTextHeight() : ( int ) _bounds.height;
-	}
-
-	public boolean getAutoSize()
-	{
-		return _autoSize;
-	}
-
-	public void setBackgroundColor( int color )
-	{
-		_background.color( color );
-	}
-
-	public void setSelectionColor( int color )
-	{
-		_selection.color( color );
 	}
 
 	@Override
