@@ -53,7 +53,6 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 		return Character.toString( ( char ) code ).charAt( 0 );
 	}
 
-
 	public UIGlyph( UIFont font, int code, MRectangle sourceRect, MRectangle bounds, MPoint offset, int xAdvance, int lineHeight, int base, LinkedList<UIKerningPair> kerning )
 	{
 		_font = font;
