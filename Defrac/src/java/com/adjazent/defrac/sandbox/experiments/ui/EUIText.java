@@ -1,6 +1,8 @@
 package com.adjazent.defrac.sandbox.experiments.ui;
 
 import com.adjazent.defrac.core.log.Context;
+import com.adjazent.defrac.core.notification.action.Action;
+import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.sandbox.events.IEnterFrame;
@@ -19,8 +21,10 @@ import static com.adjazent.defrac.core.log.Log.info;
  * @author Alan Ross
  * @version 0.1
  */
-public final class EUIText extends Experiment implements IUIResourceLoaderQueueObserver, IEnterFrame
+public final class EUIText extends Experiment implements IUIResourceLoaderQueueObserver, IEnterFrame, IActionObserver
 {
+	private UILabel _info;
+
 	private UILabel _labelSL1;
 	private UILabel _labelSL2;
 	private UILabel _labelML1;
@@ -47,6 +51,10 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 	{
 		UITextFormat format = new UITextFormat( "Helvetica" );
 
+		_info = new UILabel( format );
+		_info.setText( "Info" );
+		_info.id = "info";
+
 		_labelSL1 = new UILabel( format, UISkinFactory.create( 0x33888888 ) );
 		_labelSL1.setText( "Single, AutoSize, How Are You? Very GoodThankYou" );
 		_labelSL1.id = "sl1";
@@ -69,7 +77,10 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		_textField = new UITextField( UISkinFactory.create( 0x33E0E0E0 ), format );
 		_textField.resizeTo( 400, 150 );
 		_textField.setText( "Single, SetSize, How Are You? Very GoodThankYou" );
+		_textField.onSelection.add( this );
+		_textField.onText.add( this );
 
+		addChild( _info ).moveTo( 50, 50 );
 		addChild( _labelSL1 ).moveTo( 50, 200 );
 		addChild( _labelML1 ).moveTo( 50, 250 );
 		addChild( _labelSL2 ).moveTo( 700, 200 );
@@ -91,6 +102,17 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		float h = ( float ) MMath.clamp( mousePos.y - _labelML2.y(), 0, 200 );
 		_labelSL2.setSize( mousePos.x - _labelSL2.x(), _labelSL2.height() );
 		_labelML2.setSize( mousePos.x - _labelML2.x(), h );
+	}
+
+	@Override
+	public void onActionEvent( Action action )
+	{
+		int i0 = _textField.getSelectionFirst();
+		int i1 = _textField.getSelectionLast();
+
+		String text = _textField.getText();
+
+		_info.setText( text + " :: " + ( ( i0 > -1 && i1 > -1 ) ? text.substring( i0, i1 ) : "-1/-1" ) );
 	}
 
 	@Override

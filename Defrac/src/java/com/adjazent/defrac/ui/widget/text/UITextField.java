@@ -1,5 +1,6 @@
 package com.adjazent.defrac.ui.widget.text;
 
+import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MPoint;
 import com.adjazent.defrac.math.geom.MRectangle;
@@ -12,6 +13,7 @@ import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 import com.adjazent.defrac.ui.text.processing.IUITextRenderer;
 import com.adjazent.defrac.ui.text.processing.UITextLayout;
 import com.adjazent.defrac.ui.text.processing.UITextLine;
+import com.adjazent.defrac.ui.widget.UIActionType;
 import defrac.display.DisplayObject;
 import defrac.display.Image;
 import defrac.display.Layer;
@@ -56,6 +58,9 @@ public final class UITextField extends UISurface implements IUITextRenderer
 			onKeyUp( event );
 		}
 	};
+
+	public final Action onText = new Action( UIActionType.TEXT_CHANGE );
+	public final Action onSelection = new Action( UIActionType.TEXT_SELECTION_CHANGE );
 
 	private final LinkedList<Image> _images = new LinkedList<Image>();
 
@@ -148,14 +153,14 @@ public final class UITextField extends UISurface implements IUITextRenderer
 					if( i0 > -1 && i1 > 0 )
 					{
 						s.delete( i0, i1 + 1 );
-						_processor.setText( s.toString() );
+						setText( s.toString() );
 						setSelection( -1, -1 );
 						setCaretIndex( i0 );
 					}
 					else if( caretIndex > -1 && s.length() > 0 )
 					{
 						s.deleteCharAt( caretIndex );
-						_processor.setText( s.toString() );
+						setText( s.toString() );
 						setCaretIndex( --caretIndex );
 					}
 
@@ -174,7 +179,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		{
 			char c = UIGlyph.codeToChar( keyCode );
 			s.insert( ++caretIndex, c );
-			_processor.setText( s.toString() );
+			setText( s.toString() );
 			setCaretIndex( caretIndex );
 		}
 	}
@@ -203,14 +208,14 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 			if( _dragActive )
 			{
-				setSelection( _dragOrigin, p );
+				updateSelection( _dragOrigin, p );
 			}
 		}
 		if( actionEvent.type == UIEventType.ACTION_END )
 		{
 			if( _dragActive )
 			{
-				setSelection( _dragOrigin, p );
+				updateSelection( _dragOrigin, p );
 			}
 
 			_dragActive = false;
@@ -312,10 +317,10 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 	public void setCaretIndex( int index )
 	{
-		index = MMath.clampInt( index, -1, _processor.getTextLength() - 1 );
+		_caretIndex = MMath.clampInt( index, -1, _processor.getTextLength() - 1 );
 
-		_caretIndex = index;
-
+		// if the text is already rendered renderTextDependantAction will be called directly
+		// else renderTextDependantAction will be called after next render
 		_processor.requestRenderAction();
 	}
 
@@ -334,9 +339,11 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		}
 
 		_processor.requestRenderAction();
+
+		onSelection.send( this );
 	}
 
-	public void setSelection( MPoint p0, MPoint p1 )
+	private void updateSelection( MPoint p0, MPoint p1 )
 	{
 		if( p0.x >= p1.x ) //negative selection
 		{
@@ -360,6 +367,8 @@ public final class UITextField extends UISurface implements IUITextRenderer
 	public void setText( String value )
 	{
 		_processor.setText( value );
+
+		onText.send( this );
 	}
 
 	public String getText()

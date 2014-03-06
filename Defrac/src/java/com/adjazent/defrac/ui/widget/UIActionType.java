@@ -15,6 +15,9 @@ public final class UIActionType
 	public static final int CELL_CLICK = 5;
 	public static final int CELL_SELECT = 6;
 
+	public static final int TEXT_CHANGE = 7;
+	public static final int TEXT_SELECTION_CHANGE = 8;
+
 	private UIActionType()
 	{
 	}
