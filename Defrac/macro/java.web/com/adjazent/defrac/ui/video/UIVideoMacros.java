@@ -34,10 +34,8 @@ public final class UIVideoMacros extends Macro
 		// "" (an empty string) if the browser is certain it can’t play this format
 
 		return MethodBody(
-				Return( MethodCall(
-						StaticAccess( "defrac.lang.Bridge", "toString" ),
-						Untyped( "document.createElement('video').canPlayType('video/mp4;')" )
-				) )
+				Return( StaticCall( "defrac.lang.Bridge", "toString", Untyped( "document.createElement('video').canPlayType('video/mp4;')" ) )
+				)
 		);
 	}
 
@@ -45,10 +43,8 @@ public final class UIVideoMacros extends Macro
 	public MethodBody supportsOGV()
 	{
 		return MethodBody(
-				Return( MethodCall(
-						StaticAccess( "defrac.lang.Bridge", "toString" ),
-						Untyped( "document.createElement('video').canPlayType('video/ogg;')" )
-				) )
+				Return( StaticCall( "defrac.lang.Bridge", "toString", Untyped( "document.createElement('video').canPlayType('video/ogg;')" ) )
+				)
 		);
 	}
 
@@ -56,10 +52,8 @@ public final class UIVideoMacros extends Macro
 	public MethodBody supportsWEBM()
 	{
 		return MethodBody(
-				Return( MethodCall(
-						StaticAccess( "defrac.lang.Bridge", "toString" ),
-						Untyped( "document.createElement('video').canPlayType('video/webm;')" )
-				) )
+				Return( StaticCall( "defrac.lang.Bridge", "toString", Untyped( "document.createElement('video').canPlayType('video/webm;')" ) )
+				)
 		);
 	}
 
@@ -89,7 +83,7 @@ public final class UIVideoMacros extends Macro
 						"c.style.visibility = 'hidden';                            \n" +
 						"c.appendChild(v);                                         \n" +
 						"document.body.insertBefore( c, document.body.firstChild );\n",
-						MethodCall( StaticAccess( "defrac.lang.Bridge", "toJSString" ), ParameterAccess( fileUri ) )
+						StaticCall( "defrac.lang.Bridge", "toJSString", LocalGet( fileUri ) )
 				)
 		);
 	}
@@ -112,33 +106,33 @@ public final class UIVideoMacros extends Macro
 	public MethodBody uploadVideoTexture( @Nonnull final Parameter gl )
 	{
 		return MethodBody(
-				Variable(
+				Local(
 						"videoSource",
 						ClassTypeReference( "intrinsic.HTMLVideoElement" ),
 						Untyped( "document.getElementById( 'the_video' )" ) ),
-				Variable(
+				Local(
 						"webGlSubstrate",
 						ClassTypeReference( "defrac.gl.WebGLSubstrate" ),
 						Cast(
 								ClassTypeReference( "defrac.gl.WebGLSubstrate" ),
-								MemberAccess( ParameterAccess( gl ), "gl" )
+								MemberAccess( LocalGet( gl ), "gl" )
 						)
 				),
-				Variable(
+				Local(
 						"webGlContext",
-						ClassTypeReference( "intrinsic.WebGLRenderingContext" ), MemberAccess( VariableAccess( "webGlSubstrate" ), "context" )
+						ClassTypeReference( "intrinsic.WebGLRenderingContext" ), MemberAccess( LocalGet( "webGlSubstrate" ), "context" )
 				),
-				If( NE( VariableAccess( "videoSource" ), Null() ),
+				If( NE( LocalGet( "videoSource" ), Null() ),
 						Block(
 								MethodCall(
-										MemberAccess( VariableAccess( "webGlContext" ), "texImage2D" ),
+										MemberAccess( LocalGet( "webGlContext" ), "texImage2D" ),
 										List(
-												StaticAccess( "defrac.gl.GLSubstrate", "TEXTURE_2D" ),
+												StaticGet( "defrac.gl.GLSubstrate", "TEXTURE_2D" ),
 												Int( 0 ),
-												StaticAccess( "defrac.gl.GLSubstrate", "RGBA" ),
-												StaticAccess( "defrac.gl.GLSubstrate", "RGBA" ),
-												StaticAccess( "defrac.gl.GLSubstrate", "UNSIGNED_BYTE" ),
-												VariableAccess( "videoSource" )
+												StaticGet( "defrac.gl.GLSubstrate", "RGBA" ),
+												StaticGet( "defrac.gl.GLSubstrate", "RGBA" ),
+												StaticGet( "defrac.gl.GLSubstrate", "UNSIGNED_BYTE" ),
+												LocalGet( "videoSource" )
 										)
 								)
 						),

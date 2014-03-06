@@ -31,12 +31,7 @@ public final class Browser extends Macro
 		// the individual platforms.
 		return MethodBody(
 				Return(
-						MethodCall(
-								MemberAccess(
-										ClassTypeReference( "com.adjazent.defrac.sandbox.samples.flutterman.macro.Browser" ),
-										"openWebsite"
-								)
-						)
+						StaticCall( "com.adjazent.defrac.sandbox.samples.flutterman.macro.Browser", "openWebsite" )
 				)
 		);
 	}
