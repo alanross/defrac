@@ -1,10 +1,9 @@
 package com.adjazent.defrac.sandbox.apps.playout;
 
+import com.adjazent.defrac.sandbox.apps.model.Pro7Model;
 import com.adjazent.defrac.sandbox.apps.theme.Pro7Theme;
-import com.adjazent.defrac.sandbox.apps.video.Pro7VideoSourceManager;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.range.UISlider;
-import defrac.display.Image;
 
 /**
  * @author Alan Ross
@@ -12,8 +11,8 @@ import defrac.display.Image;
  */
 public final class Pro7VideoPlayer extends UISurface
 {
+	private Pro7VideoArea _video;
 	private UISlider _slider;
-	private Image _video;
 
 	public Pro7VideoPlayer()
 	{
@@ -21,7 +20,7 @@ public final class Pro7VideoPlayer extends UISurface
 
 		resizeTo( 423, 240 );
 
-		_video = new Image( Pro7VideoSourceManager.get().createTextureTile( 0,0, 423, 240 ) );
+		_video = new Pro7VideoArea( Pro7Model.videoProvider.createTextureTile( 0, 0, 423, 240 ) );
 		addChild( _video );
 
 		_slider = Pro7Theme.get().createSlider( "PlayOutSliderTrack", "PlayOutSliderThumb", "PlayOutSliderValue" );

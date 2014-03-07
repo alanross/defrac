@@ -6,12 +6,12 @@ import com.adjazent.defrac.sandbox.Experiment;
 import com.adjazent.defrac.sandbox.apps.dnd.DnDManager;
 import com.adjazent.defrac.sandbox.apps.input.Pro7PanelInputTypeSelectorGroup;
 import com.adjazent.defrac.sandbox.apps.input.Pro7PanelInputs;
+import com.adjazent.defrac.sandbox.apps.model.Pro7Model;
 import com.adjazent.defrac.sandbox.apps.playout.Pro7PanelPlayout;
 import com.adjazent.defrac.sandbox.apps.scenes.Pro7PanelScenes;
 import com.adjazent.defrac.sandbox.apps.settings.Pro7PanelSettings;
 import com.adjazent.defrac.sandbox.apps.theme.IPro7ThemeObserver;
 import com.adjazent.defrac.sandbox.apps.theme.Pro7Theme;
-import com.adjazent.defrac.sandbox.apps.video.Pro7VideoSourceManager;
 import com.adjazent.defrac.ui.surface.UISurface;
 
 import static com.adjazent.defrac.core.log.Log.info;
@@ -44,7 +44,7 @@ public final class Pro7Studio extends Experiment implements IPro7ThemeObserver
 	@Override
 	public void onPro7CoreUISetupSuccess()
 	{
-		Pro7VideoSourceManager.initialize();
+		Pro7Model.initialize();
 
 		Signals.addType( Pro7SignalTypes.SCENE_EDIT_1 );
 		Signals.addType( Pro7SignalTypes.SCENE_EDIT_2 );

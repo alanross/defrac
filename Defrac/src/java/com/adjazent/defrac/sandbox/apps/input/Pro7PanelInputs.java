@@ -5,8 +5,8 @@ import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.core.notification.signals.Signals;
 import com.adjazent.defrac.sandbox.apps.Pro7SignalTypes;
 import com.adjazent.defrac.sandbox.apps.dnd.IDragable;
+import com.adjazent.defrac.sandbox.apps.model.Pro7Model;
 import com.adjazent.defrac.sandbox.apps.theme.Pro7Theme;
-import com.adjazent.defrac.sandbox.apps.video.Pro7VideoSourceManager;
 import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.surface.skin.UISkinFactory;
@@ -51,19 +51,19 @@ public final class Pro7PanelInputs extends UISurface implements ISignalReceiver
 
 		IUISkin skin;
 
-		skin = UISkinFactory.create( Pro7VideoSourceManager.get().createTextureTile( 400, 100, 180, 100 ) );
+		skin = UISkinFactory.create( Pro7Model.videoProvider.createTextureTile( 400, 100, 180, 100 ) );
 		_demoContent1 = new Pro7DemoInput( skin );
 		_demoContent1.moveTo( 2, 2 );
 		_demoContent1.id = "DEMO 1";
 		_inputSlot1.addChild( _demoContent1 );
 
-		skin = UISkinFactory.create( Pro7VideoSourceManager.get().createTextureTile( 200, 200, 180, 100 ) );
+		skin = UISkinFactory.create( Pro7Model.videoProvider.createTextureTile( 200, 200, 180, 100 ) );
 		_demoContent2 = new Pro7DemoInput( skin );
 		_demoContent2.moveTo( 2, 2 );
 		_demoContent2.id = "DEMO 2";
 		_inputSlot2.addChild( _demoContent2 );
 
-		skin = UISkinFactory.create( Pro7VideoSourceManager.get().createTextureTile( 0, 0, 180, 100 ) );
+		skin = UISkinFactory.create( Pro7Model.videoProvider.createTextureTile( 0, 0, 180, 100 ) );
 		_demoContent3 = new Pro7DemoInput( skin );
 		_demoContent3.moveTo( 2, 2 );
 		_demoContent3.id = "DEMO 3";

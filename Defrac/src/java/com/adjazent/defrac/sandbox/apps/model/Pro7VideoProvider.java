@@ -1,6 +1,5 @@
-package com.adjazent.defrac.sandbox.apps.video;
+package com.adjazent.defrac.sandbox.apps.model;
 
-import com.adjazent.defrac.core.error.SingletonError;
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.ui.widget.video.UIVideoTexture;
 import com.adjazent.defrac.ui.widget.video.UIVideoUtils;
@@ -12,31 +11,14 @@ import static com.adjazent.defrac.core.log.Log.info;
  * @author Alan Ross
  * @version 0.1
  */
-public final class Pro7VideoSourceManager
+public final class Pro7VideoProvider
 {
 	final int videoWidth = 640;
 	final int videoHeight = 360;
 
 	UIVideoTexture videoTexture;
 
-	private static Pro7VideoSourceManager _instance;
-
-	public static void initialize()
-	{
-		if( _instance != null )
-		{
-			throw new SingletonError( "DnDManager" );
-		}
-
-		_instance = new Pro7VideoSourceManager();
-	}
-
-	public static Pro7VideoSourceManager get()
-	{
-		return _instance;
-	}
-
-	private Pro7VideoSourceManager()
+	public Pro7VideoProvider()
 	{
 		String videoPath = "video_640x360";
 
@@ -79,6 +61,6 @@ public final class Pro7VideoSourceManager
 	@Override
 	public String toString()
 	{
-		return "[Pro7VideoSourceManager]";
+		return "[Pro7VideoProvider]";
 	}
 }
