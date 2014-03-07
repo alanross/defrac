@@ -160,37 +160,49 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		int i0 = selection.firstIndex;
 		int i1 = selection.lastIndex;
 
-		if( i0 != i1 )    // more than one char
+		if( i0 > -1 && i1 > -1 && _glyphs.size() > 0 )
 		{
-			MRectangle b0 = getGlyphAt( i0 ).getSelectionRect();
-			MRectangle b1 = getGlyphAt( i1 ).getSelectionRect();
+			if( i1 >= _glyphs.size() )
+			{
+				MRectangle b0 = getGlyphAt( i0 ).getSelectionRect();
+				MRectangle b1 = getGlyphAt( _glyphs.size() - 1 ).getSelectionRect();
 
-			rectangles.addLast( new MRectangle( b0.x, 0, b1.x + b1.width - b0.x, _font.getLineHeight() ) );
-		}
-		else if( i0 > -1 )    //exactly one char
-		{
-			MRectangle b = getGlyphAt( i0 ).getSelectionRect();
+				rectangles.addLast( new MRectangle( b0.x, 0, b1.x + b1.width - b0.x, _font.getLineHeight() ) );
+			}
+			else
+			{
+				MRectangle b0 = getGlyphAt( i0 ).getSelectionRect();
+				MRectangle b1 = getGlyphAt( i1 ).getSelectionRect();
 
-			rectangles.addLast( new MRectangle( b.x, 0, b.width, _font.getLineHeight() ) );
+				rectangles.addLast( new MRectangle( b0.x, 0, b1.x - b0.x, _font.getLineHeight() ) );
+			}
 		}
 
 		return rectangles;
 	}
 
-	public void getCaretRectAtPoint( MPoint p, MRectangle caretRect )
-	{
-		getCaretRectAtIndex( getCaretIndexAtPoint( p ), caretRect );
-	}
-
 	public void getCaretRectAtIndex( int index, MRectangle caretRect )
 	{
-		caretRect.setTo( 0, 0, 1, _font.getLineHeight() );
-
-		if( index > -1 )
+		if( _glyphs.size() == 0 )
 		{
-			MRectangle b = getGlyphAt( index ).getSelectionRect();
+			caretRect.setTo( 0, 0, 1, _font.getLineHeight() );
+		}
+		else
+		{
+			if( index < _glyphs.size() )
+			{
+				MRectangle b = getGlyphAt( index ).getSelectionRect();
 
-			caretRect.moveTo( b.x + b.width, b.y );
+				caretRect.moveTo( b.x, b.y );
+			}
+			else
+			{
+				MRectangle b = getGlyphAt( _glyphs.size() - 1 ).getSelectionRect();
+
+				caretRect.moveTo( b.x + b.width, b.y );
+			}
+
+			caretRect.resizeTo( 1, _font.getLineHeight() );
 		}
 	}
 
@@ -209,14 +221,14 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		return _interact.getCharIndexAtPoint( _glyphs, point );
 	}
 
-	public void selectCharAtPoint( MPoint point, UITextSelection selection )
+	public void selectChars( MPoint p0, MPoint p1, UITextSelection selection )
 	{
-		_interact.selectCharAtPoint( _glyphs, point, selection );
+		_interact.selectChars( _glyphs, p0, p1, selection );
 	}
 
-	public void selectWordAtPoint( MPoint point, UITextSelection selection )
+	public void selectWord( MPoint point, UITextSelection selection )
 	{
-		_interact.selectWordAtPoint( _glyphs, point, selection );
+		_interact.selectWord( _glyphs, point, selection );
 	}
 
 	public UIGlyph getGlyphAt( int index )

@@ -75,8 +75,8 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 		_labelML2.id = "ml2";
 
 		_textField = new UITextField( UISkinFactory.create( 0x33E0E0E0 ), format );
-		_textField.resizeTo( 400, 150 );
-		_textField.setText( "Single, SetSize, How Are You? Very GoodThankYou" );
+		_textField.resizeTo( 400, 50 );
+		_textField.setText( "Hello World How are you?" );
 		_textField.onSelection.add( this );
 		_textField.onText.add( this );
 
@@ -112,7 +112,7 @@ public final class EUIText extends Experiment implements IUIResourceLoaderQueueO
 
 		String text = _textField.getText();
 
-		_info.setText( text + " :: " + ( ( i0 > -1 && i1 > -1 ) ? text.substring( i0, i1 ) : "-1/-1" ) );
+		_info.setText( text + " :: " + i0 + " - " + i1 + " | " + ( ( i0 > -1 && i1 > -1 ) ? text.substring( i0, i1 ) : "-1/-1" ) );
 	}
 
 	@Override

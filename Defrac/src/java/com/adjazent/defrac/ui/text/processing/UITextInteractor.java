@@ -21,13 +21,9 @@ public final class UITextInteractor
 
 	public int getCaretIndexAtPoint( LinkedList<UIGlyph> glyphs, MPoint point )
 	{
-		int n = glyphs.size();
-
-		UIGlyph glyph;
-
-		for( int i = 0; i < n; ++i )
+		for( int i = 0; i < glyphs.size(); ++i )
 		{
-			glyph = glyphs.get( i );
+			UIGlyph glyph = glyphs.get( i );
 
 			if( glyph.containsPoint( point ) )
 			{
@@ -35,18 +31,16 @@ public final class UITextInteractor
 
 				double x = point.x - ( b.x + b.width * 0.5 );
 
-				return ( x < 0 ) ? i - 1 : i; // can and should result in -1;
+				return ( x < 0 ) ? i : i + 1;
 			}
 		}
 
-		return n - 1;
+		return -1;
 	}
 
 	public int getCharIndexAtPoint( LinkedList<UIGlyph> glyphs, MPoint point )
 	{
-		int n = glyphs.size();
-
-		for( int i = 0; i < n; ++i )
+		for( int i = 0; i < glyphs.size(); ++i )
 		{
 			if( glyphs.get( i ).containsPoint( point ) )
 			{
@@ -70,64 +64,81 @@ public final class UITextInteractor
 		return null;
 	}
 
-	public void selectCharAtPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
+	public void selectChars( LinkedList<UIGlyph> glyphs, MPoint p0, MPoint p1, UITextSelection selection )
 	{
-		int n = glyphs.size();
+		int i0;
+		int i1;
 
-		selection.firstIndex = -1;
-		selection.lastIndex = -1;
-
-		for( int i = 0; i < n; ++i )
+		if( p0.x >= p1.x ) //negative selection
 		{
-			if( glyphs.get( i ).containsPoint( point ) )
-			{
-				selection.firstIndex = i;
-				selection.lastIndex = i;
-				return;
-			}
+			i0 = getCaretIndexAtPoint( glyphs, p1 );
+			i1 = getCaretIndexAtPoint( glyphs, p0 );
 		}
+		else //positive selection
+		{
+			i0 = getCaretIndexAtPoint( glyphs, p0 );
+			i1 = getCaretIndexAtPoint( glyphs, p1 );
+		}
+
+		if( i0 == i1 ) // same char
+		{
+			i0 = i1 = -1;
+		}
+
+		if( i0 > -1 && i1 == -1 ) // fill till end
+		{
+			i1 = glyphs.size();
+		}
+
+		if( i0 == -1 && i1 > -1 ) // fill till start
+		{
+			i0 = 0;
+		}
+
+		selection.setTo( i0, i1 );
 	}
 
-	public void selectWordAtPoint( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
+	public void selectWord( LinkedList<UIGlyph> glyphs, MPoint point, UITextSelection selection )
 	{
 		int n = glyphs.size();
-		UIGlyph glyph;
 
 		selection.setTo( -1, -1 );
 
 		for( int i = 0; i < n; ++i )
 		{
-			glyph = glyphs.get( i );
+			UIGlyph glyph = glyphs.get( i );
 
-			if( glyph.containsPoint( point ) )
+			if( !glyph.containsPoint( point ) )
 			{
-				if( UIGlyphUtils.isWordSeparator( glyph ) )
+				continue;
+			}
+
+			if( UIGlyphUtils.isWordSeparator( glyph ) )
+			{
+				selection.setTo( i, i );
+			}
+			else
+			{
+				selection.setTo( 0, n );
+
+				for( int min = i; min > -1; --min )
 				{
-					selection.setTo( i, i );
+					if( UIGlyphUtils.isWordSeparator( glyphs.get( min ) ) )
+					{
+						break;
+					}
+
+					selection.firstIndex = min;
 				}
-				else
+
+				for( int max = i; max < n; ++max )
 				{
-					selection.setTo( 0, n - 1 );
-
-					for( int min = i; min > -1; --min )
+					if( UIGlyphUtils.isWordSeparator( glyphs.get( max ) ) )
 					{
-						if( UIGlyphUtils.isWordSeparator( glyphs.get( min ) ) )
-						{
-							break;
-						}
-
-						selection.firstIndex = min;
+						break;
 					}
 
-					for( int max = i; max < n; ++max )
-					{
-						if( UIGlyphUtils.isWordSeparator( glyphs.get( max ) ) )
-						{
-							break;
-						}
-
-						selection.lastIndex = max;
-					}
+					selection.lastIndex = max + 1;
 				}
 			}
 		}

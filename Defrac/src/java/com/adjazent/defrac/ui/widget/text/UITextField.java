@@ -70,13 +70,14 @@ public final class UITextField extends UISurface implements IUITextRenderer
 	private final Layer _container;
 
 	private final UITextSelection _selection;
-	private int _caretIndex = -1;
+	private int _caretIndex = 0;
 
 	private boolean _dragEnabled = false;
 	private boolean _dragActive = false;
 	private MPoint _dragOrigin = new MPoint();
 
 	private boolean _enabled = true;
+	private boolean _hasFocus = false;
 
 	public UITextField( IUISkin skin, UITextFormat textFormat )
 	{
@@ -89,7 +90,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		_bgSelection.visible( false );
 
 		_bgCaret = new Quad( 1, 1, 0xFFFFFFFF );
-		_bgCaret.visible( true );
+		_bgCaret.visible( false );
 
 		_container = new Layer();
 
@@ -100,87 +101,89 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		addChild( _bgCaret );
 	}
 
-	private void renderCaret()
-	{
-		MRectangle caretBounds = new MRectangle();
-
-		_processor.getCaretRectAtIndex( _caretIndex, caretBounds );
-
-		_bgCaret.moveTo( ( float ) caretBounds.x, ( float ) caretBounds.y );
-		_bgCaret.scaleToSize( ( float ) caretBounds.width, ( float ) caretBounds.height );
-		_bgCaret.visible( true );
-	}
-
-	private void renderSelection()
-	{
-		if( _selection.firstIndex != -1 && _selection.lastIndex != -1 )
-		{
-			// Note: We will have several rectangles for multi line, though not implemented yet
-			LinkedList<MRectangle> rectangles = _processor.getSelectionRect( _selection );
-
-			for( MRectangle r : rectangles )
-			{
-				_bgSelection.visible( true );
-				_bgSelection.moveTo( ( float ) r.x, ( float ) r.y );
-				_bgSelection.scaleToSize( ( float ) r.width, ( float ) r.height );
-			}
-
-			_bgCaret.visible( false );
-		}
-		else
-		{
-			_bgSelection.visible( false );
-			_bgSelection.moveTo( 0, 0 );
-			_bgSelection.scaleToSize( 0, 0 );
-		}
-	}
-
 	private void onKeyDown( KeyboardEvent event )
 	{
 		int keyCode = event.keyCode;
-		int caretIndex = getCaretIndex();
 		StringBuilder s = new StringBuilder( getText() );
 
-		final int i0 = getSelectionFirst();
-		final int i1 = getSelectionLast();
+		int ci = getCaretIndex();
+		int i0 = getSelectionFirst();
+		int i1 = getSelectionLast();
 
+		boolean textSelected = ( i0 > -1 && i1 > -1 );
+		boolean shiftKey = false;
+
+		setSelection( -1, -1 );
 
 		if( keyCode < SPECIAL )
 		{
 			switch( keyCode )
 			{
 				case DEL:
-					if( i0 > -1 && i1 > 0 )
+					if( textSelected )
 					{
-						s.delete( i0, i1 + 1 );
+						s.delete( i0, i1 );
 						setText( s.toString() );
-						setSelection( -1, -1 );
 						setCaretIndex( i0 );
 					}
-					else if( caretIndex > -1 && s.length() > 0 )
+					else if( ci > 0 && s.length() > 0 )
 					{
-						s.deleteCharAt( caretIndex );
+						s.deleteCharAt( --ci );
 						setText( s.toString() );
-						setCaretIndex( --caretIndex );
+						setCaretIndex( ci );
 					}
-
-					return;
+					break;
 
 				case LEFT:
-					setCaretIndex( --caretIndex );
-					return;
+					if( textSelected && shiftKey )
+					{
+						if( i0 < ci )
+						{
+							setSelection( --i0, i1 );
+						}
+						else
+						{
+							setSelection( i0, --i1 );
+						}
+					}
+					else
+					{
+						if( -1 < --ci )
+						{
+							setCaretIndex( ci );
+						}
+					}
+
+					break;
 
 				case RIGHT:
-					setCaretIndex( ++caretIndex );
-					return;
+					if( textSelected && shiftKey )
+					{
+						if( i0 < ci )
+						{
+							setSelection( ++i0, i1 );
+						}
+						else
+						{
+							setSelection( i0, ++i1 );
+						}
+					}
+					else
+					{
+						if( _processor.getTextLength() >= ++ci )
+						{
+							setCaretIndex( ci );
+						}
+					}
+					break;
 			}
 		}
 		else
 		{
 			char c = UIGlyph.codeToChar( keyCode );
-			s.insert( ++caretIndex, c );
+			s.insert( ci, c );
 			setText( s.toString() );
-			setCaretIndex( caretIndex );
+			setCaretIndex( ++ci );
 		}
 	}
 
@@ -196,7 +199,6 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		if( actionEvent.type == UIEventType.ACTION_BEGIN )
 		{
 			_dragEnabled = true;
-
 			_dragOrigin.setTo( p.x, p.y );
 
 			setCaretIndex( _processor.getCaretIndexAtPoint( p ) );
@@ -208,14 +210,18 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 			if( _dragActive )
 			{
-				updateSelection( _dragOrigin, p );
+				UITextSelection selection = new UITextSelection();
+				_processor.selectChars( _dragOrigin, p, selection );
+				setSelection( selection.firstIndex, selection.lastIndex );
 			}
 		}
 		if( actionEvent.type == UIEventType.ACTION_END )
 		{
 			if( _dragActive )
 			{
-				updateSelection( _dragOrigin, p );
+				UITextSelection selection = new UITextSelection();
+				_processor.selectChars( _dragOrigin, p, selection );
+				setSelection( selection.firstIndex, selection.lastIndex );
 			}
 
 			_dragActive = false;
@@ -224,7 +230,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		if( actionEvent.type == UIEventType.ACTION_DOUBLE )
 		{
 			UITextSelection selection = new UITextSelection();
-			_processor.selectWordAtPoint( p, selection );
+			_processor.selectWord( p, selection );
 			setSelection( selection.firstIndex, selection.lastIndex );
 		}
 	}
@@ -235,12 +241,16 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		{
 			Events.onKeyDown.attach( keyDownHandler );
 			Events.onKeyUp.attach( keyUpHandler );
+			_hasFocus = true;
 		}
 		else if( focusEvent.type == UIEventType.FOCUS_OUT )
 		{
 			Events.onKeyDown.detach( keyDownHandler );
 			Events.onKeyUp.detach( keyUpHandler );
+			_hasFocus = false;
 		}
+
+		_processor.requestRenderAction();
 	}
 
 	@Override
@@ -302,8 +312,37 @@ public final class UITextField extends UISurface implements IUITextRenderer
 	@Override
 	public void renderTextDependantAction()
 	{
-		renderCaret();
-		renderSelection();
+		MRectangle caretBounds = new MRectangle();
+
+		_processor.getCaretRectAtIndex( _caretIndex, caretBounds );
+
+		_bgCaret.moveTo( ( float ) caretBounds.x, ( float ) caretBounds.y );
+		_bgCaret.scaleToSize( ( float ) caretBounds.width, ( float ) caretBounds.height );
+
+		if( _selection.firstIndex != -1 && _selection.lastIndex != -1 )
+		{
+			// Note: We will have several rectangles for multi line, though not implemented yet
+			LinkedList<MRectangle> rectangles = _processor.getSelectionRect( _selection );
+
+			for( MRectangle r : rectangles )
+			{
+				_bgSelection.moveTo( ( float ) r.x, ( float ) r.y );
+				_bgSelection.scaleToSize( ( float ) r.width, ( float ) r.height );
+			}
+
+			_bgSelection.visible( true );
+			_bgCaret.visible( false );
+		}
+		else
+		{
+			_bgSelection.moveTo( 0, 0 );
+			_bgSelection.scaleToSize( 0, 0 );
+
+			_bgSelection.visible( false );
+			_bgCaret.visible( _hasFocus );
+		}
+
+		_bgSelection.alpha( _hasFocus ? 1.0f : 0.3f );
 	}
 
 	public DisplayObject resizeTo( float width, float height )
@@ -317,7 +356,16 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 	public void setCaretIndex( int index )
 	{
-		_caretIndex = MMath.clampInt( index, -1, _processor.getTextLength() - 1 );
+		if( index < 0 )
+		{
+			index = _processor.getTextLength();
+		}
+		else if( index > _processor.getTextLength() )
+		{
+			index = _processor.getTextLength();
+		}
+
+		_caretIndex = index;
 
 		// if the text is already rendered renderTextDependantAction will be called directly
 		// else renderTextDependantAction will be called after next render
@@ -328,8 +376,8 @@ public final class UITextField extends UISurface implements IUITextRenderer
 	{
 		if( i0 != -1 && i1 != -1 )
 		{
-			i0 = MMath.clampInt( i0, 0, _processor.getTextLength() - 1 );
-			i1 = MMath.clampInt( i1, 0, _processor.getTextLength() - 1 );
+			i0 = MMath.clampInt( i0, 0, _processor.getTextLength() );
+			i1 = MMath.clampInt( i1, 0, _processor.getTextLength() );
 
 			_selection.setTo( i0, i1 );
 		}
@@ -341,22 +389,6 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		_processor.requestRenderAction();
 
 		onSelection.send( this );
-	}
-
-	private void updateSelection( MPoint p0, MPoint p1 )
-	{
-		if( p0.x >= p1.x ) //negative selection
-		{
-			setSelection(
-					_processor.getCaretIndexAtPoint( p1 ) + 1,
-					_processor.getCaretIndexAtPoint( p0 ) );
-		}
-		else //positive selection
-		{
-			setSelection(
-					_processor.getCaretIndexAtPoint( p0 ) + 1,
-					_processor.getCaretIndexAtPoint( p1 ) );
-		}
 	}
 
 	public void setFormat( UITextFormat value )
