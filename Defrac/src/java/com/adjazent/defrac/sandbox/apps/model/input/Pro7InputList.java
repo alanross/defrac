@@ -9,16 +9,16 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class Pro7InputList
+public final class Pro7InputList<T>
 {
-	private LinkedList<IPro7Input> _inputs;
+	private LinkedList<T> _inputs;
 
 	public Pro7InputList()
 	{
-		_inputs = new LinkedList<IPro7Input>();
+		_inputs = new LinkedList<T>();
 	}
 
-	public IPro7Input add( IPro7Input input )
+	public T add( T input )
 	{
 		if( has( input ) )
 		{
@@ -30,7 +30,7 @@ public final class Pro7InputList
 		return input;
 	}
 
-	public IPro7Input remove( IPro7Input input )
+	public T remove( T input )
 	{
 		if( has( input ) )
 		{
@@ -42,12 +42,12 @@ public final class Pro7InputList
 		return input;
 	}
 
-	public boolean has( IPro7Input input )
+	public boolean has( T input )
 	{
 		return ( -1 != _inputs.indexOf( input ) );
 	}
 
-	public IPro7Input getAt( int index )
+	public T getAt( int index )
 	{
 		return _inputs.get( index );
 	}
@@ -60,6 +60,6 @@ public final class Pro7InputList
 	@Override
 	public String toString()
 	{
-		return "[Pro7InputList]";
+		return "[Pro7Input]";
 	}
 }

@@ -6,11 +6,15 @@ package com.adjazent.defrac.sandbox.apps.model.scene;
  */
 public final class Pro7SceneSet
 {
+	public final String id;
+
 	public final Pro7Scene a;
 	public final Pro7Scene b;
 
-	public Pro7SceneSet( Pro7Scene a, Pro7Scene b )
+	public Pro7SceneSet( String id, Pro7Scene a, Pro7Scene b )
 	{
+		this.id = id;
+
 		this.a = a;
 		this.b = b;
 	}

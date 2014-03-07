@@ -11,10 +11,14 @@ import java.util.LinkedList;
  */
 public final class Pro7Scene
 {
+	public final String id;
+
 	private LinkedList<Pro7SceneElement> _elements;
 
-	public Pro7Scene()
+	public Pro7Scene( String id )
 	{
+		this.id = id;
+
 		_elements = new LinkedList<Pro7SceneElement>();
 	}
 
