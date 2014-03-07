@@ -1,6 +1,6 @@
 package com.adjazent.defrac.sandbox;
 
-import com.adjazent.defrac.sandbox.experiments.apps.Pro7Studio;
+import com.adjazent.defrac.sandbox.apps.Pro7Studio;
 import com.adjazent.defrac.sandbox.experiments.core.EArrayUtils;
 import com.adjazent.defrac.sandbox.experiments.core.EDateUtils;
 import com.adjazent.defrac.sandbox.experiments.core.EStringUtils;
@@ -62,7 +62,7 @@ public final class Sandbox extends AbstractSandbox
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( EUIText.class );
+		activate( Pro7Studio.class );
 	}
 
 	public static void main( final String[] args )

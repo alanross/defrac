@@ -35,7 +35,7 @@ public final class ETextures extends Experiment
 		// We want to load it as a TextureData, so we choose the TextureDataResource.
 		// Other resource types can be loaded with InputStreamResource or BinaryResource.
 		// Note: If we enable WebP conversion (on by default) a runtime choice will be made to load the WebP version of this image
-		final TextureDataResource textureDataResource = TextureDataResource.from( "images/textures.png" );
+		final TextureDataResource textureDataResource = TextureDataResource.from( "img/textures.png" );
 
 		// Start loading the resource, this will prepare a Future of TextureData
 		// We could also attach listeners to textureDataResource (like textureDataResource.onComplete)

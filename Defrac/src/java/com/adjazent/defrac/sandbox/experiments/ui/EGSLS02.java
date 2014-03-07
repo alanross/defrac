@@ -69,7 +69,7 @@ public final class EGSLS02 extends Experiment implements Procedure<Canvas.Argume
 
 		addChild( _canvas );
 
-		TextureDataResource textureResourceLoader = TextureDataResource.from( "images/scalegridtest1.png" );
+		TextureDataResource textureResourceLoader = TextureDataResource.from( "img/scalegridtest1.png" );
 		textureResourceLoader.onComplete.attach( onTextureLoadHandler );
 		textureResourceLoader.load();
 
