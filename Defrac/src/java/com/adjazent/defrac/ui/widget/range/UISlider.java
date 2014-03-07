@@ -101,6 +101,8 @@ public final class UISlider extends UISurface implements UIProcessHook
 		{
 			Point p = this.globalToLocal( new Point( event.pos.x, event.pos.y ) );
 
+			p.x -= _surfaceKnob.width() * 0.5;
+
 			posToVal( p.x );
 		}
 	}
@@ -155,7 +157,7 @@ public final class UISlider extends UISurface implements UIProcessHook
 
 		pos += _surfaceKnob.width() * 0.5;
 
-		if( pos <= 2 )
+		if( pos < 2 )
 		{
 			pos = 2;
 		}
@@ -187,6 +189,16 @@ public final class UISlider extends UISurface implements UIProcessHook
 
 			onValueChange.send( this );
 		}
+	}
+
+	public UISurface getKnobSurface()
+	{
+		return _surfaceKnob;
+	}
+
+	public UISurface getValueSurface()
+	{
+		return _surfaceValue;
 	}
 
 	@Override
