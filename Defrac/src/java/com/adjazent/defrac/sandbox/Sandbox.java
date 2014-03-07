@@ -12,6 +12,7 @@ import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
 import com.adjazent.defrac.sandbox.experiments.ui.*;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
 import com.adjazent.defrac.sandbox.issues.EAddChild;
+import com.adjazent.defrac.sandbox.issues.EKeyboardEvents;
 import com.adjazent.defrac.sandbox.issues.EResourcePath;
 import com.adjazent.defrac.sandbox.samples.canvas.ECanvas;
 import com.adjazent.defrac.sandbox.samples.event.EUIEvent;
@@ -59,6 +60,7 @@ public final class Sandbox extends AbstractSandbox
 		//----------------------------- issues
 		add( new EAddChild() );
 		add( new EResourcePath() );
+		add( new EKeyboardEvents() );
 		//----------------------------- warzone
 		add( new Warzone() );
 
