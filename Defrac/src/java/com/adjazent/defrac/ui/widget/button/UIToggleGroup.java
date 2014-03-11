@@ -1,5 +1,8 @@
 package com.adjazent.defrac.ui.widget.button;
 
+import com.adjazent.defrac.core.error.ElementAlreadyExistsError;
+import com.adjazent.defrac.core.error.ElementDoesNotExistError;
+import com.adjazent.defrac.core.error.NullError;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.ui.widget.UIActionType;
@@ -19,18 +22,11 @@ public final class UIToggleGroup implements IActionObserver
 
 	public UIToggleGroup( Object... buttons )
 	{
-		final int n = buttons.length;
-
-		for( int i = 0; i < n; ++i )
+		for( Object o : buttons )
 		{
-			if( buttons[ i ] instanceof UIToggleButton )
+			if( o instanceof UIToggleButton )
 			{
-				UIToggleButton button = ( UIToggleButton ) buttons[ i ];
-
-				button.setLockIfSelected( true );
-				button.onSelect.add( this );
-
-				_buttons.addLast( button );
+				add( ( UIToggleButton ) o );
 			}
 		}
 	}
@@ -38,11 +34,6 @@ public final class UIToggleGroup implements IActionObserver
 	@Override
 	public void onActionEvent( Action action )
 	{
-		if( _buttons.indexOf( action.origin ) == -1 )
-		{
-			return;
-		}
-
 		if( action.type == UIActionType.BUTTON_SELECT )
 		{
 			if( action.origin != _current )
@@ -58,8 +49,71 @@ public final class UIToggleGroup implements IActionObserver
 
 				onSelect.send( _current );
 			}
-
 		}
+	}
+
+	public UIToggleButton add( UIToggleButton toggleButton )
+	{
+		if( null == toggleButton )
+		{
+			throw new NullError( this + " button can not be null" );
+		}
+
+		if( has( toggleButton ) )
+		{
+			throw new ElementAlreadyExistsError( this + " " + toggleButton + " already exists" );
+		}
+
+		toggleButton.setLockIfSelected( true );
+		toggleButton.onSelect.add( this );
+
+		_buttons.addLast( toggleButton );
+
+		return toggleButton;
+	}
+
+	public UIToggleButton remove( UIToggleButton toggleButton )
+	{
+		if( null == toggleButton )
+		{
+			throw new NullError( this + " button can not be null" );
+		}
+
+		if( !has( toggleButton ) )
+		{
+			throw new ElementDoesNotExistError( this + " " + toggleButton + " does not exist" );
+		}
+
+		toggleButton.onSelect.remove( this );
+
+		_buttons.remove( toggleButton );
+
+		return toggleButton;
+	}
+
+	public boolean has( UIToggleButton toggleButton )
+	{
+		if( null == toggleButton )
+		{
+			throw new NullError( this + " observer can not be null" );
+		}
+
+		return ( -1 != _buttons.indexOf( toggleButton ) );
+	}
+
+	public UIToggleButton get( int index )
+	{
+		return _buttons.get( index );
+	}
+
+	public UIToggleButton getSelected()
+	{
+		return _current;
+	}
+
+	public int getSelectedIndex()
+	{
+		return ( _current != null ) ? _buttons.indexOf( _current ) : -1;
 	}
 
 	@Override
