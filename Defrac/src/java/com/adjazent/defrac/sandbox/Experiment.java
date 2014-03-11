@@ -1,6 +1,7 @@
 package com.adjazent.defrac.sandbox;
 
 import com.adjazent.defrac.core.stage.StageProvider;
+import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.sandbox.events.*;
 import defrac.app.GenericApp;
 import defrac.display.Layer;
@@ -21,6 +22,7 @@ public class Experiment extends Layer implements IAppResize
 {
 	protected final Point mousePos = new Point();
 	protected final Quad background = new Quad( 1, 1, 0xFF232323 );
+	protected final MRectangle bounds = new MRectangle();
 
 	protected Stage stage;
 	protected GenericApp app;
@@ -36,6 +38,7 @@ public class Experiment extends Layer implements IAppResize
 
 		this.addChild( background );
 		background.scaleToSize( stage.width(), stage.height() );
+		bounds.resizeTo( stage.width(), stage.height() );
 
 		onInit();
 
@@ -56,6 +59,7 @@ public class Experiment extends Layer implements IAppResize
 				public void apply( StageEvent.Resize event )
 				{
 					background.scaleToSize( stage.width(), stage.height() );
+					bounds.resizeTo( stage.width(), stage.height() );
 					onResize( stage.width(), stage.height() );
 				}
 			} );
