@@ -74,6 +74,11 @@ public class UISurface extends Layer implements IDisposable
 	@Override
 	public UIEventTarget captureEventTarget( Point point )
 	{
+		if( !visible() )
+		{
+			return null;
+		}
+
 		Point local = this.globalToLocal( new Point( point.x, point.y ) );
 
 		if( _bounds.contains( local.x, local.y ) )
@@ -105,7 +110,7 @@ public class UISurface extends Layer implements IDisposable
 		attachSkin( skin );
 	}
 
-	public IUISkin getSkin()
+	public IUISkin getDnDSkin()
 	{
 		return _skin;
 	}
