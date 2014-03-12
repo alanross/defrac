@@ -2,6 +2,8 @@ package com.adjazent.defrac.sandbox.apps.lite.scene.editor;
 
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteInputSource;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteScene;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneElement;
 import com.adjazent.defrac.sandbox.apps.lite.core.dnd.ILiteDragItem;
 import com.adjazent.defrac.sandbox.apps.lite.core.dnd.ILiteDropTarget;
 import com.adjazent.defrac.ui.surface.IUISkin;
@@ -40,6 +42,8 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 	private UISurface _activeHandle;
 
 	private boolean _enabled = true;
+
+	private LiteScene _scene;
 
 	public LiteSceneEditor( IUISkin skin )
 	{
@@ -226,13 +230,18 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 		return this;
 	}
 
-	public void create( float x, float y, float width, float height, IUISkin skin )
+	public void populate( LiteScene scene )
 	{
-		LiteSceneEditorElement element = new LiteSceneEditorElement( skin );
+		_scene = scene;
 
-		element.setDimensions( x, y, width, height );
+		_elementLayer.removeAllChildren();
 
-		add( element );
+		for( int i = 0; i < _scene.numElements(); i++ )
+		{
+			LiteSceneElement element = _scene.get( i );
+
+			add( new LiteSceneEditorElement( element.dim, element.skin.clone() ) );
+		}
 	}
 
 	public void add( LiteSceneEditorElement element )
@@ -302,7 +311,14 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 
 			Point local = _elementLayer.globalToLocal( new Point( pos.x, pos.y ) );
 
-			create( local.x, local.y, data.full.getDefaultWidth(), data.full.getDefaultHeight(), data.full.clone() );
+			if( _scene != null )
+			{
+				Rectangle dim = new Rectangle( local.x, local.y, data.full.getDefaultWidth(), data.full.getDefaultHeight() );
+
+				_scene.add( new LiteSceneElement( dim, data.full.clone() ) );
+
+				add( new LiteSceneEditorElement( dim, data.full.clone() ) );
+			}
 		}
 	}
 

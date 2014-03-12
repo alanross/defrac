@@ -83,7 +83,7 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 	{
 		if( signalType == LiteState.SELECT_SCENE_SET )
 		{
-			int index = LiteCore.state.sceneSet();
+			int index = LiteCore.state.sceneSetIndex();
 
 			if( index == 0 )
 			{
@@ -97,10 +97,13 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 			{
 				_arrow.moveTo( 245, -9 );
 			}
+
+			_sceneEditorA.populate( LiteCore.state.sceneSet().a );
+			_sceneEditorB.populate( LiteCore.state.sceneSet().b );
 		}
 		if( signalType == LiteState.SELECT_SCENE_SLOT )
 		{
-			int type = LiteCore.state.sceneSlot();
+			int type = LiteCore.state.sceneSlotType();
 
 			if( type == LiteState.STATE_SCENE_A )
 			{

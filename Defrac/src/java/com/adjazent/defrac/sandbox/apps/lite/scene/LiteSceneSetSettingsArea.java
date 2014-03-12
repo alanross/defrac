@@ -84,7 +84,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 	{
 		if( signalType == LiteState.SELECT_SCENE_SLOT )
 		{
-			int type = LiteCore.state.sceneSlot();
+			int type = LiteCore.state.sceneSlotType();
 
 			if( type == LiteState.STATE_SCENE_A )
 			{

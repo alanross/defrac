@@ -19,9 +19,10 @@ public final class LiteSceneEditorElement extends UISurface
 
 	private LiteSceneEditor _editor;
 
-	public LiteSceneEditorElement( IUISkin skin )
+	public LiteSceneEditorElement( Rectangle dimensions, IUISkin skin )
 	{
 		super( skin );
+		setDimensions( dimensions );
 	}
 
 	public void attach( LiteSceneEditor editor )
@@ -63,16 +64,9 @@ public final class LiteSceneEditorElement extends UISurface
 	{
 		if( uiEvent.target == this )
 		{
-			if( ( uiEvent.type & UIEventType.FOCUS ) != 0 )
+			if( uiEvent.type == UIEventType.FOCUS_IN )
 			{
-				if( uiEvent.type == UIEventType.FOCUS_IN )
-				{
-					_editor.activate( this );
-				}
-				else if( uiEvent.type == UIEventType.FOCUS_OUT )
-				{
-					//_editor.deactivate( this );
-				}
+				_editor.activate( this );
 			}
 		}
 	}

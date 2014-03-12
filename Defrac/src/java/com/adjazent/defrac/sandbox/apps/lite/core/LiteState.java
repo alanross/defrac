@@ -2,6 +2,8 @@ package com.adjazent.defrac.sandbox.apps.lite.core;
 
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.core.notification.signals.Signals;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteScene;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneSet;
 
 /**
  * @author Alan Ross
@@ -20,9 +22,11 @@ public final class LiteState extends Signals implements ISignalSource
 	public static final int STATE_SCENE_A = 1;
 	public static final int STATE_SCENE_B = 2;
 
-	private int _inputType = -1;
-	private int _sceneSet = -1;
-	private int _sceneSlot = -1;
+	private int _currentInputType = -1;
+	private int _currentSceneSetIndex = -1;
+	private LiteSceneSet _currentSceneSet = null;
+	private LiteScene _currentScene = null;
+	private int _currentSceneSlotType = -1;
 
 	public LiteState()
 	{
@@ -30,38 +34,54 @@ public final class LiteState extends Signals implements ISignalSource
 
 	public void selectInputType( int type )
 	{
-		_inputType = type;
+		_currentInputType = type;
 
 		send( this, SELECT_INPUT_TYPE );
 	}
 
 	public void selectSceneSet( int index )
 	{
-		_sceneSet = index;
+		_currentSceneSetIndex = index;
+
+		_currentSceneSet = LiteCore.data.sceneSets.get( index );
 
 		send( this, SELECT_SCENE_SET );
 	}
 
 	public void selectSceneSlot( int type )
 	{
-		_sceneSlot = type;
+		_currentSceneSlotType = type;
+
+		if( type == STATE_SCENE_A )
+		{
+			_currentScene = _currentSceneSet.a;
+		}
+		else
+		{
+			_currentScene = _currentSceneSet.b;
+		}
 
 		send( this, SELECT_SCENE_SLOT );
 	}
 
 	public int inputType()
 	{
-		return _inputType;
+		return _currentInputType;
 	}
 
-	public int sceneSet()
+	public int sceneSetIndex()
 	{
-		return _sceneSet;
+		return _currentSceneSetIndex;
 	}
 
-	public int sceneSlot()
+	public LiteSceneSet sceneSet()
 	{
-		return _sceneSlot;
+		return _currentSceneSet;
+	}
+
+	public int sceneSlotType()
+	{
+		return _currentSceneSlotType;
 	}
 
 	@Override

@@ -73,7 +73,7 @@ public final class LiteSceneSetChoice extends UISurface implements IActionObserv
 	{
 		if( signalType == LiteState.SELECT_SCENE_SET )
 		{
-			int index = LiteCore.state.sceneSet();
+			int index = LiteCore.state.sceneSetIndex();
 
 			if( index == 0 )
 			{
