@@ -116,17 +116,6 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 		}
 	}
 
-
-//	public ILiteDropTarget getSceneSlot1()
-//	{
-//		return _sceneEditorB;
-//	}
-//
-//	public ILiteDropTarget getSceneSlot2()
-//	{
-//		return _sceneEditorB;
-//	}
-
 	@Override
 	public String toString()
 	{
