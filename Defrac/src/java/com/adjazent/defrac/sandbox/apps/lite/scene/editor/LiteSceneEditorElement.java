@@ -1,8 +1,10 @@
 package com.adjazent.defrac.sandbox.apps.lite.scene.editor;
 
-import com.adjazent.defrac.ui.surface.IUISkin;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneElement;
 import com.adjazent.defrac.ui.surface.UISurface;
-import defrac.display.event.*;
+import defrac.display.event.UIEvent;
+import defrac.display.event.UIEventTarget;
+import defrac.display.event.UIEventType;
 import defrac.geom.Point;
 import defrac.geom.Rectangle;
 
@@ -19,10 +21,16 @@ public final class LiteSceneEditorElement extends UISurface
 
 	private LiteSceneEditor _editor;
 
-	public LiteSceneEditorElement( Rectangle dimensions, IUISkin skin )
+	private LiteSceneElement _model;
+
+	public LiteSceneEditorElement( LiteSceneElement model )
 	{
-		super( skin );
-		setDimensions( dimensions );
+		super( model.skin );
+
+		_model = model;
+
+		super.moveTo( _model.dim.x, _model.dim.y );
+		super.resizeTo( _model.dim.width, _model.dim.height );
 	}
 
 	public void attach( LiteSceneEditor editor )
@@ -35,15 +43,12 @@ public final class LiteSceneEditorElement extends UISurface
 		_editor = null;
 	}
 
-	public void setDimensions( Rectangle dimensions )
+	public void setDimensions( Rectangle d )
 	{
-		setDimensions( dimensions.x, dimensions.y, dimensions.width, dimensions.height );
-	}
+		_model.dim.set( d.x, d.y, d.width, d.height );
 
-	public void setDimensions( float x, float y, float width, float height )
-	{
-		super.moveTo( x, y );
-		super.resizeTo( width, height );
+		super.moveTo( d.x, d.y );
+		super.resizeTo( d.width, d.height );
 
 		if( _editor != null )
 		{

@@ -43,7 +43,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 
 	private boolean _enabled = true;
 
-	private LiteScene _scene;
+	private LiteScene _model;
 
 	public LiteSceneEditor( IUISkin skin )
 	{
@@ -232,15 +232,20 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 
 	public void populate( LiteScene scene )
 	{
-		_scene = scene;
+		_model = scene;
+
+		if( _activeElement != null )
+		{
+			deactivate( _activeElement );
+
+			_activeElement = null;
+		}
 
 		_elementLayer.removeAllChildren();
 
-		for( int i = 0; i < _scene.numElements(); i++ )
+		for( int i = 0; i < _model.numElements(); i++ )
 		{
-			LiteSceneElement element = _scene.get( i );
-
-			add( new LiteSceneEditorElement( element.dim, element.skin.clone() ) );
+			add( new LiteSceneEditorElement( _model.get( i ) ) );
 		}
 	}
 
@@ -311,13 +316,15 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 
 			Point local = _elementLayer.globalToLocal( new Point( pos.x, pos.y ) );
 
-			if( _scene != null )
+			if( _model != null )
 			{
 				Rectangle dim = new Rectangle( local.x, local.y, data.full.getDefaultWidth(), data.full.getDefaultHeight() );
 
-				_scene.add( new LiteSceneElement( dim, data.full.clone() ) );
+				LiteSceneElement element = new LiteSceneElement( dim, data.full.clone() );
 
-				add( new LiteSceneEditorElement( dim, data.full.clone() ) );
+				_model.add( element );
+
+				add( new LiteSceneEditorElement( element ) );
 			}
 		}
 	}
