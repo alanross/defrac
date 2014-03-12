@@ -9,12 +9,28 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class Signals
+public class Signals
 {
 	private static final LinkedList<ISignalReceiver> receivers = new LinkedList<ISignalReceiver>();
 	private static final LinkedList<Integer> types = new LinkedList<Integer>();
 
-	public static void send( int signalType, ISignalSource signalSource )
+	private static int __id = -1;
+
+	public static int createTypeID()
+	{
+		__id++;
+
+		if( hasType( __id ) )
+		{
+			throw new ElementAlreadyExistsError();
+		}
+
+		types.addFirst( __id );
+
+		return __id;
+	}
+
+	public static void send( ISignalSource signalSource, int signalType )
 	{
 		if( !hasType( signalType ) )
 		{
@@ -25,7 +41,7 @@ public final class Signals
 
 		while( --n > -1 )
 		{
-			receivers.get( n ).onSignal( signalType, signalSource );
+			receivers.get( n ).onSignal( signalSource, signalType );
 		}
 	}
 
@@ -39,37 +55,37 @@ public final class Signals
 		types.addFirst( signalType );
 	}
 
-	public static boolean hasType( int type )
+	public static boolean hasType( int signalType )
 	{
-		return ( -1 != types.indexOf( type ) );
+		return ( -1 != types.indexOf( signalType ) );
 	}
 
-	public static void addReceiver( ISignalReceiver receiver )
+	public static void addReceiver( ISignalReceiver signalReceiver )
 	{
-		if( hasReceiver( receiver ) )
+		if( hasReceiver( signalReceiver ) )
 		{
 			throw new ElementAlreadyExistsError();
 		}
 
-		receivers.addFirst( receiver );
+		receivers.addFirst( signalReceiver );
 	}
 
-	public static void removeReceiver( ISignalReceiver receiver )
+	public static void removeReceiver( ISignalReceiver signalReceiver )
 	{
-		if( !hasReceiver( receiver ) )
+		if( !hasReceiver( signalReceiver ) )
 		{
 			throw new ElementDoesNotExistError();
 		}
 
-		receivers.remove( receiver );
+		receivers.remove( signalReceiver );
 	}
 
-	public static boolean hasReceiver( ISignalReceiver receiver )
+	public static boolean hasReceiver( ISignalReceiver signalReceiver )
 	{
-		return ( -1 != receivers.indexOf( receiver ) );
+		return ( -1 != receivers.indexOf( signalReceiver ) );
 	}
 
-	private Signals()
+	public Signals()
 	{
 
 	}

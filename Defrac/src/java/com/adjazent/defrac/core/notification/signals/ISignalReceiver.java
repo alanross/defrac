@@ -6,6 +6,6 @@ package com.adjazent.defrac.core.notification.signals;
  */
 public interface ISignalReceiver
 {
-	void onSignal( int signalType, ISignalSource signalSource );
+	void onSignal( ISignalSource signalSource, int signalType );
 }
 
