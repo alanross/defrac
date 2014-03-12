@@ -211,6 +211,20 @@ public final class UIList extends Layer implements IUIRenderListener
 		_renderRequest.invalidate();
 	}
 
+	public void removeItemAt( int index )
+	{
+		if( index < 0 || index >= _items.size() )
+		{
+			throw new ElementDoesNotExistError();
+		}
+
+		_items.remove( _items.get( index ) );
+
+		measure();
+
+		_renderRequest.invalidate();
+	}
+
 	public boolean hasItem( UICellData item )
 	{
 		return ( -1 != _items.indexOf( item ) );
@@ -221,7 +235,7 @@ public final class UIList extends Layer implements IUIRenderListener
 		return _items.get( index );
 	}
 
-	public int getNumItems()
+	public int numItems()
 	{
 		return _items.size();
 	}
