@@ -11,17 +11,56 @@ import java.util.LinkedList;
  */
 public final class LiteScene
 {
+	public static final int ELEMENT_ADDED = 1;
+	public static final int ELEMENT_REMOVED = 2;
+
 	public final String id;
 
-	private LinkedList<LiteSceneElement> _elements;
+	private final LinkedList<ILiteSceneObserver> _observers;
 
-	private boolean _active = false;
+	private final LinkedList<LiteSceneElement> _elements;
 
 	public LiteScene( String id )
 	{
 		this.id = id;
 
 		_elements = new LinkedList<LiteSceneElement>();
+		_observers = new LinkedList<ILiteSceneObserver>();
+	}
+
+	public void addObserver( ILiteSceneObserver observer )
+	{
+		if( hasObserver( observer ) )
+		{
+			throw new ElementAlreadyExistsError();
+		}
+
+		_observers.addFirst( observer );
+	}
+
+	public void removeObserver( ILiteSceneObserver observer )
+	{
+		if( !hasObserver( observer ) )
+		{
+			throw new ElementDoesNotExistError();
+		}
+
+		_observers.remove( observer );
+	}
+
+	public boolean hasObserver( ILiteSceneObserver signalObserver )
+	{
+		return ( -1 != _observers.indexOf( signalObserver ) );
+	}
+
+	private void notify( LiteSceneElement item, int type )
+	{
+		int n = _observers.size();
+
+		while( --n > -1 )
+		{
+			_observers.get( n ).onLiteSceneModified( item, type );
+		}
 	}
 
 	public LiteSceneElement add( LiteSceneElement item )
@@ -32,6 +71,8 @@ public final class LiteScene
 		}
 
 		_elements.addLast( item );
+
+		notify( item, ELEMENT_ADDED );
 
 		return item;
 	}
@@ -44,6 +85,8 @@ public final class LiteScene
 		}
 
 		_elements.remove( item );
+
+		notify( item, ELEMENT_REMOVED );
 
 		return item;
 	}
@@ -63,19 +106,9 @@ public final class LiteScene
 		return _elements.size();
 	}
 
-	public boolean active()
-	{
-		return _active;
-	}
-
-	public void active( boolean value )
-	{
-		_active = value;
-	}
-
 	@Override
 	public String toString()
 	{
-		return "[LiteScene]";
+		return "[LiteScene id:" + id + ", numItems:" + _elements.size() + "]";
 	}
 }

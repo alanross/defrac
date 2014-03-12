@@ -2,6 +2,7 @@ package com.adjazent.defrac.sandbox.apps.lite.scene.editor;
 
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteInputSource;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.ILiteSceneObserver;
 import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteScene;
 import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneElement;
 import com.adjazent.defrac.sandbox.apps.lite.core.dnd.ILiteDragItem;
@@ -23,7 +24,7 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
+public final class LiteSceneEditor extends UISurface implements ILiteDropTarget, ILiteSceneObserver
 {
 	private LiteSceneEditorResizer _resizer;
 
@@ -172,6 +173,19 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 		}
 	}
 
+	@Override
+	public void onLiteSceneModified( LiteSceneElement item, int type )
+	{
+		if( type == LiteScene.ELEMENT_ADDED )
+		{
+			add( item );
+		}
+		if( type == LiteScene.ELEMENT_REMOVED )
+		{
+			remove( item );
+		}
+	}
+
 	private void onActionEvent( UIActionEvent event )
 	{
 		Point global = new Point( event.pos.x, event.pos.y );
@@ -232,8 +246,6 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 
 	public void populate( LiteScene scene )
 	{
-		_model = scene;
-
 		if( _activeElement != null )
 		{
 			deactivate( _activeElement );
@@ -243,17 +255,46 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 
 		_elementLayer.removeAllChildren();
 
+		if( _model != null )
+		{
+			_model.removeObserver( this );
+		}
+
+		_model = scene;
+		_model.addObserver( this );
+
 		for( int i = 0; i < _model.numElements(); i++ )
 		{
-			add( new LiteSceneEditorElement( _model.get( i ) ) );
+			add( _model.get( i ) );
 		}
 	}
 
-	public void add( LiteSceneEditorElement element )
+	private void add( LiteSceneElement element )
 	{
-		element.attach( this );
+		LiteSceneEditorElement e = new LiteSceneEditorElement( element );
 
-		_elementLayer.addChild( element );
+		e.attach( this );
+
+		_elementLayer.addChild( e );
+	}
+
+	private void remove( LiteSceneElement element )
+	{
+		for( int i = 0; i < _elementLayer.numChildren(); i++ )
+		{
+			DisplayObject c = _elementLayer.getChildAt( i );
+
+			if( c instanceof LiteSceneEditorElement )
+			{
+				LiteSceneEditorElement e = ( LiteSceneEditorElement ) c;
+
+				if( e.model == element )
+				{
+					_elementLayer.removeChild( e );
+					return;
+				}
+			}
+		}
 	}
 
 	public void activate( LiteSceneEditorElement element )
@@ -310,22 +351,15 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget
 	{
 		_outline.visible( false );
 
-		if( dragItem.getDndData() instanceof LiteInputSource )
+		if( dragItem.getDndData() instanceof LiteInputSource && _model != null )
 		{
 			LiteInputSource data = ( LiteInputSource ) dragItem.getDndData();
 
 			Point local = _elementLayer.globalToLocal( new Point( pos.x, pos.y ) );
 
-			if( _model != null )
-			{
-				Rectangle dim = new Rectangle( local.x, local.y, data.full.getDefaultWidth(), data.full.getDefaultHeight() );
+			Rectangle dim = new Rectangle( local.x, local.y, data.full.getDefaultWidth(), data.full.getDefaultHeight() );
 
-				LiteSceneElement element = new LiteSceneElement( dim, data.full.clone() );
-
-				_model.add( element );
-
-				add( new LiteSceneEditorElement( element ) );
-			}
+			_model.add( new LiteSceneElement( "Scene Element " + _model.numElements(), dim, data.full.clone() ) );
 		}
 	}
 

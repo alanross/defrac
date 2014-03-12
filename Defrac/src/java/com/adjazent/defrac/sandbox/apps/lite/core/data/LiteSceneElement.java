@@ -11,9 +11,11 @@ public final class LiteSceneElement
 {
 	public final Rectangle dim;
 	public final IUISkin skin;
+	public final String id;
 
-	public LiteSceneElement( Rectangle dim, IUISkin skin )
+	public LiteSceneElement( String id, Rectangle dim, IUISkin skin )
 	{
+		this.id = id;
 		this.dim = dim;
 		this.skin = skin;
 	}

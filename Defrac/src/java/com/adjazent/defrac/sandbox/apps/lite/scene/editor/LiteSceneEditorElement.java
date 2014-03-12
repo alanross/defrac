@@ -19,18 +19,18 @@ public final class LiteSceneEditorElement extends UISurface
 	public final float minWidth = 40;
 	public final float minHeight = 40;
 
-	private LiteSceneEditor _editor;
+	public final LiteSceneElement model;
 
-	private LiteSceneElement _model;
+	private LiteSceneEditor _editor;
 
 	public LiteSceneEditorElement( LiteSceneElement model )
 	{
 		super( model.skin );
 
-		_model = model;
+		this.model = model;
 
-		super.moveTo( _model.dim.x, _model.dim.y );
-		super.resizeTo( _model.dim.width, _model.dim.height );
+		super.moveTo( this.model.dim.x, this.model.dim.y );
+		super.resizeTo( this.model.dim.width, this.model.dim.height );
 	}
 
 	public void attach( LiteSceneEditor editor )
@@ -45,7 +45,7 @@ public final class LiteSceneEditorElement extends UISurface
 
 	public void setDimensions( Rectangle d )
 	{
-		_model.dim.set( d.x, d.y, d.width, d.height );
+		model.dim.set( d.x, d.y, d.width, d.height );
 
 		super.moveTo( d.x, d.y );
 		super.resizeTo( d.width, d.height );

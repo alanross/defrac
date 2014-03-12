@@ -1,12 +1,16 @@
 package com.adjazent.defrac.sandbox.apps.lite.scene;
 
 import com.adjazent.defrac.core.log.Context;
+import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteState;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.ILiteSceneObserver;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteScene;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneElement;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import com.adjazent.defrac.ui.widget.button.UIButton;
@@ -19,7 +23,7 @@ import static com.adjazent.defrac.core.log.Log.info;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteSceneSetSettingsArea extends UISurface implements IActionObserver, ISignalReceiver
+public final class LiteSceneSetSettingsArea extends UISurface implements IActionObserver, ISignalReceiver, ILiteSceneObserver
 {
 	private UIButton _buttonAdd;
 	private UIButton _buttonDel;
@@ -27,6 +31,8 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 	private UIList _list;
 
 	private UISurface _arrow;
+
+	private LiteScene _model;
 
 	public LiteSceneSetSettingsArea()
 	{
@@ -55,11 +61,6 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		addChild( _buttonAdd );
 		addChild( _buttonDel );
 
-		for( int i = 0; i < 3; ++i )
-		{
-			addCell( "Ebene " + _list.getNumItems() );
-		}
-
 		LiteCore.state.addReceiver( this );
 	}
 
@@ -70,7 +71,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		{
 			if( action.origin == _buttonAdd )
 			{
-				addCell( "Ebene " + _list.getNumItems() );
+				info( Context.DEFAULT, "Add cell to list" );
 			}
 			if( action.origin == _buttonDel )
 			{
@@ -82,29 +83,95 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 	@Override
 	public void onSignal( ISignalSource signalSource, int signalType )
 	{
-		if( signalType == LiteState.SELECT_SCENE_SLOT )
+		if( signalType == LiteState.SELECT_SCENE_SET || signalType == LiteState.SELECT_SCENE_SLOT )
 		{
 			int type = LiteCore.state.sceneSlotType();
 
 			if( type == LiteState.STATE_SCENE_A )
 			{
 				_arrow.moveTo( 183, 0 );
+
+				populate( LiteCore.state.sceneSet().a );
 			}
 			if( type == LiteState.STATE_SCENE_B )
 			{
 				_arrow.moveTo( 570, 0 );
+
+				populate( LiteCore.state.sceneSet().b );
 			}
 		}
 	}
 
-	private void addCell( String text )
+	@Override
+	public void onLiteSceneModified( LiteSceneElement item, int type )
 	{
-		_list.addItem( new UICellData( text, 20 ) );
+		if( type == LiteScene.ELEMENT_ADDED )
+		{
+			add( item );
+		}
+		if( type == LiteScene.ELEMENT_REMOVED )
+		{
+			remove( item );
+		}
+	}
+
+	private void populate( LiteScene scene )
+	{
+		for( int i = 0; i < _list.numItems(); i++ )
+		{
+			_list.removeItemAt( i );
+		}
+
+		if( _model != null )
+		{
+			_model.removeObserver( this );
+		}
+
+		_model = scene;
+		_model.addObserver( this );
+
+		Log.info( Context.DEFAULT, this, "populate", _model);
+
+		for( int j = 0; j < _model.numElements(); j++ )
+		{
+			add( _model.get( j ) );
+		}
+	}
+
+	private void add( LiteSceneElement element )
+	{
+		_list.addItem( new LiteCellData( element ) );
+	}
+
+	private void remove( LiteSceneElement element )
+	{
+		for( int i = 0; i < _list.numItems(); i++ )
+		{
+			LiteCellData cellData = ( LiteCellData ) _list.getItem( i );
+
+			if( cellData.model == element )
+			{
+				_list.removeItem( cellData );
+				return;
+			}
+		}
 	}
 
 	@Override
 	public String toString()
 	{
 		return "[LiteSceneSetSettingsArea]";
+	}
+
+	private class LiteCellData extends UICellData
+	{
+		final LiteSceneElement model;
+
+		LiteCellData( LiteSceneElement model )
+		{
+			super( model.id, 20 );
+
+			this.model = model;
+		}
 	}
 }
