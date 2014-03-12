@@ -152,16 +152,28 @@ public final class LiteDnDManager implements UIProcessHook
 	private void onActionDragIn( UIActionEvent event )
 	{
 		// only consider targets that are of type ILiteDropTarget
-		if( _currentDrag == null || !( event.target instanceof ILiteDropTarget ) )
+		if( _currentDrag == null )
 		{
 			return;
 		}
 
-		_currentDrop = ( ILiteDropTarget ) event.target;
+		UIEventTarget t = event.target;
 
-		_dropAccepted = _currentDrop.onDragIn( _currentDrag, new Point( _ghost.x(), _ghost.y() ) );
+		while( t != null )
+		{
+			if( t instanceof ILiteDropTarget )
+			{
+				_currentDrop = ( ILiteDropTarget ) t;
 
-		_ghost.onDropTargetIn( _dropAccepted );
+				_dropAccepted = _currentDrop.onDragIn( _currentDrag, new Point( _ghost.x(), _ghost.y() ) );
+
+				_ghost.onDropTargetIn( _dropAccepted );
+
+				return;
+			}
+
+			t = t.eventParent();
+		}
 	}
 
 	private void onActionDragOut( UIActionEvent event )
