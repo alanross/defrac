@@ -77,15 +77,15 @@ public final class LiteSceneSetChoice extends UISurface implements IActionObserv
 
 			if( index == 0 )
 			{
-				_buttonScene1.setSelected( true );
+				_buttonScene1.selected( true );
 			}
 			if( index == 1 )
 			{
-				_buttonScene2.setSelected( true );
+				_buttonScene2.selected( true );
 			}
 			if( index == 2 )
 			{
-				_buttonScene3.setSelected( true );
+				_buttonScene3.selected( true );
 			}
 		}
 	}

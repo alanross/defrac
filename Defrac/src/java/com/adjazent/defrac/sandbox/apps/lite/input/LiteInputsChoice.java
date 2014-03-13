@@ -75,15 +75,15 @@ public final class LiteInputsChoice extends UISurface implements IActionObserver
 		{
 			if( LiteCore.state.inputType() == LiteState.STATE_INPUT_LIVE )
 			{
-				_buttonLive.setSelected( true );
+				_buttonLive.selected( true );
 			}
 			else if( LiteCore.state.inputType() == LiteState.STATE_INPUT_VOD )
 			{
-				_buttonVOD.setSelected( true );
+				_buttonVOD.selected( true );
 			}
 			else if( LiteCore.state.inputType() == LiteState.STATE_INPUT_IMAGES )
 			{
-				_buttonImage.setSelected( true );
+				_buttonImage.selected( true );
 			}
 		}
 	}

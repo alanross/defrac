@@ -107,11 +107,11 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 
 			if( type == LiteState.STATE_SCENE_A )
 			{
-				_buttonSettingsA.setSelected( true );
+				_buttonSettingsA.selected( true );
 			}
 			if( type == LiteState.STATE_SCENE_B )
 			{
-				_buttonSettingsB.setSelected( true );
+				_buttonSettingsB.selected( true );
 			}
 		}
 	}

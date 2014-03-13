@@ -40,9 +40,7 @@ public final class UIToggleGroup implements IActionObserver
 			{
 				if( _current != null )
 				{
-					onSelect.send( _current );
-
-					_current.setSelected( false );
+					_current.selected( false );
 				}
 
 				_current = ( UIToggleButton ) action.origin;
@@ -64,7 +62,7 @@ public final class UIToggleGroup implements IActionObserver
 			throw new ElementAlreadyExistsError( this + " " + toggleButton + " already exists" );
 		}
 
-		toggleButton.setLockIfSelected( true );
+		toggleButton.lockIfSelected( true );
 		toggleButton.onSelect.add( this );
 
 		_buttons.addLast( toggleButton );

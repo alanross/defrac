@@ -53,7 +53,7 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 
 		if( event.type == UIEventType.ACTION_BEGIN && event.target == this )
 		{
-			setSelected( ( getLockIfSelected() ) ? true : !getSelected() );
+			selected( lockIfSelected() || !selected() );
 		}
 		if( event.type == UIEventType.ACTION_SINGLE && event.target == this )
 		{
@@ -61,12 +61,12 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 		}
 	}
 
-	public boolean getSelected()
+	public boolean selected()
 	{
 		return _selected;
 	}
 
-	public void setSelected( boolean value )
+	public void selected( boolean value )
 	{
 		if( _selected == value )
 		{
@@ -80,12 +80,12 @@ public final class UIToggleButton extends UISurface implements ISignalSource
 		onSelect.send( this );
 	}
 
-	public boolean getLockIfSelected()
+	public boolean lockIfSelected()
 	{
 		return _lockSelected;
 	}
 
-	public void setLockIfSelected( boolean value )
+	public void lockIfSelected( boolean value )
 	{
 		_lockSelected = value;
 	}
