@@ -106,7 +106,7 @@ public final class UIList extends UISurface implements IUIRenderListener, IActio
 
 				_lastSelectedItem = ( UICellData ) action.origin;
 
-				onSelect.send( _lastSelectedItem );
+				onSelect.send( this );
 			}
 		}
 	}
@@ -391,6 +391,11 @@ public final class UIList extends UISurface implements IUIRenderListener, IActio
 	public int getCellSpacing()
 	{
 		return _cellSpacing;
+	}
+
+	public UICellData getLastSelectedItem()
+	{
+		return _lastSelectedItem;
 	}
 
 	@Override
