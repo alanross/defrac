@@ -18,11 +18,12 @@ import java.util.Iterator;
  */
 public class UISurface extends Layer implements IDisposable
 {
-	public String id = "";
-	public Layer skinLayer;
-	public Layer contentLayer;
+	public final Layer skinLayer;
+	public final Layer contentLayer;
 
-	private MRectangle _bounds;
+	public String id = "";
+
+	protected final MRectangle bounds;
 
 	private IUISkin _skin;
 
@@ -36,7 +37,7 @@ public class UISurface extends Layer implements IDisposable
 		super.addChild( skinLayer );
 		super.addChild( contentLayer );
 
-		_bounds = new MRectangle( 0, 0, 0, 0 );
+		bounds = new MRectangle( 0, 0, 0, 0 );
 	}
 
 	public UISurface( IUISkin skin )
@@ -49,7 +50,7 @@ public class UISurface extends Layer implements IDisposable
 		super.addChild( skinLayer );
 		super.addChild( contentLayer );
 
-		_bounds = new MRectangle( 0, 0, skin.getDefaultWidth(), skin.getDefaultHeight() );
+		bounds = new MRectangle( 0, 0, skin.getDefaultWidth(), skin.getDefaultHeight() );
 
 		attachSkin( skin );
 	}
@@ -68,7 +69,7 @@ public class UISurface extends Layer implements IDisposable
 	{
 		_skin = skin;
 		_skin.attach( this );
-		_skin.resizeTo( ( float ) _bounds.width, ( float ) _bounds.height );
+		_skin.resizeTo( ( float ) bounds.width, ( float ) bounds.height );
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class UISurface extends Layer implements IDisposable
 
 		Point local = this.globalToLocal( new Point( point.x, point.y ) );
 
-		if( _bounds.contains( local.x, local.y ) )
+		if( bounds.contains( local.x, local.y ) )
 		{
 			Iterator<DisplayObject> it = contentLayer.iterator();
 
@@ -122,7 +123,7 @@ public class UISurface extends Layer implements IDisposable
 
 	public DisplayObject resizeTo( float width, float height )
 	{
-		_bounds.resizeTo( width, height );
+		bounds.resizeTo( width, height );
 
 		if( _skin != null )
 		{
@@ -201,7 +202,7 @@ public class UISurface extends Layer implements IDisposable
 
 	public boolean containsPoint( float x, float y )
 	{
-		return _bounds.contains( x, y );
+		return bounds.contains( x, y );
 	}
 
 	public DisplayObjectContainer getRoot()
@@ -227,13 +228,13 @@ public class UISurface extends Layer implements IDisposable
 	@Override
 	public float width()
 	{
-		return ( float ) _bounds.width;
+		return ( float ) bounds.width;
 	}
 
 	@Override
 	public float height()
 	{
-		return ( float ) _bounds.height;
+		return ( float ) bounds.height;
 	}
 
 	@Override
