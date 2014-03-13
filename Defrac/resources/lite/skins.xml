@@ -58,7 +58,7 @@
     <sprite n="ListIconTextSelected" x="323" y="455" w="17" h="17" left="0" right="0" top="0" bottom="0" />
     <sprite n="ListIconVideoDeselected" x="304" y="455" w="17" h="17" left="0" right="0" top="0" bottom="0" />
     <sprite n="ListIconVideoSelected" x="475" y="466" w="17" h="17" left="0" right="0" top="0" bottom="0" />
-    <sprite n="Logo" x="304" y="476" w="154" h="19" left="0" right="0" top="0" bottom="0" />
+    <sprite n="Logo" x="304" y="476" w="85" h="19" left="0" right="0" top="0" bottom="0" />
     <sprite n="PanelGeneric" x="379" y="274" w="100" h="100" left="10" right="10" top="10" bottom="10" />
     <sprite n="PanelGenericArrow" x="438" y="497" w="17" h="12" left="0" right="0" top="0" bottom="0" />
     <sprite n="PanelSettings" x="2" y="130" w="380" h="110" left="340" right="20" top="50" bottom="50" />

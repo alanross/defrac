@@ -46,7 +46,7 @@ public final class LiteStudio extends Experiment implements ILiteSetupObserver
 	{
 		_background = LiteCore.ui.createSurface( "AppBackground" );
 
-		_logo = LiteCore.ui.createSurface( "Logo", 0, 0, 154, 19 );
+		_logo = LiteCore.ui.createSurface( "Logo" );
 
 		_inputChoices = new LiteInputsChoice();
 		_inputChoices.moveTo( 22, 12 );
