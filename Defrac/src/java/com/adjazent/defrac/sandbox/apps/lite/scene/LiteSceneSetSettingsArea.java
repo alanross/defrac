@@ -44,6 +44,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		_list = LiteCore.ui.createList();
 		_list.resizeTo( 230, 185 );
 		_list.moveTo( 4, 60 );
+		_list.onSelect.add( this );
 
 		_buttonAdd = LiteCore.ui.createButton( "ButtonListAdd", "ButtonListAdd" );
 		_buttonAdd.resizeTo( 16, 16 );
@@ -75,6 +76,13 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 			if( action.origin == _buttonDel )
 			{
 				info( Context.DEFAULT, "Remove cell from list" );
+			}
+		}
+		if( action.type == UIActionType.CELL_SELECT )
+		{
+			if( action.origin == _list )
+			{
+				( ( LiteCellData ) _list.getLastSelectedItem() ).model.selected( true );
 			}
 		}
 	}
@@ -112,6 +120,10 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		{
 			remove( item );
 		}
+		if( type == LiteScene.ELEMENT_SELECTED )
+		{
+			select( item );
+		}
 	}
 
 	private void populate( LiteScene scene )
@@ -139,16 +151,37 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 
 	private void remove( LiteSceneElement element )
 	{
+		UICellData cellData = getAssociatedData( element );
+
+		if( element != null )
+		{
+			_list.removeItem( cellData );
+		}
+	}
+
+	private void select( LiteSceneElement element )
+	{
+		UICellData cellData = getAssociatedData( element );
+
+		if( element != null )
+		{
+			cellData.selected( true );
+		}
+	}
+
+	private LiteCellData getAssociatedData( LiteSceneElement element )
+	{
 		for( int i = 0; i < _list.numItems(); i++ )
 		{
 			LiteCellData cellData = ( LiteCellData ) _list.getItem( i );
 
 			if( cellData.model == element )
 			{
-				_list.removeItem( cellData );
-				return;
+				return cellData;
 			}
 		}
+
+		return null;
 	}
 
 	@Override

@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteSceneEditorElement extends UISurface
+public final class LiteSceneElementView extends UISurface
 {
 	public final float minWidth = 40;
 	public final float minHeight = 40;
@@ -23,14 +23,16 @@ public final class LiteSceneEditorElement extends UISurface
 
 	private LiteSceneEditor _editor;
 
-	public LiteSceneEditorElement( LiteSceneElement model )
+	public LiteSceneElementView( LiteSceneElement model )
 	{
 		super( model.skin );
 
 		this.model = model;
 
-		super.moveTo( this.model.dim.x, this.model.dim.y );
-		super.resizeTo( this.model.dim.width, this.model.dim.height );
+		Rectangle d = model.getDimensions();
+
+		super.moveTo( d.x, d.y );
+		super.resizeTo( d.width, d.height );
 	}
 
 	public void attach( LiteSceneEditor editor )
@@ -45,15 +47,10 @@ public final class LiteSceneEditorElement extends UISurface
 
 	public void setDimensions( Rectangle d )
 	{
-		model.dim.set( d.x, d.y, d.width, d.height );
-
 		super.moveTo( d.x, d.y );
 		super.resizeTo( d.width, d.height );
 
-		if( _editor != null )
-		{
-			_editor.onUpdated( this );
-		}
+		model.setDimensions( d.x, d.y, d.width, d.height );
 	}
 
 	@Override
@@ -71,7 +68,7 @@ public final class LiteSceneEditorElement extends UISurface
 		{
 			if( uiEvent.type == UIEventType.FOCUS_IN )
 			{
-				_editor.activate( this );
+				model.selected( true );
 			}
 		}
 	}
@@ -79,6 +76,6 @@ public final class LiteSceneEditorElement extends UISurface
 	@Override
 	public String toString()
 	{
-		return "[LiteSceneEditorElement]";
+		return "[LiteSceneElementView]";
 	}
 }

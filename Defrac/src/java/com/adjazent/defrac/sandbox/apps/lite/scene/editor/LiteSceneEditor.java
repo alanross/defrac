@@ -1,5 +1,6 @@
 package com.adjazent.defrac.sandbox.apps.lite.scene.editor;
 
+import com.adjazent.defrac.core.error.ElementDoesNotExistError;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteInputSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.data.ILiteSceneObserver;
@@ -26,7 +27,7 @@ import javax.annotation.Nonnull;
  */
 public final class LiteSceneEditor extends UISurface implements ILiteDropTarget, ILiteSceneObserver
 {
-	private LiteSceneEditorResizer _resizer;
+	private LiteSceneElementResizer _resizer;
 
 	private Layer _elementLayer = new Layer();
 	private Layer _resizerLayer = new Layer();
@@ -39,7 +40,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	private boolean _dragEnabled;
 	private boolean _dragActive;
 
-	private LiteSceneEditorElement _activeElement;
+	private LiteSceneElementView _activeElement;
 	private UISurface _activeHandle;
 
 	private boolean _enabled = true;
@@ -50,7 +51,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	{
 		super( skin );
 
-		_resizer = new LiteSceneEditorResizer( _resizerLayer );
+		_resizer = new LiteSceneElementResizer( _resizerLayer );
 
 		_resizerLayer.visible( false );
 
@@ -184,6 +185,18 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 		{
 			remove( item );
 		}
+		if( type == LiteScene.ELEMENT_SELECTED )
+		{
+			LiteSceneElementView view = getAssociatedView( item );
+			_activeElement = view;
+			_resizerLayer.visible( true );
+			_resizer.setPosition( view );
+		}
+		if( type == LiteScene.ELEMENT_UPDATED )
+		{
+			LiteSceneElementView element = getAssociatedView( item );
+			_resizer.setPosition( element );
+		}
 	}
 
 	private void onActionEvent( UIActionEvent event )
@@ -248,9 +261,8 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	{
 		if( _activeElement != null )
 		{
-			deactivate( _activeElement );
-
 			_activeElement = null;
+			_resizerLayer.visible( false );
 		}
 
 		_elementLayer.removeAllChildren();
@@ -271,7 +283,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 	private void add( LiteSceneElement element )
 	{
-		LiteSceneEditorElement e = new LiteSceneEditorElement( element );
+		LiteSceneElementView e = new LiteSceneElementView( element );
 
 		e.attach( this );
 
@@ -280,39 +292,31 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 	private void remove( LiteSceneElement element )
 	{
-		for( int i = 0; i < _elementLayer.numChildren(); i++ )
+		LiteSceneElementView e = getAssociatedView( element );
+
+		if( e != null )
 		{
-			DisplayObject c = _elementLayer.getChildAt( i );
-
-			if( c instanceof LiteSceneEditorElement )
-			{
-				LiteSceneEditorElement e = ( LiteSceneEditorElement ) c;
-
-				if( e.model == element )
-				{
-					_elementLayer.removeChild( e );
-					return;
-				}
-			}
+			_elementLayer.removeChild( e );
+		}
+		else
+		{
+			throw new ElementDoesNotExistError( this );
 		}
 	}
 
-	public void activate( LiteSceneEditorElement element )
+	private LiteSceneElementView getAssociatedView( LiteSceneElement element )
 	{
-		_activeElement = element;
-		_resizerLayer.visible( true );
-		_resizer.setPosition( element );
-	}
+		for( int i = 0; i < _elementLayer.numChildren(); ++i )
+		{
+			LiteSceneElementView e = ( LiteSceneElementView ) _elementLayer.getChildAt( i );
 
-	public void deactivate( LiteSceneEditorElement element )
-	{
-		_activeElement = null;
-		_resizerLayer.visible( false );
-	}
+			if( e.model == element )
+			{
+				return e;
+			}
+		}
 
-	public void onUpdated( LiteSceneEditorElement element )
-	{
-		_resizer.setPosition( element );
+		return null;
 	}
 
 	public void setEnabled( boolean value )

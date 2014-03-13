@@ -84,6 +84,11 @@ public final class LiteState extends Signals implements ISignalSource
 		return _currentSceneSlotType;
 	}
 
+	public LiteScene currentScene()
+	{
+		return _currentScene;
+	}
+
 	@Override
 	public String toString()
 	{

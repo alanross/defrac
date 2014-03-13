@@ -13,6 +13,8 @@ public final class LiteScene
 {
 	public static final int ELEMENT_ADDED = 1;
 	public static final int ELEMENT_REMOVED = 2;
+	public static final int ELEMENT_SELECTED = 3;
+	public static final int ELEMENT_UPDATED = 4;
 
 	public final String id;
 
@@ -20,12 +22,34 @@ public final class LiteScene
 
 	private final LinkedList<LiteSceneElement> _elements;
 
+	private LiteSceneElement _lastSelectedItem;
+
 	public LiteScene( String id )
 	{
 		this.id = id;
 
 		_elements = new LinkedList<LiteSceneElement>();
 		_observers = new LinkedList<ILiteSceneObserver>();
+	}
+
+	void onSelected( LiteSceneElement item )
+	{
+		if( item != _lastSelectedItem )
+		{
+			if( _lastSelectedItem != null )
+			{
+				_lastSelectedItem.selected( false );
+			}
+
+			_lastSelectedItem = item;
+
+			notify( item, ELEMENT_SELECTED );
+		}
+	}
+
+	void onUpdated( LiteSceneElement item )
+	{
+		notify( item, ELEMENT_UPDATED );
 	}
 
 	public void addObserver( ILiteSceneObserver observer )
@@ -72,6 +96,8 @@ public final class LiteScene
 
 		_elements.addLast( item );
 
+		item.attach( this );
+
 		notify( item, ELEMENT_ADDED );
 
 		return item;
@@ -86,6 +112,8 @@ public final class LiteScene
 
 		_elements.remove( item );
 
+		item.detach( this );
+
 		notify( item, ELEMENT_REMOVED );
 
 		return item;
@@ -99,6 +127,16 @@ public final class LiteScene
 	public LiteSceneElement get( int index )
 	{
 		return _elements.get( index );
+	}
+
+	public void select( int index )
+	{
+		_elements.get( index ).selected( true );
+	}
+
+	public void select( LiteSceneElement item )
+	{
+		item.selected( true );
 	}
 
 	public int numElements()
