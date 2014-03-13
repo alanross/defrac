@@ -28,11 +28,10 @@ public final class LiteCellRenderer extends UISurface implements IUICellRenderer
 {
 	public final Action onClick = new Action( UIActionType.CELL_CLICK );
 
-	private IUISkin _skinDeselected;
-	private IUISkin _skinSelected;
-	private UILabel _label;
-
-	private Image _image;
+	private final IUISkin _skinDeselected;
+	private final IUISkin _skinSelected;
+	private final UILabel _label;
+	private final Image _image;
 
 	private UICellData _data;
 
@@ -117,7 +116,7 @@ public final class LiteCellRenderer extends UISurface implements IUICellRenderer
 		_data.onSelect.remove( this );
 		_data = null;
 
-		_label.setText( "UNDEFINED" );
+		_label.setText( "" );
 	}
 
 	@Override
