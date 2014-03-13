@@ -54,7 +54,7 @@ public final class LiteCellRenderer extends UISurface implements IUICellRenderer
 
 	private void repaint()
 	{
-		setSkin( ( _data.getSelected() ? _skinSelected : _skinDeselected ) );
+		setSkin( ( _data.selected() ? _skinSelected : _skinDeselected ) );
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public final class LiteCellRenderer extends UISurface implements IUICellRenderer
 
 		if( event.type == UIEventType.ACTION_BEGIN && event.target == this )
 		{
-			_data.setSelected( !_data.getSelected() );
+			_data.selected( true );
 		}
 		if( event.type == UIEventType.ACTION_SINGLE && event.target == this )
 		{

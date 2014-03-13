@@ -111,10 +111,13 @@ public final class EUIWidgets extends Experiment implements IUIResourceLoaderQue
 		_slider.id = "s1";
 
 		// --------------------- LIST
-		_list = new UIList( new MyCellRendererFactory( new UITextFormat( "Helvetica" ) ), new UIListInteractions() );
+		_list = new UIList(
+				UISkinFactory.create( 0xFFA2A2A2 ),
+				new MyCellRendererFactory( new UITextFormat( "Helvetica" ) ),
+				new UIListInteractions()
+		);
 		_list.moveTo( 50, 150 );
 		_list.resizeTo( 200, 350 );
-		_list.setBackground( 0xFFA2A2A2 );
 
 		for( int i = 0; i < 30; ++i )
 		{

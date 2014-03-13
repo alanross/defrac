@@ -15,8 +15,7 @@ public class UICellData
 
 	private String _text;
 	private int _height;
-	private boolean _selected;
-	private boolean _lockSelected;
+	private boolean _selected = false;
 
 	public UICellData( String text, int height )
 	{
@@ -24,34 +23,19 @@ public class UICellData
 		_height = height;
 	}
 
-	public boolean getSelected()
+	public boolean selected()
 	{
 		return _selected;
 	}
 
-	public void setSelected( boolean value )
+	public void selected( boolean value )
 	{
 		if( _selected != value )
 		{
-			if( _lockSelected && !value )
-			{
-				return;
-			}
-
 			_selected = value;
 
 			onSelect.send( this );
 		}
-	}
-
-	public boolean getLockIfSelected()
-	{
-		return _lockSelected;
-	}
-
-	public void setLockIfSelected( boolean value )
-	{
-		_lockSelected = value;
 	}
 
 	public String getText()

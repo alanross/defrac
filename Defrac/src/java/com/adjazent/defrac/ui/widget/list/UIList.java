@@ -3,15 +3,19 @@ package com.adjazent.defrac.ui.widget.list;
 import com.adjazent.defrac.core.error.ElementAlreadyExistsError;
 import com.adjazent.defrac.core.error.ElementDoesNotExistError;
 import com.adjazent.defrac.core.error.GenericError;
+import com.adjazent.defrac.core.notification.action.Action;
+import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.math.MMath;
-import com.adjazent.defrac.math.geom.MRectangle;
+import com.adjazent.defrac.ui.surface.IUISkin;
+import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.utils.render.IUIRenderListener;
 import com.adjazent.defrac.ui.utils.render.UIRenderRequest;
+import com.adjazent.defrac.ui.widget.UIActionType;
 import defrac.display.DisplayObjectContainer;
 import defrac.display.Layer;
-import defrac.display.Quad;
 import defrac.display.event.UIEventTarget;
 import defrac.geom.Point;
+import defrac.geom.Rectangle;
 
 import java.util.LinkedList;
 import java.util.Stack;
@@ -20,33 +24,45 @@ import java.util.Stack;
  * @author Alan Ross
  * @version 0.1
  */
-public final class UIList extends Layer implements IUIRenderListener
+public final class UIList extends UISurface implements IUIRenderListener, IActionObserver
 {
-	public String id = "";
+	public final Action onSelect = new Action( UIActionType.CELL_SELECT );
 
-	private LinkedList<UICellData> _items = new LinkedList<UICellData>();
-	private LinkedList<IUICellRenderer> _renderer = new LinkedList<IUICellRenderer>();
-	private IUICellRendererFactory _factory;
+	private final LinkedList<UICellData> _items = new LinkedList<UICellData>();
+	private final LinkedList<IUICellRenderer> _renderer = new LinkedList<IUICellRenderer>();
+	private final IUICellRendererFactory _factory;
 
-	private Layer _container = new Layer();
-	private Quad _background = new Quad( 1, 1, 0x0 );
+	private final Layer _container = new Layer();
 
-	private UIRenderRequest _renderRequest;
-
-	private MRectangle _bounds = new MRectangle();
-	private int _itemsHeight = 0;
-	private int _offset = 0;
-	private int _cellSpacing = 1;
+	private final UIRenderRequest _renderRequest;
 
 	private UIListInteractions _interactions;
 
+	private int _itemsHeight = 0;
+	private int _offset = 0;
+	private int _cellSpacing = 1;
+	private UICellData _lastSelectedItem;
+	private boolean _multiSelection = false;
+
 	public UIList( IUICellRendererFactory rendererFactory )
 	{
+		super();
+
 		_factory = rendererFactory;
 
 		_renderRequest = new UIRenderRequest( this );
 
-		addChild( _background );
+		addChild( _container );
+	}
+
+	public UIList( IUISkin skin, IUICellRendererFactory rendererFactory )
+	{
+		super( skin );
+
+		_factory = rendererFactory;
+
+		_renderRequest = new UIRenderRequest( this );
+
 		addChild( _container );
 	}
 
@@ -56,7 +72,20 @@ public final class UIList extends Layer implements IUIRenderListener
 
 		_renderRequest = new UIRenderRequest( this );
 
-		addChild( _background );
+		addChild( _container );
+
+		_interactions = interactions;
+		_interactions.attach( this );
+	}
+
+	public UIList( IUISkin skin, IUICellRendererFactory rendererFactory, UIListInteractions interactions )
+	{
+		super( skin );
+
+		_factory = rendererFactory;
+
+		_renderRequest = new UIRenderRequest( this );
+
 		addChild( _container );
 
 		_interactions = interactions;
@@ -64,11 +93,30 @@ public final class UIList extends Layer implements IUIRenderListener
 	}
 
 	@Override
+	public void onActionEvent( Action action )
+	{
+		if( action.type == UIActionType.CELL_SELECT )
+		{
+			if( action.origin != _lastSelectedItem )
+			{
+				if( _lastSelectedItem != null && !_multiSelection )
+				{
+					_lastSelectedItem.selected( false );
+				}
+
+				_lastSelectedItem = ( UICellData ) action.origin;
+
+				onSelect.send( _lastSelectedItem );
+			}
+		}
+	}
+
+	@Override
 	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
 	{
 		Point local = this.globalToLocal( new Point( point.x, point.y ) );
 
-		if( _bounds.contains( local.x, local.y ) )
+		if( bounds.contains( local.x, local.y ) )
 		{
 			int n = _renderer.size();
 
@@ -148,13 +196,13 @@ public final class UIList extends Layer implements IUIRenderListener
 
 	public void render()
 	{
-		if( _bounds.width < 1 || _bounds.height < 1 )
+		if( bounds.width < 1 || bounds.height < 1 )
 		{
 			throw new GenericError( this + " Invalid size" );
 		}
 
-		final int viewWidth = ( int ) _bounds.width;
-		final int viewHeight = ( int ) _bounds.height;
+		final int viewWidth = ( int ) bounds.width;
+		final int viewHeight = ( int ) bounds.height;
 		final int minView = _offset;
 		final int maxView = _offset + viewHeight;
 		final int numItems = _items.size();
@@ -223,6 +271,8 @@ public final class UIList extends Layer implements IUIRenderListener
 
 		_items.addLast( item );
 
+		item.onSelect.add( this );
+
 		measure();
 
 		_renderRequest.invalidate();
@@ -234,6 +284,13 @@ public final class UIList extends Layer implements IUIRenderListener
 		{
 			throw new ElementDoesNotExistError();
 		}
+
+		if( _lastSelectedItem == item )
+		{
+			_lastSelectedItem = null;
+		}
+
+		item.onSelect.remove( this );
 
 		_items.remove( item );
 
@@ -249,11 +306,7 @@ public final class UIList extends Layer implements IUIRenderListener
 			throw new ElementDoesNotExistError();
 		}
 
-		_items.remove( _items.get( index ) );
-
-		measure();
-
-		_renderRequest.invalidate();
+		removeItem( _items.get( index ) );
 	}
 
 	public void removeAllItems()
@@ -262,8 +315,14 @@ public final class UIList extends Layer implements IUIRenderListener
 
 		while( --n > -1 )
 		{
-			_items.remove( n );
+			UICellData item = _items.get( n );
+
+			item.onSelect.remove( this );
+
+			_items.remove( item );
 		}
+
+		_lastSelectedItem = null;
 
 		measure();
 
@@ -292,12 +351,11 @@ public final class UIList extends Layer implements IUIRenderListener
 			throw new GenericError( this + " Invalid size" );
 		}
 
-		if( _bounds.width != width || _bounds.height != height )
+		if( bounds.width != width || bounds.height != height )
 		{
-			_bounds.resizeTo( width, height );
-			_background.scaleToSize( width, height );
+			super.resizeTo( width, height );
 
-			scrollRect( new defrac.geom.Rectangle( 0, 0, width, height ) );
+			scrollRect( new Rectangle( 0, 0, width, height ) );
 
 			_renderRequest.invalidate();
 		}
@@ -310,7 +368,7 @@ public final class UIList extends Layer implements IUIRenderListener
 
 	public void setOffset( int value )
 	{
-		value = ( _itemsHeight < _bounds.height ) ? 0 : MMath.clampInt( value, 0, ( int ) ( _itemsHeight - _bounds.height ) );
+		value = ( _itemsHeight < bounds.height ) ? 0 : MMath.clampInt( value, 0, ( int ) ( _itemsHeight - bounds.height ) );
 
 		if( _offset != value )
 		{
@@ -320,9 +378,9 @@ public final class UIList extends Layer implements IUIRenderListener
 		}
 	}
 
-	public void setBackground( int color )
+	public void multiSelection( boolean value )
 	{
-		_background.color( color );
+		_multiSelection = value;
 	}
 
 	public int getItemsHeight()
@@ -333,16 +391,6 @@ public final class UIList extends Layer implements IUIRenderListener
 	public int getCellSpacing()
 	{
 		return _cellSpacing;
-	}
-
-	public int getWidth()
-	{
-		return ( int ) _bounds.width;
-	}
-
-	public int getHeight()
-	{
-		return ( int ) _bounds.height;
 	}
 
 	@Override

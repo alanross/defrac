@@ -47,7 +47,7 @@ public class MyCellRenderer extends UISurface implements IUICellRenderer, IActio
 
 	private void repaint()
 	{
-		setSkin( ( _data.getSelected() ? _skinSelected : _skinDeselected ) );
+		setSkin( ( _data.selected() ? _skinSelected : _skinDeselected ) );
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class MyCellRenderer extends UISurface implements IUICellRenderer, IActio
 
 		if( event.type == UIEventType.ACTION_BEGIN && event.target == this )
 		{
-			_data.setSelected( !_data.getSelected() );
+			_data.selected( true );
 		}
 		if( event.type == UIEventType.ACTION_SINGLE && event.target == this )
 		{

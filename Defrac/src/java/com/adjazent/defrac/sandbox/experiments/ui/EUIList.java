@@ -50,11 +50,9 @@ public final class EUIList extends Experiment implements IUIResourceLoaderQueueO
 	@Override
 	public void onResourceLoadingSuccess()
 	{
-		_list = new UIList( new MyCellRendererFactory( new UITextFormat( "Helvetica" ) ) );
+		_list = new UIList( UISkinFactory.create( 0xFFA2A2A2 ), new MyCellRendererFactory( new UITextFormat( "Helvetica" ) ) );
 		_list.moveTo( 100, 150 );
 		_list.resizeTo( 200, 350 );
-		_list.setBackground( 0xFFA2A2A2 );
-
 
 		for( int i = 0; i < 3; ++i )
 		{
