@@ -64,7 +64,7 @@ public final class Sandbox extends AbstractSandbox
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( EUIList.class );
+		activate( LiteStudio.class );
 	}
 
 	public static void main( final String[] args )

@@ -1,7 +1,6 @@
 package com.adjazent.defrac.sandbox.apps.lite.scene;
 
 import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
@@ -99,7 +98,6 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 
 				populate( LiteCore.state.sceneSet().b );
 			}
-
 		}
 	}
 
