@@ -87,7 +87,7 @@ public final class LiteScene
 		}
 	}
 
-	public LiteSceneElement add( LiteSceneElement item )
+	public void add( LiteSceneElement item )
 	{
 		if( has( item ) )
 		{
@@ -99,24 +99,25 @@ public final class LiteScene
 		item.attach( this );
 
 		notify( item, ELEMENT_ADDED );
-
-		return item;
 	}
 
-	public LiteSceneElement remove( LiteSceneElement item )
+	public void remove( LiteSceneElement item )
 	{
-		if( has( item ) )
+		if( !has( item ) )
 		{
 			throw new ElementDoesNotExistError( this + " " + item + " does not exist" );
 		}
 
-		_elements.remove( item );
+		if( _lastSelectedItem == item )
+		{
+			_lastSelectedItem = null;
+		}
 
-		item.detach( this );
+		_elements.remove( item );
 
 		notify( item, ELEMENT_REMOVED );
 
-		return item;
+		item.detach( this );
 	}
 
 	public boolean has( LiteSceneElement item )
@@ -132,11 +133,6 @@ public final class LiteScene
 	public void select( int index )
 	{
 		_elements.get( index ).selected( true );
-	}
-
-	public void select( LiteSceneElement item )
-	{
-		item.selected( true );
 	}
 
 	public int numElements()

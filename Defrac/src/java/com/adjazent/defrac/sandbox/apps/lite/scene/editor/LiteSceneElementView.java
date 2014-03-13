@@ -21,8 +21,6 @@ public final class LiteSceneElementView extends UISurface
 
 	public final LiteSceneElement model;
 
-	private LiteSceneEditor _editor;
-
 	public LiteSceneElementView( LiteSceneElement model )
 	{
 		super( model.skin );
@@ -33,16 +31,6 @@ public final class LiteSceneElementView extends UISurface
 
 		super.moveTo( d.x, d.y );
 		super.resizeTo( d.width, d.height );
-	}
-
-	public void attach( LiteSceneEditor editor )
-	{
-		_editor = editor;
-	}
-
-	public void detach( LiteSceneEditor editor )
-	{
-		_editor = null;
 	}
 
 	public void setDimensions( Rectangle d )

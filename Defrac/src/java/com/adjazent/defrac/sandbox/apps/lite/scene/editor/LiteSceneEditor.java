@@ -281,22 +281,24 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 		}
 	}
 
-	private void add( LiteSceneElement element )
+	private void add( LiteSceneElement item )
 	{
-		LiteSceneElementView e = new LiteSceneElementView( element );
-
-		e.attach( this );
-
-		_elementLayer.addChild( e );
+		_elementLayer.addChild( new LiteSceneElementView( item ) );
 	}
 
-	private void remove( LiteSceneElement element )
+	private void remove( LiteSceneElement item )
 	{
-		LiteSceneElementView e = getAssociatedView( element );
+		LiteSceneElementView view = getAssociatedView( item );
 
-		if( e != null )
+		if( view != null )
 		{
-			_elementLayer.removeChild( e );
+			if( _activeElement == view )
+			{
+				_activeElement = null;
+				_resizerLayer.visible( false );
+			}
+
+			_elementLayer.removeChild( view );
 		}
 		else
 		{
@@ -304,13 +306,13 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 		}
 	}
 
-	private LiteSceneElementView getAssociatedView( LiteSceneElement element )
+	private LiteSceneElementView getAssociatedView( LiteSceneElement item )
 	{
 		for( int i = 0; i < _elementLayer.numChildren(); ++i )
 		{
 			LiteSceneElementView e = ( LiteSceneElementView ) _elementLayer.getChildAt( i );
 
-			if( e.model == element )
+			if( e.model == item )
 			{
 				return e;
 			}

@@ -75,7 +75,12 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 			}
 			if( action.origin == _buttonDel )
 			{
-				info( Context.DEFAULT, "Remove cell from list" );
+				if( _list.getLastSelectedItem() != null )
+				{
+					LiteCellData d = ( LiteCellData ) _list.getLastSelectedItem();
+
+					_model.remove( d.model );
+				}
 			}
 		}
 		if( action.type == UIActionType.CELL_SELECT )
