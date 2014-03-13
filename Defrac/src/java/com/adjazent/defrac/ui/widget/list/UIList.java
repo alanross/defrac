@@ -14,6 +14,7 @@ import defrac.display.event.UIEventTarget;
 import defrac.geom.Point;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * @author Alan Ross
@@ -87,6 +88,37 @@ public final class UIList extends Layer implements IUIRenderListener
 		return null;
 	}
 
+	private void addRenderer( float viewWidth, boolean top, IUICellRenderer renderer, UICellData item )
+	{
+		if( top )
+		{
+			_renderer.addFirst( renderer );
+		}
+		else
+		{
+			_renderer.addLast( renderer );
+		}
+
+		_container.addChild( renderer.getContainer() );
+
+		renderer.onAttach( item, viewWidth, ( float ) item.getHeight() );
+
+		item.inViewRange = true;
+	}
+
+	private void removeRenderer( IUICellRenderer renderer, UICellData item )
+	{
+		renderer.onDetach();
+
+		item.inViewRange = false;
+
+		_renderer.remove( renderer );
+
+		_container.removeChild( renderer.getContainer() );
+
+		_factory.release( renderer );
+	}
+
 	private IUICellRenderer getAssociatedRenderer( UICellData data )
 	{
 		int n = _renderer.size();
@@ -121,13 +153,15 @@ public final class UIList extends Layer implements IUIRenderListener
 			throw new GenericError( this + " Invalid size" );
 		}
 
-		int viewWidth = ( int ) _bounds.width;
-		int viewHeight = ( int ) _bounds.height;
-		int numItems = _items.size();
+		final int viewWidth = ( int ) _bounds.width;
+		final int viewHeight = ( int ) _bounds.height;
+		final int minView = _offset;
+		final int maxView = _offset + viewHeight;
+		final int numItems = _items.size();
 		int itemOffset = 0;
-		int minView = _offset;
-		int maxView = _offset + viewHeight;
 		IUICellRenderer renderer;
+
+		Stack<IUICellRenderer> processed = new Stack<IUICellRenderer>();
 
 		for( int i = 0; i < numItems; ++i )
 		{
@@ -139,15 +173,7 @@ public final class UIList extends Layer implements IUIRenderListener
 				{
 					renderer = getAssociatedRenderer( item );
 
-					renderer.onDetach();
-
-					item.inViewRange = false;
-
-					_renderer.remove( renderer );
-
-					_container.removeChild( renderer.getContainer() );
-
-					_factory.release( renderer );
+					removeRenderer( renderer, item );
 				}
 			}
 			else
@@ -156,20 +182,7 @@ public final class UIList extends Layer implements IUIRenderListener
 				{
 					renderer = _factory.create( i );
 
-					if( itemOffset < _offset )
-					{
-						_renderer.addFirst( renderer );
-					}
-					else
-					{
-						_renderer.addLast( renderer );
-					}
-
-					_container.addChild( renderer.getContainer() );
-
-					item.inViewRange = true;
-
-					renderer.onAttach( item, ( float ) viewWidth, ( float ) item.getHeight() );
+					addRenderer( viewWidth, ( itemOffset < _offset ), renderer, item );
 				}
 				else
 				{
@@ -177,9 +190,27 @@ public final class UIList extends Layer implements IUIRenderListener
 				}
 
 				renderer.setY( itemOffset - _offset );
+
+				processed.push( renderer );
 			}
 
 			itemOffset += item.getHeight() + _cellSpacing;
+		}
+
+		int n = _renderer.size();
+
+		while( --n > -1 )
+		{
+			renderer = _renderer.get( n );
+
+			if( !processed.contains( renderer ) )
+			{
+				removeRenderer( renderer, renderer.getData() );
+			}
+			else
+			{
+				processed.remove( renderer );
+			}
 		}
 	}
 
@@ -219,6 +250,20 @@ public final class UIList extends Layer implements IUIRenderListener
 		}
 
 		_items.remove( _items.get( index ) );
+
+		measure();
+
+		_renderRequest.invalidate();
+	}
+
+	public void removeAllItems()
+	{
+		int n = _items.size();
+
+		while( --n > -1 )
+		{
+			_items.remove( n );
+		}
 
 		measure();
 
