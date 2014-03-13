@@ -41,6 +41,6 @@ public final class LiteSceneSet
 	@Override
 	public String toString()
 	{
-		return "[LiteSceneSet]";
+		return "[LiteSceneSet id:" + id + "]";
 	}
 }

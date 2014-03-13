@@ -23,6 +23,6 @@ public final class LiteSceneElement
 	@Override
 	public String toString()
 	{
-		return "[LiteSceneElement]";
+		return "[LiteSceneElement id:" + id + "]";
 	}
 }

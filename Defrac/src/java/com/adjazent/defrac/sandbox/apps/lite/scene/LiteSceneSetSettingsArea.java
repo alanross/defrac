@@ -99,6 +99,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 
 				populate( LiteCore.state.sceneSet().b );
 			}
+
 		}
 	}
 
@@ -117,10 +118,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 
 	private void populate( LiteScene scene )
 	{
-		for( int i = 0; i < _list.numItems(); i++ )
-		{
-			_list.removeItemAt( i );
-		}
+		_list.removeAllItems();
 
 		if( _model != null )
 		{
@@ -129,8 +127,6 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 
 		_model = scene;
 		_model.addObserver( this );
-
-		Log.info( Context.DEFAULT, this, "populate", _model);
 
 		for( int j = 0; j < _model.numElements(); j++ )
 		{
