@@ -91,7 +91,7 @@ public final class LiteStudio extends Experiment implements ILiteSetupObserver
 	@Override
 	public void onLiteSetupFailure( Error error )
 	{
-		info( Context.DEFAULT, this, "LiteCore setup failure:", error );
+		info( Context.DEFAULT, this, "LiteCore setup failure:", error.getMessage() );
 	}
 
 	@Override
