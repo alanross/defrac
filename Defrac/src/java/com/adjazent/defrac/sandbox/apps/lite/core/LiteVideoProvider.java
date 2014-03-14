@@ -9,6 +9,14 @@ import defrac.display.Texture;
 import static com.adjazent.defrac.core.log.Log.info;
 
 /**
+ * If Firefox failes to load the video resource
+ * ("Content-Type" of "text/plain" is not supported. Load ...),
+ * add the following lines to htaccess:
+ *
+ * AddType video/webm .webm
+ * AddType video/ogg .ogv
+ * AddType video/mp4 .mp4
+ *
  * @author Alan Ross
  * @version 0.1
  */
@@ -37,8 +45,8 @@ public final class LiteVideoProvider extends Job
 		}
 		if( format == UIVideoUtils.WEBM )
 		{
-			fail( new Error( "Found WebM support, but have no video. Aborting." ) );
-			return;
+			info( Context.DEFAULT, this, "Selected webm video format." );
+			videoPath += ".webm";
 		}
 		if( format == UIVideoUtils.MP4 )
 		{
