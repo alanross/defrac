@@ -48,7 +48,9 @@ public class UIFont extends Atlas implements IAtlasElement
 
 	public UIGlyph getGlyphWithCode( int code )
 	{
-		return ( ( UIGlyph ) getElement( Integer.toString( code ) ) ).clone();
+		String id = Integer.toString( code );
+
+		return ( hasElement( id ) ) ? ( ( UIGlyph ) getElement( id ) ).clone() : null;
 	}
 
 	public boolean hasGlyphWithChar( char character )
