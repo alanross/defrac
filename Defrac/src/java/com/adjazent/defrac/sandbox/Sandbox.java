@@ -8,6 +8,7 @@ import com.adjazent.defrac.sandbox.experiments.core.job.EJob;
 import com.adjazent.defrac.sandbox.experiments.lang.EDataTypes;
 import com.adjazent.defrac.sandbox.experiments.macros.EMacros;
 import com.adjazent.defrac.sandbox.experiments.system.EFileResource;
+import com.adjazent.defrac.sandbox.experiments.system.ETerminal;
 import com.adjazent.defrac.sandbox.experiments.system.EXMLResource;
 import com.adjazent.defrac.sandbox.experiments.ui.*;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
@@ -55,6 +56,7 @@ public final class Sandbox extends AbstractSandbox
 		add( new EUIList() );
 		add( new EUIWidgets() );
 		add( new EMacros() );
+		add( new ETerminal() );
 		//----------------------------- apps
 		add( new LiteStudio() );
 		//----------------------------- issues
