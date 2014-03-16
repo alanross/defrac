@@ -1,6 +1,5 @@
 package com.adjazent.defrac.ds.atlas;
 
-import com.adjazent.defrac.core.error.ElementDoesNotExistError;
 import com.adjazent.defrac.core.error.NullError;
 import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.log.Log;
@@ -29,7 +28,7 @@ public abstract class Atlas
 
 		if( StringUtils.isEmpty( id ) )
 		{
-			Log.warn( Context.DEFAULT, this, "Ignoring. Can not prepare element with empty id." );
+			Log.warn( Context.DEFAULT, this, "Can not prepare element with empty id. Ignoring." );
 
 			return false;
 		}
@@ -38,7 +37,7 @@ public abstract class Atlas
 
 		if( hasElement( id ) )
 		{
-			Log.warn( Context.DEFAULT, this, "Ignoring. Element already exists." );
+			Log.warn( Context.DEFAULT, this, "Element \"" + id + "\" already exists. Ignoring." );
 
 			return false;
 		}
@@ -54,7 +53,7 @@ public abstract class Atlas
 
 		if( StringUtils.isEmpty( id ) )
 		{
-			Log.warn( Context.DEFAULT, this, "Ignoring. Can not remove element with empty id." );
+			Log.warn( Context.DEFAULT, this, "Can not remove element with empty id. Ignoring." );
 
 			return false;
 		}
@@ -63,7 +62,7 @@ public abstract class Atlas
 
 		if( !hasElement( id ) )
 		{
-			Log.warn( Context.DEFAULT, this, "Ignoring. Element does not exists." );
+			Log.warn( Context.DEFAULT, this, "Element \"" + id + "\" does not exists. Ignoring." );
 
 			return false;
 		}
@@ -84,7 +83,9 @@ public abstract class Atlas
 
 		if( !hasElement( id ) )
 		{
-			throw new ElementDoesNotExistError( this );
+			Log.warn( Context.DEFAULT, this, "Element \"" + id + "\" does not exists. Ignoring." );
+
+			return null;
 		}
 
 		return _dictionary.get( id );
