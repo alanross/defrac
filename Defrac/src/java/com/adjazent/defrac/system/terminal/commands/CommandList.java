@@ -38,7 +38,7 @@ public final class CommandList implements ICommand
 
 		Arrays.sort( result );
 
-		return ArrayUtils.join( result, "\t" );
+		return ArrayUtils.join( result, ", " );
 	}
 
 	/**
