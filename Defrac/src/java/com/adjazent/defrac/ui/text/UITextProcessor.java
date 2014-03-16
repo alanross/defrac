@@ -111,7 +111,15 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 		for( int i = 0; i < n; ++i )
 		{
-			_glyphs.addLast( _font.getGlyphWithChar( value.charAt( i ) ).clone() );
+			UIGlyph glyph = _font.getGlyphWithChar( value.charAt( i ) );
+
+			// no glyph found for char, insert following substitute
+			if( glyph == null )
+			{
+				glyph = _font.getGlyphWithChar( '_' );
+			}
+
+			_glyphs.addLast( glyph );
 		}
 
 		_renderRequest.invalidate();
