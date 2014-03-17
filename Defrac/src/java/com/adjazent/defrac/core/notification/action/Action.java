@@ -12,11 +12,18 @@ import java.util.LinkedList;
  */
 public class Action
 {
+	private static int __id = -1;
+
 	public final int type;
 
 	public Object origin;
 
 	private LinkedList<IActionObserver> _observer;
+
+	public static int createUniqueType()
+	{
+		return ++__id;
+	}
 
 	public Action( int type )
 	{
