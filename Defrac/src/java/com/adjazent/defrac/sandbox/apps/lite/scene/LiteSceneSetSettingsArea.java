@@ -1,22 +1,21 @@
 package com.adjazent.defrac.sandbox.apps.lite.scene;
 
-import com.adjazent.defrac.core.log.Context;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
-import com.adjazent.defrac.sandbox.apps.lite.core.LiteState;
+import com.adjazent.defrac.sandbox.apps.lite.core.LiteData;
 import com.adjazent.defrac.sandbox.apps.lite.core.data.ILiteSceneObserver;
 import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteScene;
-import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneElement;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneItem;
+import com.adjazent.defrac.sandbox.apps.lite.scene.settings.LiteSceneItemCellData;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import com.adjazent.defrac.ui.widget.button.UIButton;
-import com.adjazent.defrac.ui.widget.list.UICellData;
 import com.adjazent.defrac.ui.widget.list.UIList;
 
-import static com.adjazent.defrac.core.log.Log.info;
+import java.util.Hashtable;
 
 /**
  * @author Alan Ross
@@ -26,11 +25,10 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 {
 	private UIButton _buttonAdd;
 	private UIButton _buttonDel;
-
 	private UIList _list;
-
 	private UISurface _arrow;
 
+	private Hashtable<LiteSceneItem, LiteSceneItemCellData> _items;
 	private LiteScene _model;
 
 	public LiteSceneSetSettingsArea()
@@ -38,6 +36,8 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		super( LiteCore.ui.createSkin( "PanelSettings" ) );
 
 		resizeTo( 791, 284 );
+
+		_items = new Hashtable<LiteSceneItem, LiteSceneItemCellData>();
 
 		_arrow = LiteCore.ui.createSurface( "PanelSettingsArrow", 183, 0, 23, 16 );
 
@@ -61,7 +61,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		addChild( _buttonAdd );
 		addChild( _buttonDel );
 
-		LiteCore.state.addReceiver( this );
+		LiteCore.data.addReceiver( this );
 	}
 
 	@Override
@@ -71,13 +71,12 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		{
 			if( action.origin == _buttonAdd )
 			{
-				info( Context.DEFAULT, "Add cell to list" );
 			}
 			if( action.origin == _buttonDel )
 			{
 				if( _list.getLastSelectedItem() != null )
 				{
-					LiteCellData d = ( LiteCellData ) _list.getLastSelectedItem();
+					LiteSceneItemCellData d = ( LiteSceneItemCellData ) _list.getLastSelectedItem();
 
 					_model.remove( d.model );
 				}
@@ -87,7 +86,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		{
 			if( action.origin == _list )
 			{
-				( ( LiteCellData ) _list.getLastSelectedItem() ).model.selected( true );
+				( ( LiteSceneItemCellData ) _list.getLastSelectedItem() ).model.selected( true );
 			}
 		}
 	}
@@ -95,39 +94,39 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 	@Override
 	public void onSignal( ISignalSource signalSource, int signalType )
 	{
-		if( signalType == LiteState.SELECT_SCENE_SET || signalType == LiteState.SELECT_SCENE_SLOT )
+		if( signalType == LiteData.SELECT_SCENE_SET || signalType == LiteData.SELECT_SCENE_SLOT )
 		{
-			int type = LiteCore.state.sceneSlotType();
+			int type = LiteCore.data.selectedSceneSlotId();
 
-			if( type == LiteState.STATE_SCENE_A )
+			if( type == LiteData.SCENE_SLOT_A )
 			{
 				_arrow.moveTo( 183, 0 );
 
-				populate( LiteCore.state.sceneSet().a );
+				populate( LiteCore.data.selectedSceneSet().a );
 			}
-			if( type == LiteState.STATE_SCENE_B )
+			if( type == LiteData.SCENE_SLOT_B )
 			{
 				_arrow.moveTo( 570, 0 );
 
-				populate( LiteCore.state.sceneSet().b );
+				populate( LiteCore.data.selectedSceneSet().b );
 			}
 		}
 	}
 
 	@Override
-	public void onLiteSceneModified( LiteSceneElement item, int type )
+	public void onLiteSceneModified( LiteSceneItem item, int type )
 	{
-		if( type == LiteScene.ELEMENT_ADDED )
+		if( type == LiteScene.ITEM_ATTACHED )
 		{
-			add( item );
+			addItem( item );
 		}
-		if( type == LiteScene.ELEMENT_REMOVED )
+		if( type == LiteScene.ITEM_DETACHED )
 		{
-			remove( item );
+			removeItem( item );
 		}
-		if( type == LiteScene.ELEMENT_SELECTED )
+		if( type == LiteScene.ITEM_SELECTED )
 		{
-			select( item );
+			selectItem( item );
 		}
 	}
 
@@ -143,67 +142,38 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		_model = scene;
 		_model.addObserver( this );
 
-		for( int j = 0; j < _model.numElements(); j++ )
+		for( int j = 0; j < _model.numItems(); j++ )
 		{
-			add( _model.get( j ) );
+			addItem( _model.get( j ) );
 		}
 	}
 
-	private void add( LiteSceneElement element )
+	private void addItem( LiteSceneItem item )
 	{
-		_list.addItem( new LiteCellData( element ) );
+		LiteSceneItemCellData cellData = new LiteSceneItemCellData( item );
+
+		_items.put( item, cellData );
+
+		_list.addItem( cellData );
 	}
 
-	private void remove( LiteSceneElement element )
+	private void removeItem( LiteSceneItem item )
 	{
-		UICellData cellData = getAssociatedData( element );
+		LiteSceneItemCellData cellData = _items.remove( item );
 
-		if( element != null )
-		{
-			_list.removeItem( cellData );
-		}
+		_list.removeItem( cellData );
 	}
 
-	private void select( LiteSceneElement element )
+	private void selectItem( LiteSceneItem item )
 	{
-		UICellData cellData = getAssociatedData( element );
+		LiteSceneItemCellData cellData = _items.get( item );
 
-		if( element != null )
-		{
-			cellData.selected( true );
-		}
-	}
-
-	private LiteCellData getAssociatedData( LiteSceneElement element )
-	{
-		for( int i = 0; i < _list.numItems(); i++ )
-		{
-			LiteCellData cellData = ( LiteCellData ) _list.getItem( i );
-
-			if( cellData.model == element )
-			{
-				return cellData;
-			}
-		}
-
-		return null;
+		cellData.selected( true );
 	}
 
 	@Override
 	public String toString()
 	{
 		return "[LiteSceneSetSettingsArea]";
-	}
-
-	private class LiteCellData extends UICellData
-	{
-		final LiteSceneElement model;
-
-		LiteCellData( LiteSceneElement model )
-		{
-			super( model.id, 20 );
-
-			this.model = model;
-		}
 	}
 }

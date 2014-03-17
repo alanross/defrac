@@ -1,4 +1,4 @@
-package com.adjazent.defrac.sandbox.apps.lite.core;
+package com.adjazent.defrac.sandbox.apps.lite.core.data;
 
 import com.adjazent.defrac.ui.surface.IUISkin;
 

@@ -5,7 +5,7 @@ import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
-import com.adjazent.defrac.sandbox.apps.lite.core.LiteState;
+import com.adjazent.defrac.sandbox.apps.lite.core.LiteData;
 import com.adjazent.defrac.sandbox.apps.lite.scene.editor.LiteSceneEditor;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.UIActionType;
@@ -59,7 +59,7 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 		addChild( _buttonSettingsA );
 		addChild( _buttonSettingsB );
 
-		LiteCore.state.addReceiver( this );
+		LiteCore.data.addReceiver( this );
 	}
 
 	@Override
@@ -69,11 +69,11 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 		{
 			if( action.origin == _buttonSettingsA )
 			{
-				LiteCore.state.selectSceneSlot( LiteState.STATE_SCENE_A );
+				LiteCore.data.selectSceneSlot( LiteData.SCENE_SLOT_A );
 			}
 			if( action.origin == _buttonSettingsB )
 			{
-				LiteCore.state.selectSceneSlot( LiteState.STATE_SCENE_B );
+				LiteCore.data.selectSceneSlot( LiteData.SCENE_SLOT_B );
 			}
 		}
 	}
@@ -81,9 +81,9 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 	@Override
 	public void onSignal( ISignalSource signalSource, int signalType )
 	{
-		if( signalType == LiteState.SELECT_SCENE_SET )
+		if( signalType == LiteData.SELECT_SCENE_SET )
 		{
-			int index = LiteCore.state.sceneSetIndex();
+			int index = LiteCore.data.selectedSceneSetIndex();
 
 			if( index == 0 )
 			{
@@ -98,20 +98,39 @@ public final class LiteSceneSetEditingArea extends UISurface implements IActionO
 				_arrow.moveTo( 245, -9 );
 			}
 
-			_sceneEditorA.populate( LiteCore.state.sceneSet().a );
-			_sceneEditorB.populate( LiteCore.state.sceneSet().b );
-		}
-		if( signalType == LiteState.SELECT_SCENE_SLOT )
-		{
-			int type = LiteCore.state.sceneSlotType();
+			int type = LiteCore.data.selectedSceneSlotId();
 
-			if( type == LiteState.STATE_SCENE_A )
+			if( type == LiteData.SCENE_SLOT_A )
 			{
 				_buttonSettingsA.selected( true );
+				_sceneEditorA.enabled( true );
+				_sceneEditorB.enabled( false );
 			}
-			if( type == LiteState.STATE_SCENE_B )
+			if( type == LiteData.SCENE_SLOT_B )
 			{
 				_buttonSettingsB.selected( true );
+				_sceneEditorA.enabled( false );
+				_sceneEditorB.enabled( true );
+			}
+
+			_sceneEditorA.populate( LiteCore.data.selectedSceneSet().a );
+			_sceneEditorB.populate( LiteCore.data.selectedSceneSet().b );
+		}
+		if( signalType == LiteData.SELECT_SCENE_SLOT )
+		{
+			int type = LiteCore.data.selectedSceneSlotId();
+
+			if( type == LiteData.SCENE_SLOT_A )
+			{
+				_buttonSettingsA.selected( true );
+				_sceneEditorA.enabled( true );
+				_sceneEditorB.enabled( false );
+			}
+			if( type == LiteData.SCENE_SLOT_B )
+			{
+				_buttonSettingsB.selected( true );
+				_sceneEditorA.enabled( false );
+				_sceneEditorB.enabled( true );
 			}
 		}
 	}

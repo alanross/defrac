@@ -4,10 +4,8 @@ import com.adjazent.defrac.core.error.SingletonError;
 import com.adjazent.defrac.core.job.IJob;
 import com.adjazent.defrac.core.job.IJobObserver;
 import com.adjazent.defrac.core.job.JobQueue;
-import com.adjazent.defrac.sandbox.apps.lite.core.dnd.LiteDnDGhost;
-import com.adjazent.defrac.sandbox.apps.lite.core.dnd.LiteDnDManager;
-import com.adjazent.defrac.ui.text.font.UIFontManager;
-import com.adjazent.defrac.ui.texture.UITextureManager;
+import com.adjazent.defrac.sandbox.apps.lite.core.setup.LiteSetupData;
+import com.adjazent.defrac.sandbox.apps.lite.core.setup.LiteSetupUI;
 import defrac.display.Stage;
 
 /**
@@ -16,10 +14,8 @@ import defrac.display.Stage;
  */
 public final class LiteCore implements IJobObserver
 {
-	public static LiteDataProvider data = new LiteDataProvider();
-	public static LiteState state = new LiteState();
-	public static LiteUIProvider ui = new LiteUIProvider();
-	public static LiteVideoProvider video = new LiteVideoProvider();
+	public static final LiteData data = new LiteData();
+	public static final LiteUI ui = new LiteUI();
 
 	private static LiteCore _instance;
 
@@ -43,17 +39,12 @@ public final class LiteCore implements IJobObserver
 
 	private void setup( Stage stage )
 	{
-		_observer.onLiteSetupMessage( "Theme completed started." );
-
-		UIFontManager.initialize();
-		UITextureManager.initialize();
-		LiteDnDManager.initialize( stage, new LiteDnDGhost() );
+		_observer.onLiteSetupMessage( "Setup started." );
 
 		JobQueue setupQueue;
 		setupQueue = new JobQueue();
-		setupQueue.addJob( ui );
-		setupQueue.addJob( video );
-		setupQueue.addJob( data );
+		setupQueue.addJob( new LiteSetupUI( stage ) );
+		setupQueue.addJob( new LiteSetupData() );
 		setupQueue.addObserver( this );
 		setupQueue.start();
 	}

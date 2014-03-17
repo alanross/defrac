@@ -1,11 +1,10 @@
 package com.adjazent.defrac.sandbox.apps.lite.scene.editor;
 
-import com.adjazent.defrac.core.error.ElementDoesNotExistError;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
-import com.adjazent.defrac.sandbox.apps.lite.core.LiteInputSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.data.ILiteSceneObserver;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteInputSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteScene;
-import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneElement;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneItem;
 import com.adjazent.defrac.sandbox.apps.lite.core.dnd.ILiteDragItem;
 import com.adjazent.defrac.sandbox.apps.lite.core.dnd.ILiteDropTarget;
 import com.adjazent.defrac.ui.surface.IUISkin;
@@ -20,6 +19,8 @@ import defrac.geom.Point;
 import defrac.geom.Rectangle;
 
 import javax.annotation.Nonnull;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * @author Alan Ross
@@ -27,23 +28,25 @@ import javax.annotation.Nonnull;
  */
 public final class LiteSceneEditor extends UISurface implements ILiteDropTarget, ILiteSceneObserver
 {
-	private LiteSceneElementResizer _resizer;
+	private LiteSceneResizeHandles _resizer;
 
 	private Layer _elementLayer = new Layer();
 	private Layer _resizerLayer = new Layer();
 
 	private UISurface _outline;
 
-	private Rectangle _origDim = new Rectangle();
-	private Rectangle _minSize = new Rectangle();
+	private Rectangle _itemOriginalDim = new Rectangle();
+	private Rectangle _itemRestrictDim = new Rectangle();
 	private Point _dragStart = new Point();
 	private boolean _dragEnabled;
 	private boolean _dragActive;
 
-	private LiteSceneElementView _activeElement;
+	private LiteSceneItemView _activeItem;
 	private UISurface _activeHandle;
 
 	private boolean _enabled = true;
+
+	private Hashtable<LiteSceneItem, LiteSceneItemView> _items;
 
 	private LiteScene _model;
 
@@ -51,7 +54,9 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	{
 		super( skin );
 
-		_resizer = new LiteSceneElementResizer( _resizerLayer );
+		_items = new Hashtable<LiteSceneItem, LiteSceneItemView>();
+
+		_resizer = new LiteSceneResizeHandles( _resizerLayer );
 
 		_resizerLayer.visible( false );
 
@@ -63,7 +68,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 		addChild( _outline );
 	}
 
-	private Rectangle createElementDimensions( Point global )
+	private Rectangle createItemDimensions( Point global )
 	{
 		final float dx = ( global.x - _dragStart.x );
 		final float dy = ( global.y - _dragStart.y );
@@ -72,29 +77,28 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 		if( _activeHandle != null )
 		{
-			d = _resizer.calculateDimensions( _activeHandle, _origDim, dx, dy );
+			d = _resizer.calculateDimensions( _activeHandle, _itemOriginalDim, dx, dy );
 
-			if( d.x > _minSize.x )
+			if( d.x > _itemRestrictDim.x )
 			{
-				d.x = _minSize.x;
+				d.x = _itemRestrictDim.x;
 			}
-			if( d.y > _minSize.y )
+			if( d.y > _itemRestrictDim.y )
 			{
-				d.y = _minSize.y;
+				d.y = _itemRestrictDim.y;
 			}
-			if( d.width < _minSize.width )
+			if( d.width < _itemRestrictDim.width )
 			{
-				d.width = _minSize.width;
+				d.width = _itemRestrictDim.width;
 			}
-			if( d.height < _minSize.height )
+			if( d.height < _itemRestrictDim.height )
 			{
-				d.height = _minSize.height;
+				d.height = _itemRestrictDim.height;
 			}
-
 		}
 		else
 		{
-			d = new Rectangle( _origDim.x + dx, _origDim.y + dy, _origDim.width, _origDim.height );
+			d = new Rectangle( _itemOriginalDim.x + dx, _itemOriginalDim.y + dy, _itemOriginalDim.width, _itemOriginalDim.height );
 		}
 
 		int margin = 5;
@@ -165,42 +169,18 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	@Override
 	public void processEvent( @Nonnull final UIEvent uiEvent )
 	{
-		if( ( uiEvent.type & UIEventType.ACTION ) != 0 )
+		if( ( uiEvent.type & UIEventType.ACTION ) == 0 )
 		{
-			if( _activeElement != null )
-			{
-				onActionEvent( ( UIActionEvent ) uiEvent );
-			}
+			return;
 		}
-	}
 
-	@Override
-	public void onLiteSceneModified( LiteSceneElement item, int type )
-	{
-		if( type == LiteScene.ELEMENT_ADDED )
+		if( _activeItem == null )
 		{
-			add( item );
+			return;
 		}
-		if( type == LiteScene.ELEMENT_REMOVED )
-		{
-			remove( item );
-		}
-		if( type == LiteScene.ELEMENT_SELECTED )
-		{
-			LiteSceneElementView view = getAssociatedView( item );
-			_activeElement = view;
-			_resizerLayer.visible( true );
-			_resizer.setPosition( view );
-		}
-		if( type == LiteScene.ELEMENT_UPDATED )
-		{
-			LiteSceneElementView element = getAssociatedView( item );
-			_resizer.setPosition( element );
-		}
-	}
 
-	private void onActionEvent( UIActionEvent event )
-	{
+		UIActionEvent event = ( UIActionEvent ) uiEvent;
+
 		Point global = new Point( event.pos.x, event.pos.y );
 
 		if( event.type == UIEventType.ACTION_BEGIN )
@@ -211,13 +191,12 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 			_activeHandle = _resizer.getHandle( event.target );
 
-			_origDim.set( _activeElement.x(), _activeElement.y(), _activeElement.width(), _activeElement.height() );
+			_itemOriginalDim.set( _activeItem.x(), _activeItem.y(), _activeItem.width(), _activeItem.height() );
 
-			_minSize.x = _activeElement.x() + _activeElement.width() - _activeElement.minWidth;
-			_minSize.y = _activeElement.y() + _activeElement.height() - _activeElement.minHeight;
-			_minSize.width = _activeElement.minWidth;
-			_minSize.height = _activeElement.minHeight;
-
+			_itemRestrictDim.x = _activeItem.x() + _activeItem.width() - _activeItem.model.minWidth;
+			_itemRestrictDim.y = _activeItem.y() + _activeItem.height() - _activeItem.model.minHeight;
+			_itemRestrictDim.width = _activeItem.model.minWidth;
+			_itemRestrictDim.height = _activeItem.model.minHeight;
 		}
 		if( event.type == UIEventType.ACTION_MOVE )
 		{
@@ -225,14 +204,14 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 			if( _dragActive )
 			{
-				_activeElement.setDimensions( createElementDimensions( global ) );
+				_activeItem.model.setDimensions( createItemDimensions( global ) );
 			}
 		}
 		if( event.type == UIEventType.ACTION_END )
 		{
 			if( _dragActive )
 			{
-				_activeElement.setDimensions( createElementDimensions( global ) );
+				_activeItem.model.setDimensions( createItemDimensions( global ) );
 			}
 
 			_dragEnabled = false;
@@ -240,100 +219,29 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 		}
 		if( event.type == UIEventType.ACTION_DOUBLE )
 		{
-			_activeElement.setDimensions( new Rectangle( 0, 0, _elementLayer.width(), _elementLayer.height() ) );
+			_activeItem.model.setDimensions( new Rectangle( 0, 0, _elementLayer.width(), _elementLayer.height() ) );
 		}
 	}
 
-	public DisplayObject resizeTo( float width, float height )
+	@Override
+	public void onLiteSceneModified( LiteSceneItem item, int type )
 	{
-		super.resizeTo( width, height );
-
-		_elementLayer.scrollRect( new Rectangle( 0, 0, width - 2, height - 2 ) );
-		_elementLayer.moveTo( 1, 1 );
-
-		_resizerLayer.scrollRect( new Rectangle( 0, 0, width - 2, height - 2 ) );
-		_resizerLayer.moveTo( 1, 1 );
-
-		return this;
-	}
-
-	public void populate( LiteScene scene )
-	{
-		if( _activeElement != null )
+		if( type == LiteScene.ITEM_ATTACHED )
 		{
-			_activeElement = null;
-			_resizerLayer.visible( false );
+			addItem( item );
 		}
-
-		_elementLayer.removeAllChildren();
-
-		if( _model != null )
+		if( type == LiteScene.ITEM_DETACHED )
 		{
-			_model.removeObserver( this );
+			removeItem( item );
 		}
-
-		_model = scene;
-		_model.addObserver( this );
-
-		for( int i = 0; i < _model.numElements(); i++ )
+		if( type == LiteScene.ITEM_SELECTED )
 		{
-			add( _model.get( i ) );
+			selectItem( item );
 		}
-	}
-
-	private void add( LiteSceneElement item )
-	{
-		_elementLayer.addChild( new LiteSceneElementView( item ) );
-	}
-
-	private void remove( LiteSceneElement item )
-	{
-		LiteSceneElementView view = getAssociatedView( item );
-
-		if( view != null )
+		if( type == LiteScene.ITEM_MODIFIED )
 		{
-			if( _activeElement == view )
-			{
-				_activeElement = null;
-				_resizerLayer.visible( false );
-			}
-
-			_elementLayer.removeChild( view );
+			modifyItem( item );
 		}
-		else
-		{
-			throw new ElementDoesNotExistError( this );
-		}
-	}
-
-	private LiteSceneElementView getAssociatedView( LiteSceneElement item )
-	{
-		for( int i = 0; i < _elementLayer.numChildren(); ++i )
-		{
-			LiteSceneElementView e = ( LiteSceneElementView ) _elementLayer.getChildAt( i );
-
-			if( e.model == item )
-			{
-				return e;
-			}
-		}
-
-		return null;
-	}
-
-	public void setEnabled( boolean value )
-	{
-		if( _enabled != value )
-		{
-			_enabled = value;
-
-			_resizerLayer.visible( _enabled );
-		}
-	}
-
-	public boolean getEnabled()
-	{
-		return _enabled;
 	}
 
 	@Override
@@ -357,16 +265,115 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	{
 		_outline.visible( false );
 
-		if( dragItem.getDndData() instanceof LiteInputSource && _model != null )
+		if( _model == null )
 		{
-			LiteInputSource data = ( LiteInputSource ) dragItem.getDndData();
-
-			Point local = _elementLayer.globalToLocal( new Point( pos.x, pos.y ) );
-
-			Rectangle dim = new Rectangle( local.x, local.y, data.full.getDefaultWidth(), data.full.getDefaultHeight() );
-
-			_model.add( new LiteSceneElement( "Scene Element " + _model.numElements(), dim, data.full.clone() ) );
+			return;
 		}
+
+		String itemID = "Item " + _model.numItems();
+
+		IUISkin s = ( ( LiteInputSource ) dragItem.getDndData() ).full.clone();
+
+		Point local = _elementLayer.globalToLocal( new Point( pos.x, pos.y ) );
+
+		_model.add( new LiteSceneItem( itemID, s, local.x, local.y, s.getDefaultWidth(), s.getDefaultHeight() ) );
+	}
+
+	public DisplayObject resizeTo( float width, float height )
+	{
+		super.resizeTo( width, height );
+
+		_elementLayer.scrollRect( new Rectangle( 0, 0, width - 2, height - 2 ) );
+		_elementLayer.moveTo( 1, 1 );
+
+		_resizerLayer.scrollRect( new Rectangle( 0, 0, width - 2, height - 2 ) );
+		_resizerLayer.moveTo( 1, 1 );
+
+		return this;
+	}
+
+	public void populate( LiteScene scene )
+	{
+		if( _activeItem != null )
+		{
+			_activeItem = null;
+			_resizerLayer.visible( false );
+		}
+
+		Enumeration<LiteSceneItem> items = _items.keys();
+
+		while( items.hasMoreElements() )
+		{
+			removeItem( items.nextElement() );
+		}
+
+		if( _model != null )
+		{
+			_model.removeObserver( this );
+		}
+
+		_model = scene;
+		_model.addObserver( this );
+
+		for( int i = 0; i < _model.numItems(); i++ )
+		{
+			addItem( _model.get( i ) );
+		}
+	}
+
+	private void addItem( LiteSceneItem item )
+	{
+		LiteSceneItemView view = new LiteSceneItemView( item );
+
+		_items.put( item, view );
+
+		_elementLayer.addChild( view );
+	}
+
+	private void removeItem( LiteSceneItem item )
+	{
+		LiteSceneItemView view = _items.remove( item );
+
+		_activeItem = null;
+		_resizerLayer.visible( false );
+
+		_elementLayer.removeChild( view );
+	}
+
+	private void selectItem( LiteSceneItem item )
+	{
+		LiteSceneItemView view = _items.get( item );
+		_activeItem = view;
+		_resizerLayer.visible( true );
+		_resizer.setPosition( view );
+	}
+
+	private void modifyItem( LiteSceneItem item )
+	{
+		LiteSceneItemView view = _items.get( item );
+		_activeItem = view;
+		_activeItem.update( item.dimensions() );
+		_resizerLayer.visible( true );
+		_resizer.setPosition( view );
+	}
+
+	public void enabled( boolean value )
+	{
+		if( _enabled != value )
+		{
+			_enabled = value;
+			_activeItem = null;
+
+			if( !_enabled )
+			{
+				_resizerLayer.visible( _enabled );
+			}
+		}
+	}
+
+	public boolean enabled()
+	{
+		return _enabled;
 	}
 
 	@Override

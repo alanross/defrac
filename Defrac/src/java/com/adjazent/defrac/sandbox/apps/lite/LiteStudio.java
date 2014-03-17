@@ -77,9 +77,9 @@ public final class LiteStudio extends Experiment implements ILiteSetupObserver
 
 		onResize( stage.width(), stage.height() );
 
-		LiteCore.state.selectInputType( LiteState.STATE_INPUT_LIVE );
-		LiteCore.state.selectSceneSet( 0 );
-		LiteCore.state.selectSceneSlot( LiteState.STATE_SCENE_A );
+		LiteCore.data.selectInput( LiteData.INPUT_TYPE_LIVE );
+		LiteCore.data.selectSceneSet( 0 );
+		LiteCore.data.selectSceneSlot( LiteData.SCENE_SLOT_A );
 	}
 
 	@Override

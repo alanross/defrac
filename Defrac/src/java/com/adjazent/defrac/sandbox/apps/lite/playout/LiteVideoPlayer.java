@@ -19,7 +19,7 @@ public final class LiteVideoPlayer extends UISurface
 
 		resizeTo( 423, 240 );
 
-		_video = new LiteVideoDisplay( LiteCore.video.createTextureTile( 0, 0, 423, 240 ) );
+		_video = new LiteVideoDisplay( LiteCore.data.output );
 
 		_slider = LiteCore.ui.createSlider( "PlayOutSliderTrack", "PlayOutSliderThumb", "PlayOutSliderValue" );
 		_slider.resizeTo( 403, 17 );

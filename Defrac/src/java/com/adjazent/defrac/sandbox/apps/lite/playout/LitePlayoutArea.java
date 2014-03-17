@@ -4,7 +4,6 @@ import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.button.UIButton;
 import com.adjazent.defrac.ui.widget.button.UIToggleButton;
-import com.adjazent.defrac.ui.widget.text.UILabel;
 
 /**
  * @author Alan Ross
@@ -18,7 +17,6 @@ public final class LitePlayoutArea extends UISurface
 	private UIToggleButton _buttonRecord;
 	private UIButton _buttonDelete;
 	private UIButton _buttonSubmit;
-	private UILabel _label;
 
 	public LitePlayoutArea()
 	{
@@ -52,13 +50,6 @@ public final class LitePlayoutArea extends UISurface
 		_buttonSubmit.resizeTo( 114, 42 );
 		_buttonSubmit.moveTo( 330, 662 );
 		addChild( _buttonSubmit );
-
-		_label = LiteCore.ui.createLabelSmall();
-		_label.setAutoSize( false );
-		_label.setSize( 100, 32 );
-		_label.moveTo( 20, 502 );
-		_label.setText( "Label" );
-		addChild( _label );
 
 //		_textField = new UITextField( LiteCore.ui.createTextField( "TextInputBackground" ), new TextFormat( "verdana", 14, 0x898989, false ) );
 //		_textField.resizeTo( 300, 32 );

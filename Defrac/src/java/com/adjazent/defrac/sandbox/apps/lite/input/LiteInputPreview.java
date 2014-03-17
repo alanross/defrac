@@ -1,6 +1,6 @@
 package com.adjazent.defrac.sandbox.apps.lite.input;
 
-import com.adjazent.defrac.sandbox.apps.lite.core.LiteInputSource;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteInputSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.dnd.ILiteDragItem;
 import com.adjazent.defrac.ui.surface.UISurface;
 

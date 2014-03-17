@@ -5,7 +5,7 @@ import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
-import com.adjazent.defrac.sandbox.apps.lite.core.LiteState;
+import com.adjazent.defrac.sandbox.apps.lite.core.LiteData;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import com.adjazent.defrac.ui.widget.button.UIToggleButton;
@@ -45,7 +45,7 @@ public final class LiteInputsChoice extends UISurface implements IActionObserver
 		UIToggleGroup group = new UIToggleGroup( _buttonLive, _buttonVOD, _buttonImage );
 		group.onSelect.add( this );
 
-		LiteCore.state.addReceiver( this );
+		LiteCore.data.addReceiver( this );
 	}
 
 	@Override
@@ -55,15 +55,15 @@ public final class LiteInputsChoice extends UISurface implements IActionObserver
 		{
 			if( action.origin == _buttonLive )
 			{
-				LiteCore.state.selectInputType( LiteState.STATE_INPUT_LIVE );
+				LiteCore.data.selectInput( LiteData.INPUT_TYPE_LIVE );
 			}
 			if( action.origin == _buttonVOD )
 			{
-				LiteCore.state.selectInputType( LiteState.STATE_INPUT_VOD );
+				LiteCore.data.selectInput( LiteData.INPUT_TYPE_VOD );
 			}
 			if( action.origin == _buttonImage )
 			{
-				LiteCore.state.selectInputType( LiteState.STATE_INPUT_IMAGES );
+				LiteCore.data.selectInput( LiteData.INPUT_TYPE_IMAGES );
 			}
 		}
 	}
@@ -71,17 +71,17 @@ public final class LiteInputsChoice extends UISurface implements IActionObserver
 	@Override
 	public void onSignal( ISignalSource signalSource, int signalType )
 	{
-		if( signalType == LiteState.SELECT_INPUT_TYPE )
+		if( signalType == LiteData.SELECT_INPUT )
 		{
-			if( LiteCore.state.inputType() == LiteState.STATE_INPUT_LIVE )
+			if( LiteCore.data.inputType() == LiteData.INPUT_TYPE_LIVE )
 			{
 				_buttonLive.selected( true );
 			}
-			else if( LiteCore.state.inputType() == LiteState.STATE_INPUT_VOD )
+			else if( LiteCore.data.inputType() == LiteData.INPUT_TYPE_VOD )
 			{
 				_buttonVOD.selected( true );
 			}
-			else if( LiteCore.state.inputType() == LiteState.STATE_INPUT_IMAGES )
+			else if( LiteCore.data.inputType() == LiteData.INPUT_TYPE_IMAGES )
 			{
 				_buttonImage.selected( true );
 			}

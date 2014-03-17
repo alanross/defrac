@@ -5,7 +5,7 @@ import com.adjazent.defrac.core.notification.action.IActionObserver;
 import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
-import com.adjazent.defrac.sandbox.apps.lite.core.LiteState;
+import com.adjazent.defrac.sandbox.apps.lite.core.LiteData;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import com.adjazent.defrac.ui.widget.button.UIToggleButton;
@@ -20,6 +20,8 @@ public final class LiteSceneSetChoice extends UISurface implements IActionObserv
 	private UIToggleButton _buttonScene1;
 	private UIToggleButton _buttonScene2;
 	private UIToggleButton _buttonScene3;
+
+	private UIToggleGroup _buttonGroup;
 
 	public LiteSceneSetChoice()
 	{
@@ -42,10 +44,11 @@ public final class LiteSceneSetChoice extends UISurface implements IActionObserv
 		_buttonScene3.moveTo( 204, 0 );
 		addChild( _buttonScene3 );
 
-		UIToggleGroup group = new UIToggleGroup( _buttonScene1, _buttonScene2, _buttonScene3 );
-		group.onSelect.add( this );
+		_buttonGroup = new UIToggleGroup( _buttonScene1, _buttonScene2, _buttonScene3 );
+		_buttonGroup.onSelect.add( this );
 
-		LiteCore.state.addReceiver( this );
+
+		LiteCore.data.addReceiver( this );
 	}
 
 	@Override
@@ -55,15 +58,15 @@ public final class LiteSceneSetChoice extends UISurface implements IActionObserv
 		{
 			if( action.origin == _buttonScene1 )
 			{
-				LiteCore.state.selectSceneSet( 0 );
+				LiteCore.data.selectSceneSet( 0 );
 			}
 			if( action.origin == _buttonScene2 )
 			{
-				LiteCore.state.selectSceneSet( 1 );
+				LiteCore.data.selectSceneSet( 1 );
 			}
 			if( action.origin == _buttonScene3 )
 			{
-				LiteCore.state.selectSceneSet( 2 );
+				LiteCore.data.selectSceneSet( 2 );
 			}
 		}
 	}
@@ -71,22 +74,9 @@ public final class LiteSceneSetChoice extends UISurface implements IActionObserv
 	@Override
 	public void onSignal( ISignalSource signalSource, int signalType )
 	{
-		if( signalType == LiteState.SELECT_SCENE_SET )
+		if( signalType == LiteData.SELECT_SCENE_SET )
 		{
-			int index = LiteCore.state.sceneSetIndex();
-
-			if( index == 0 )
-			{
-				_buttonScene1.selected( true );
-			}
-			if( index == 1 )
-			{
-				_buttonScene2.selected( true );
-			}
-			if( index == 2 )
-			{
-				_buttonScene3.selected( true );
-			}
+			_buttonGroup.select( LiteCore.data.selectedSceneSetIndex() );
 		}
 	}
 

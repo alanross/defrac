@@ -6,5 +6,5 @@ package com.adjazent.defrac.sandbox.apps.lite.core.data;
  */
 public interface ILiteSceneObserver
 {
-	void onLiteSceneModified( LiteSceneElement item, int type );
+	void onLiteSceneModified( LiteSceneItem item, int type );
 }

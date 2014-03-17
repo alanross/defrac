@@ -1,33 +1,19 @@
-package com.adjazent.defrac.sandbox.apps.lite.core;
+package com.adjazent.defrac.sandbox.apps.lite.core.setup;
 
 import com.adjazent.defrac.core.job.Job;
 import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.ui.widget.video.UIVideoTexture;
+import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.ui.widget.video.UIVideoUtils;
-import defrac.display.Texture;
 
 import static com.adjazent.defrac.core.log.Log.info;
 
 /**
- * If Firefox failes to load the video resource
- * ("Content-Type" of "text/plain" is not supported. Load ...),
- * add the following lines to htaccess:
- *
- * AddType video/webm .webm
- * AddType video/ogg .ogv
- * AddType video/mp4 .mp4
- *
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteVideoProvider extends Job
+public final class LiteSetupData extends Job
 {
-	final int videoWidth = 640;
-	final int videoHeight = 360;
-
-	UIVideoTexture videoTexture;
-
-	public LiteVideoProvider()
+	public LiteSetupData()
 	{
 	}
 
@@ -35,6 +21,8 @@ public final class LiteVideoProvider extends Job
 	protected void onStart()
 	{
 		String videoPath = "video_640x360";
+		int videoWidth = 640;
+		int videoHeight = 360;
 
 		int format = UIVideoUtils.getProbableVideoFormat();
 
@@ -59,18 +47,14 @@ public final class LiteVideoProvider extends Job
 			videoPath += ".ogv";
 		}
 
-		videoTexture = new UIVideoTexture( videoWidth, videoHeight, videoPath );
+		LiteCore.data.setup( videoPath, videoWidth, videoHeight );
 
 		complete();
 	}
 
-	public Texture createTexture()
+	@Override
+	public String toString()
 	{
-		return videoTexture.createTexture();
-	}
-
-	public Texture createTextureTile( float offsetX, float offsetY, float width, float height )
-	{
-		return videoTexture.createTextureTile( offsetX, offsetY, width, height );
+		return "[LiteSetupData]";
 	}
 }

@@ -17,6 +17,12 @@ public final class LiteSceneSet
 		this.b = b;
 	}
 
+	public void reset()
+	{
+		a.reset();
+		b.reset();
+	}
+
 	@Override
 	public String toString()
 	{

@@ -11,7 +11,7 @@ import defrac.geom.Rectangle;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteSceneElementResizer
+public final class LiteSceneResizeHandles
 {
 	public final UISurface tl;
 	public final UISurface tc;
@@ -27,7 +27,7 @@ public final class LiteSceneElementResizer
 	private final float size = 6.0f;
 	private final UISurface[] _handles = new UISurface[ 8 ];
 
-	public LiteSceneElementResizer( Layer container )
+	public LiteSceneResizeHandles( Layer container )
 	{
 		_handles[ 0 ] = tl = create( "TL", container );
 		_handles[ 1 ] = tc = create( "TC", container );
@@ -54,7 +54,7 @@ public final class LiteSceneElementResizer
 		return handle;
 	}
 
-	public void setPosition( LiteSceneElementView element )
+	public void setPosition( LiteSceneItemView element )
 	{
 		float s = size * 0.5f;
 
@@ -147,6 +147,6 @@ public final class LiteSceneElementResizer
 	@Override
 	public String toString()
 	{
-		return "[LiteSceneElementResizer]";
+		return "[LiteSceneResizeHandles]";
 	}
 }

@@ -1,16 +1,11 @@
 package com.adjazent.defrac.sandbox.apps.lite.core;
 
-import com.adjazent.defrac.core.job.Job;
-import com.adjazent.defrac.ui.resource.IUIResourceLoaderQueueObserver;
-import com.adjazent.defrac.ui.resource.UIResourceLoaderQueue;
-import com.adjazent.defrac.ui.resource.UIResourceLoaderSparrowFont;
-import com.adjazent.defrac.ui.resource.UIResourceLoaderTexturePacker;
+import com.adjazent.defrac.sandbox.apps.lite.scene.settings.LiteSceneItemCellRenderer;
 import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.surface.skin.UISkinFactory;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.texture.UITextureAtlas;
-import com.adjazent.defrac.ui.texture.UITextureManager;
 import com.adjazent.defrac.ui.widget.button.UIButton;
 import com.adjazent.defrac.ui.widget.button.UIToggleButton;
 import com.adjazent.defrac.ui.widget.list.IUICellRenderer;
@@ -26,33 +21,26 @@ import java.util.LinkedList;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteUIProvider extends Job implements IUIResourceLoaderQueueObserver, IUICellRendererFactory
+public final class LiteUI implements IUICellRendererFactory
 {
 	private UITextureAtlas _atlas;
 
 	private LinkedList<IUICellRenderer> _rendererPool = new LinkedList<IUICellRenderer>();
-	private int _rendererPoolGrowthRate = 8;
 
-	public LiteUIProvider()
+	public LiteUI()
 	{
 	}
 
-	@Override
-	public void onStart()
+	public void setup( UITextureAtlas atlas )
 	{
-		UIResourceLoaderQueue queue = new UIResourceLoaderQueue();
-		queue.add( new UIResourceLoaderSparrowFont( "lite/helvetica11.png", "lite/helvetica11.fnt", "helvetica11" ) );
-		queue.add( new UIResourceLoaderSparrowFont( "lite/helvetica24.png", "lite/helvetica24.fnt", "helvetica24" ) );
-		queue.add( new UIResourceLoaderTexturePacker( "lite/skins.png", "lite/skins.xml", "skins" ) );
-		queue.addObserver( this );
-		queue.load();
+		_atlas = atlas;
 	}
 
 	public IUICellRenderer create( int rowIndex )
 	{
 		if( 0 >= _rendererPool.size() )
 		{
-			int n = _rendererPoolGrowthRate;
+			int n = 8;
 
 			while( --n > -1 )
 			{
@@ -66,20 +54,6 @@ public final class LiteUIProvider extends Job implements IUIResourceLoaderQueueO
 	public void release( IUICellRenderer renderer )
 	{
 		_rendererPool.addLast( renderer );
-	}
-
-	@Override
-	public void onResourceLoadingSuccess()
-	{
-		_atlas = UITextureManager.get().getAtlas( "skins" );
-
-		complete();
-	}
-
-	@Override
-	public void onResourceLoadingFailure( Error error )
-	{
-		fail( error );
 	}
 
 	public IUISkin createSkin( String skinId )
@@ -149,9 +123,9 @@ public final class LiteUIProvider extends Job implements IUIResourceLoaderQueueO
 		return new UIList( this, new UIListInteractions() );
 	}
 
-	public LiteCellRenderer createCellRenderer()
+	public LiteSceneItemCellRenderer createCellRenderer()
 	{
-		return new LiteCellRenderer(
+		return new LiteSceneItemCellRenderer(
 				UISkinFactory.create( _atlas.getTexture( "ListCellDeselected" ) ),
 				UISkinFactory.create( _atlas.getTexture( "ListCellSelected" ) ),
 				new UITextFormat( "Helvetica11" ),
@@ -162,6 +136,6 @@ public final class LiteUIProvider extends Job implements IUIResourceLoaderQueueO
 	@Override
 	public String toString()
 	{
-		return "[LiteUIProvider]";
+		return "[LiteUI]";
 	}
 }

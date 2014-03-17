@@ -1,6 +1,6 @@
 package com.adjazent.defrac.sandbox.apps.lite.scene.editor;
 
-import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneElement;
+import com.adjazent.defrac.sandbox.apps.lite.core.data.LiteSceneItem;
 import com.adjazent.defrac.ui.surface.UISurface;
 import defrac.display.event.UIEvent;
 import defrac.display.event.UIEventTarget;
@@ -14,31 +14,24 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteSceneElementView extends UISurface
+public final class LiteSceneItemView extends UISurface
 {
-	public final float minWidth = 40;
-	public final float minHeight = 40;
+	public final LiteSceneItem model;
 
-	public final LiteSceneElement model;
-
-	public LiteSceneElementView( LiteSceneElement model )
+	public LiteSceneItemView( LiteSceneItem model )
 	{
 		super( model.skin );
 
 		this.model = model;
 
-		Rectangle d = model.getDimensions();
-
-		super.moveTo( d.x, d.y );
-		super.resizeTo( d.width, d.height );
+		super.moveTo( model.x(), model.y() );
+		super.resizeTo( model.width(), model.height() );
 	}
 
-	public void setDimensions( Rectangle d )
+	public void update( Rectangle d )
 	{
 		super.moveTo( d.x, d.y );
 		super.resizeTo( d.width, d.height );
-
-		model.setDimensions( d.x, d.y, d.width, d.height );
 	}
 
 	@Override
@@ -64,6 +57,6 @@ public final class LiteSceneElementView extends UISurface
 	@Override
 	public String toString()
 	{
-		return "[LiteSceneElementView]";
+		return "[LiteSceneItemView]";
 	}
 }

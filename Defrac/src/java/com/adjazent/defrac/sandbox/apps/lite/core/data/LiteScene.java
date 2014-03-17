@@ -11,45 +11,55 @@ import java.util.LinkedList;
  */
 public final class LiteScene
 {
-	public static final int ELEMENT_ADDED = 1;
-	public static final int ELEMENT_REMOVED = 2;
-	public static final int ELEMENT_SELECTED = 3;
-	public static final int ELEMENT_UPDATED = 4;
+	public static final int ITEM_ATTACHED = 1;
+	public static final int ITEM_DETACHED = 2;
+	public static final int ITEM_SELECTED = 3;
+	public static final int ITEM_MODIFIED = 4;
 
 	public final String id;
 
 	private final LinkedList<ILiteSceneObserver> _observers;
 
-	private final LinkedList<LiteSceneElement> _elements;
+	private final LinkedList<LiteSceneItem> _elements;
 
-	private LiteSceneElement _lastSelectedItem;
+	private LiteSceneItem _selectedItem;
 
 	public LiteScene( String id )
 	{
 		this.id = id;
 
-		_elements = new LinkedList<LiteSceneElement>();
+		_elements = new LinkedList<LiteSceneItem>();
 		_observers = new LinkedList<ILiteSceneObserver>();
 	}
 
-	void onSelected( LiteSceneElement item )
+	void onItemAttached( LiteSceneItem item )
 	{
-		if( item != _lastSelectedItem )
+		notify( item, ITEM_ATTACHED );
+	}
+
+	void onItemDetached( LiteSceneItem item )
+	{
+		notify( item, ITEM_DETACHED );
+	}
+
+	void onItemSelected( LiteSceneItem item )
+	{
+		if( item != _selectedItem )
 		{
-			if( _lastSelectedItem != null )
+			if( _selectedItem != null )
 			{
-				_lastSelectedItem.selected( false );
+				_selectedItem.selected( false );
 			}
 
-			_lastSelectedItem = item;
+			_selectedItem = item;
 
-			notify( item, ELEMENT_SELECTED );
+			notify( item, ITEM_SELECTED );
 		}
 	}
 
-	void onUpdated( LiteSceneElement item )
+	void onItemModified( LiteSceneItem item )
 	{
-		notify( item, ELEMENT_UPDATED );
+		notify( item, ITEM_MODIFIED );
 	}
 
 	public void addObserver( ILiteSceneObserver observer )
@@ -77,7 +87,7 @@ public final class LiteScene
 		return ( -1 != _observers.indexOf( signalObserver ) );
 	}
 
-	private void notify( LiteSceneElement item, int type )
+	private void notify( LiteSceneItem item, int type )
 	{
 		int n = _observers.size();
 
@@ -87,7 +97,7 @@ public final class LiteScene
 		}
 	}
 
-	public void add( LiteSceneElement item )
+	public void add( LiteSceneItem item )
 	{
 		if( has( item ) )
 		{
@@ -97,47 +107,47 @@ public final class LiteScene
 		_elements.addLast( item );
 
 		item.attach( this );
-
-		notify( item, ELEMENT_ADDED );
 	}
 
-	public void remove( LiteSceneElement item )
+	public void remove( LiteSceneItem item )
 	{
 		if( !has( item ) )
 		{
 			throw new ElementDoesNotExistError( this + " " + item + " does not exist" );
 		}
 
-		if( _lastSelectedItem == item )
+		if( _selectedItem == item )
 		{
-			_lastSelectedItem = null;
+			_selectedItem = null;
 		}
 
 		_elements.remove( item );
 
-		notify( item, ELEMENT_REMOVED );
-
 		item.detach( this );
 	}
 
-	public boolean has( LiteSceneElement item )
+	public boolean has( LiteSceneItem item )
 	{
 		return ( -1 != _elements.indexOf( item ) );
 	}
 
-	public LiteSceneElement get( int index )
+	public LiteSceneItem get( int index )
 	{
 		return _elements.get( index );
 	}
 
-	public void select( int index )
-	{
-		_elements.get( index ).selected( true );
-	}
-
-	public int numElements()
+	public int numItems()
 	{
 		return _elements.size();
+	}
+
+	public void reset()
+	{
+		if( _selectedItem != null )
+		{
+			_selectedItem.selected( false );
+			_selectedItem = null;
+		}
 	}
 
 	@Override

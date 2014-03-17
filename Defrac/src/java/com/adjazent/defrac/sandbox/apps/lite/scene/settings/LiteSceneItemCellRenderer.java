@@ -1,4 +1,4 @@
-package com.adjazent.defrac.sandbox.apps.lite.core;
+package com.adjazent.defrac.sandbox.apps.lite.scene.settings;
 
 import com.adjazent.defrac.core.error.GenericError;
 import com.adjazent.defrac.core.notification.action.Action;
@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteCellRenderer extends UISurface implements IUICellRenderer, IActionObserver
+public final class LiteSceneItemCellRenderer extends UISurface implements IUICellRenderer, IActionObserver
 {
 	public final Action onClick = new Action( UIActionType.CELL_CLICK );
 
@@ -35,7 +35,7 @@ public final class LiteCellRenderer extends UISurface implements IUICellRenderer
 
 	private UICellData _data;
 
-	public LiteCellRenderer( IUISkin skinDeselected, IUISkin skinSelected, UITextFormat textFormat, Texture icon )
+	public LiteSceneItemCellRenderer( IUISkin skinDeselected, IUISkin skinSelected, UITextFormat textFormat, Texture icon )
 	{
 		super( skinDeselected );
 
@@ -146,6 +146,6 @@ public final class LiteCellRenderer extends UISurface implements IUICellRenderer
 	@Override
 	public String toString()
 	{
-		return "[LiteCellRenderer text:" + _label.getText() + "]";
+		return "[LiteSceneItemCellRenderer text:" + _label.getText() + "]";
 	}
 }
