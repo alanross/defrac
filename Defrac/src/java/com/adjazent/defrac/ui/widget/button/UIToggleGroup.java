@@ -104,6 +104,16 @@ public final class UIToggleGroup implements IActionObserver
 		return _buttons.get( index );
 	}
 
+	public int numButtons()
+	{
+		return _buttons.size();
+	}
+
+	public void select( int index )
+	{
+		_buttons.get( index ).selected( true );
+	}
+
 	public UIToggleButton getSelected()
 	{
 		return _current;
