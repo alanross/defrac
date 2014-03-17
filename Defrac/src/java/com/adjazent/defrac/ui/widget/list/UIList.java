@@ -41,7 +41,7 @@ public final class UIList extends UISurface implements IUIRenderListener, IActio
 	private int _itemsHeight = 0;
 	private int _offset = 0;
 	private int _cellSpacing = 1;
-	private UICellData _lastSelectedItem;
+	private UICellData _selectedItem;
 	private boolean _multiSelection = false;
 
 	public UIList( IUICellRendererFactory rendererFactory )
@@ -97,14 +97,14 @@ public final class UIList extends UISurface implements IUIRenderListener, IActio
 	{
 		if( action.type == UIActionType.CELL_SELECT )
 		{
-			if( action.origin != _lastSelectedItem )
+			if( action.origin != _selectedItem )
 			{
-				if( _lastSelectedItem != null && !_multiSelection )
+				if( _selectedItem != null && !_multiSelection )
 				{
-					_lastSelectedItem.selected( false );
+					_selectedItem.selected( false );
 				}
 
-				_lastSelectedItem = ( UICellData ) action.origin;
+				_selectedItem = ( UICellData ) action.origin;
 
 				onSelect.send( this );
 			}
@@ -285,9 +285,9 @@ public final class UIList extends UISurface implements IUIRenderListener, IActio
 			throw new ElementDoesNotExistError();
 		}
 
-		if( _lastSelectedItem == item )
+		if( _selectedItem == item )
 		{
-			_lastSelectedItem = null;
+			_selectedItem = null;
 		}
 
 		item.onSelect.remove( this );
@@ -322,7 +322,7 @@ public final class UIList extends UISurface implements IUIRenderListener, IActio
 			_items.remove( item );
 		}
 
-		_lastSelectedItem = null;
+		_selectedItem = null;
 
 		measure();
 
@@ -393,9 +393,14 @@ public final class UIList extends UISurface implements IUIRenderListener, IActio
 		return _cellSpacing;
 	}
 
-	public UICellData getLastSelectedItem()
+	public UICellData getSelectedItem()
 	{
-		return _lastSelectedItem;
+		return _selectedItem;
+	}
+
+	public int getSelectedIndex()
+	{
+		return ( _selectedItem != null ) ? _items.indexOf( _selectedItem ) : -1;
 	}
 
 	@Override
