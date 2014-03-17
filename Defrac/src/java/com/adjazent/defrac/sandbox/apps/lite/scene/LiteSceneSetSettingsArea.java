@@ -14,6 +14,7 @@ import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.UIActionType;
 import com.adjazent.defrac.ui.widget.button.UIButton;
 import com.adjazent.defrac.ui.widget.list.UIList;
+import com.adjazent.defrac.ui.widget.range.UISlider;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -28,6 +29,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 	private UIButton _buttonDel;
 	private UIList _list;
 	private UISurface _arrow;
+	private UISlider _slider;
 
 	private Hashtable<LiteSceneItem, LiteSceneItemCellData> _items;
 	private LiteScene _model;
@@ -57,10 +59,16 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		_buttonDel.moveTo( 202, 257 );
 		_buttonDel.onClick.add( this );
 
+		_slider = LiteCore.ui.createSlider( "PlayOutSliderTrack", "PlayOutSliderThumb", "PlayOutSliderValue" );
+		_slider.resizeTo( 200, 17 );
+		_slider.moveTo( 250, 60 );
+		_slider.onValueChange.add( this );
+
 		addChild( _arrow );
 		addChild( _list );
 		addChild( _buttonAdd );
 		addChild( _buttonDel );
+		addChild( _slider );
 
 		LiteCore.data.addReceiver( this );
 	}
@@ -78,6 +86,18 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 				}
 			}
 		}
+		if( action.type == UIActionType.SLIDER_VALUE_CHANGED )
+		{
+			if( action.origin == _slider )
+			{
+				if( _list.getSelectedItem() != null )
+				{
+					LiteSceneItemCellData cellData = ( LiteSceneItemCellData ) _list.getSelectedItem();
+
+					cellData.model.alpha( ( float ) _slider.getValue() );
+				}
+			}
+		}
 		if( action.type == UIActionType.CELL_SELECT )
 		{
 			if( action.origin == _list )
@@ -85,6 +105,7 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 				LiteSceneItemCellData cellData = ( LiteSceneItemCellData ) _list.getSelectedItem();
 
 				cellData.model.selected( true );
+				_slider.setValue( cellData.model.alpha() );
 			}
 		}
 	}

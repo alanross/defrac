@@ -24,13 +24,14 @@ public final class LiteSceneItemView extends UISurface
 
 		this.model = model;
 
-		update( model.dimensions() );
+		update( model.dimensions(), model.alpha() );
 	}
 
-	public void update( Rectangle d )
+	public void update( Rectangle d, float alpha )
 	{
-		super.moveTo( d.x, d.y );
-		super.resizeTo( d.width, d.height );
+		moveTo( d.x, d.y );
+		resizeTo( d.width, d.height );
+		alpha( alpha );
 	}
 
 	@Override

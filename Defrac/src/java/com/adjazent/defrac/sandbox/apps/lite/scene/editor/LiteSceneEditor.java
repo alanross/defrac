@@ -353,7 +353,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 		_activeItem = item;
 
-		view.update( item.dimensions() );
+		view.update( item.dimensions(), item.alpha() );
 
 		_resizerLayer.visible( true );
 		_resizer.setPosition( view );

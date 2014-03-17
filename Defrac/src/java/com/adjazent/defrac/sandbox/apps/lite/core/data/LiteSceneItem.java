@@ -12,11 +12,12 @@ public final class LiteSceneItem
 	public final float minWidth = 40;
 	public final float minHeight = 40;
 
-	private final Rectangle _dimensions;
 	public final IUISkin skin;
 	public final String id;
 
-	private boolean _selected;
+	private final Rectangle _dimensions;
+	private boolean _selected = false;
+	private float _alpha = 1.0f;
 	private LiteScene _scene;
 
 	public LiteSceneItem( String id, IUISkin skin, float x, float y, float width, float height )
@@ -25,7 +26,6 @@ public final class LiteSceneItem
 		this.skin = skin;
 
 		_dimensions = new Rectangle( x, y, width, height );
-		_selected = false;
 	}
 
 	void attach( LiteScene scene )
@@ -55,6 +55,21 @@ public final class LiteSceneItem
 	public boolean selected()
 	{
 		return _selected;
+	}
+
+	public void alpha( float value )
+	{
+		if( _alpha != value )
+		{
+			_alpha = value;
+
+			_scene.onItemModified( this );
+		}
+	}
+
+	public float alpha()
+	{
+		return _alpha;
 	}
 
 	public void setDimensions( Rectangle d )
