@@ -272,7 +272,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 		String itemID = "Item " + _model.numItems();
 
-		IUISkin s = ( ( LiteInputSource ) dragItem.getDndData() ).full.clone();
+		IUISkin s = ( ( LiteInputSource ) dragItem.getDndData() ).full;
 
 		Point local = _elementLayer.globalToLocal( new Point( pos.x, pos.y ) );
 
@@ -343,7 +343,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 		_activeItem = item;
 
-		_resizerLayer.visible( true );
+		_resizerLayer.visible( _enabled );
 		_resizer.setPosition( view );
 	}
 
@@ -355,7 +355,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 		view.update( item.dimensions(), item.alpha() );
 
-		_resizerLayer.visible( true );
+		_resizerLayer.visible( _enabled );
 		_resizer.setPosition( view );
 	}
 
@@ -366,7 +366,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 			_enabled = value;
 
 			_activeItem = null;
-			_resizerLayer.visible( false );
+			_resizerLayer.visible( _enabled );
 		}
 	}
 

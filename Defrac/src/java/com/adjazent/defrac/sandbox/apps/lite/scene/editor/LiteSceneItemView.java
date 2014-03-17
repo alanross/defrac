@@ -20,7 +20,7 @@ public final class LiteSceneItemView extends UISurface
 
 	public LiteSceneItemView( LiteSceneItem model )
 	{
-		super( model.skin );
+		super( model.skin.clone() );
 
 		this.model = model;
 
