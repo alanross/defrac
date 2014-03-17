@@ -28,12 +28,12 @@ import java.util.Hashtable;
  */
 public final class LiteSceneEditor extends UISurface implements ILiteDropTarget, ILiteSceneObserver
 {
-	private LiteSceneResizeHandles _resizer;
-
 	private Layer _elementLayer = new Layer();
 	private Layer _resizerLayer = new Layer();
 
 	private UISurface _outline;
+
+	private LiteSceneResizeHandles _resizer;
 
 	private Rectangle _itemOriginalDim = new Rectangle();
 	private Rectangle _itemRestrictDim = new Rectangle();
@@ -41,7 +41,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	private boolean _dragEnabled;
 	private boolean _dragActive;
 
-	private LiteSceneItemView _activeItem;
+	private LiteSceneItem _activeItem;
 	private UISurface _activeHandle;
 
 	private boolean _enabled = true;
@@ -127,7 +127,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	}
 
 	@Override
-	public UIEventTarget captureEventTarget( Point point )
+	public UIEventTarget captureEventTarget( @javax.annotation.Nonnull Point point )
 	{
 		Point local = this.globalToLocal( new Point( point.x, point.y ) );
 
@@ -193,10 +193,10 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 			_itemOriginalDim.set( _activeItem.x(), _activeItem.y(), _activeItem.width(), _activeItem.height() );
 
-			_itemRestrictDim.x = _activeItem.x() + _activeItem.width() - _activeItem.model.minWidth;
-			_itemRestrictDim.y = _activeItem.y() + _activeItem.height() - _activeItem.model.minHeight;
-			_itemRestrictDim.width = _activeItem.model.minWidth;
-			_itemRestrictDim.height = _activeItem.model.minHeight;
+			_itemRestrictDim.x = _activeItem.x() + _activeItem.width() - _activeItem.minWidth;
+			_itemRestrictDim.y = _activeItem.y() + _activeItem.height() - _activeItem.minHeight;
+			_itemRestrictDim.width = _activeItem.minWidth;
+			_itemRestrictDim.height = _activeItem.minHeight;
 		}
 		if( event.type == UIEventType.ACTION_MOVE )
 		{
@@ -204,14 +204,14 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 			if( _dragActive )
 			{
-				_activeItem.model.setDimensions( createItemDimensions( global ) );
+				_activeItem.setDimensions( createItemDimensions( global ) );
 			}
 		}
 		if( event.type == UIEventType.ACTION_END )
 		{
 			if( _dragActive )
 			{
-				_activeItem.model.setDimensions( createItemDimensions( global ) );
+				_activeItem.setDimensions( createItemDimensions( global ) );
 			}
 
 			_dragEnabled = false;
@@ -219,7 +219,7 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 		}
 		if( event.type == UIEventType.ACTION_DOUBLE )
 		{
-			_activeItem.model.setDimensions( new Rectangle( 0, 0, _elementLayer.width(), _elementLayer.height() ) );
+			_activeItem.setDimensions( new Rectangle( 0, 0, _elementLayer.width(), _elementLayer.height() ) );
 		}
 	}
 
@@ -294,11 +294,8 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 
 	public void populate( LiteScene scene )
 	{
-		if( _activeItem != null )
-		{
-			_activeItem = null;
-			_resizerLayer.visible( false );
-		}
+		_resizerLayer.visible( false );
+		_activeItem = null;
 
 		Enumeration<LiteSceneItem> items = _items.keys();
 
@@ -343,7 +340,9 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	private void selectItem( LiteSceneItem item )
 	{
 		LiteSceneItemView view = _items.get( item );
-		_activeItem = view;
+
+		_activeItem = item;
+
 		_resizerLayer.visible( true );
 		_resizer.setPosition( view );
 	}
@@ -351,8 +350,11 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 	private void modifyItem( LiteSceneItem item )
 	{
 		LiteSceneItemView view = _items.get( item );
-		_activeItem = view;
-		_activeItem.update( item.dimensions() );
+
+		_activeItem = item;
+
+		view.update( item.dimensions() );
+
 		_resizerLayer.visible( true );
 		_resizer.setPosition( view );
 	}
@@ -362,12 +364,9 @@ public final class LiteSceneEditor extends UISurface implements ILiteDropTarget,
 		if( _enabled != value )
 		{
 			_enabled = value;
-			_activeItem = null;
 
-			if( !_enabled )
-			{
-				_resizerLayer.visible( _enabled );
-			}
+			_activeItem = null;
+			_resizerLayer.visible( false );
 		}
 	}
 
