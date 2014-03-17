@@ -15,6 +15,7 @@ import com.adjazent.defrac.ui.widget.UIActionType;
 import com.adjazent.defrac.ui.widget.button.UIButton;
 import com.adjazent.defrac.ui.widget.list.UIList;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
@@ -69,16 +70,11 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 	{
 		if( action.type == UIActionType.BUTTON_CLICK )
 		{
-			if( action.origin == _buttonAdd )
-			{
-			}
 			if( action.origin == _buttonDel )
 			{
-				if( _list.getLastSelectedItem() != null )
+				if( _list.getSelectedIndex() != -1 )
 				{
-					LiteSceneItemCellData d = ( LiteSceneItemCellData ) _list.getLastSelectedItem();
-
-					_model.remove( d.model );
+					_model.remove( _list.getSelectedIndex() );
 				}
 			}
 		}
@@ -86,7 +82,9 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 		{
 			if( action.origin == _list )
 			{
-				( ( LiteSceneItemCellData ) _list.getLastSelectedItem() ).model.selected( true );
+				LiteSceneItemCellData cellData = ( LiteSceneItemCellData ) _list.getSelectedItem();
+
+				cellData.model.selected( true );
 			}
 		}
 	}
@@ -132,7 +130,12 @@ public final class LiteSceneSetSettingsArea extends UISurface implements IAction
 
 	private void populate( LiteScene scene )
 	{
-		_list.removeAllItems();
+		Enumeration<LiteSceneItem> items = _items.keys();
+
+		while( items.hasMoreElements() )
+		{
+			removeItem( items.nextElement() );
+		}
 
 		if( _model != null )
 		{

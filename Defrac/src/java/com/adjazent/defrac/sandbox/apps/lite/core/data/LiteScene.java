@@ -20,7 +20,7 @@ public final class LiteScene
 
 	private final LinkedList<ILiteSceneObserver> _observers;
 
-	private final LinkedList<LiteSceneItem> _elements;
+	private final LinkedList<LiteSceneItem> _items;
 
 	private LiteSceneItem _selectedItem;
 
@@ -28,7 +28,7 @@ public final class LiteScene
 	{
 		this.id = id;
 
-		_elements = new LinkedList<LiteSceneItem>();
+		_items = new LinkedList<LiteSceneItem>();
 		_observers = new LinkedList<ILiteSceneObserver>();
 	}
 
@@ -104,9 +104,14 @@ public final class LiteScene
 			throw new ElementAlreadyExistsError( this + " " + item + " already exists" );
 		}
 
-		_elements.addLast( item );
+		_items.addLast( item );
 
 		item.attach( this );
+	}
+
+	public void remove( int index )
+	{
+		remove( _items.get( index ) );
 	}
 
 	public void remove( LiteSceneItem item )
@@ -121,24 +126,24 @@ public final class LiteScene
 			_selectedItem = null;
 		}
 
-		_elements.remove( item );
+		_items.remove( item );
 
 		item.detach( this );
 	}
 
 	public boolean has( LiteSceneItem item )
 	{
-		return ( -1 != _elements.indexOf( item ) );
+		return ( -1 != _items.indexOf( item ) );
 	}
 
 	public LiteSceneItem get( int index )
 	{
-		return _elements.get( index );
+		return _items.get( index );
 	}
 
 	public int numItems()
 	{
-		return _elements.size();
+		return _items.size();
 	}
 
 	public void reset()
@@ -153,6 +158,6 @@ public final class LiteScene
 	@Override
 	public String toString()
 	{
-		return "[LiteScene id:" + id + ", numItems:" + _elements.size() + "]";
+		return "[LiteScene id:" + id + ", numItems:" + _items.size() + "]";
 	}
 }
