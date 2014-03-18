@@ -4,7 +4,7 @@ import com.adjazent.defrac.core.notification.signals.ISignalReceiver;
 import com.adjazent.defrac.core.notification.signals.ISignalSource;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteData;
-import com.adjazent.defrac.sandbox.apps.lite.scene.editor.LiteSceneEditor;
+import com.adjazent.defrac.sandbox.apps.lite.scene.editor.LiteSceneViewer;
 import com.adjazent.defrac.ui.surface.UISurface;
 import com.adjazent.defrac.ui.widget.button.UIButton;
 import com.adjazent.defrac.ui.widget.button.UIToggleButton;
@@ -16,7 +16,7 @@ import com.adjazent.defrac.ui.widget.button.UIToggleButton;
 public final class LitePlayoutArea extends UISurface implements ISignalReceiver
 {
 	private UISurface _areaChallenge;
-	private LiteSceneEditor _videoPlayer;
+	private LiteSceneViewer _videoPlayer;
 	private UIButton _buttonChallenge;
 	private UIToggleButton _buttonRecord;
 	private UIButton _buttonDelete;
@@ -31,10 +31,9 @@ public final class LitePlayoutArea extends UISurface implements ISignalReceiver
 		_areaChallenge = LiteCore.ui.createSurface( "AreaEmpty", 17, 12, 423, 103 );
 		addChild( _areaChallenge );
 
-		_videoPlayer = new LiteSceneEditor( LiteCore.ui.createSkin( "AreaEmpty" ) );
+		_videoPlayer = new LiteSceneViewer( LiteCore.ui.createSkin( "AreaEmpty" ) );
 		_videoPlayer.moveTo( 17, 180 );
 		_videoPlayer.resizeTo( 423, 240 );
-		_videoPlayer.enabled( false );
 		addChild( _videoPlayer );
 
 		_buttonChallenge = LiteCore.ui.createButton( "ButtonChallenge", "ButtonChallenge" );
