@@ -18,7 +18,7 @@ import java.util.Hashtable;
  * @author Alan Ross
  * @version 0.1
  */
-public final class LiteSceneViewer extends UISurface implements ILiteSceneObserver
+public class LiteSceneViewer extends UISurface implements ILiteSceneObserver
 {
 	protected Layer itemLayer = new Layer();
 
@@ -64,6 +64,7 @@ public final class LiteSceneViewer extends UISurface implements ILiteSceneObserv
 		}
 	}
 
+	@Override
 	public DisplayObject resizeTo( float width, float height )
 	{
 		super.resizeTo( width, height );
