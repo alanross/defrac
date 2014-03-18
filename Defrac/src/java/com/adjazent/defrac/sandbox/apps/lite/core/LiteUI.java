@@ -93,7 +93,7 @@ public final class LiteUI implements IUICellRendererFactory
 
 	public UILabel createLabelSmall()
 	{
-		return new UILabel( new UITextFormat( "Helvetica11" ) );
+		return new UILabel( new UITextFormat( "Helvetica14" ) );
 	}
 
 	public UIButton createButton( String skinIdNormal, String skinIdActive )
@@ -128,7 +128,7 @@ public final class LiteUI implements IUICellRendererFactory
 		return new LiteSceneItemCellRenderer(
 				UISkinFactory.create( _atlas.getTexture( "ListCellDeselected" ) ),
 				UISkinFactory.create( _atlas.getTexture( "ListCellSelected" ) ),
-				new UITextFormat( "Helvetica11" ),
+				new UITextFormat( "Helvetica14" ),
 				_atlas.getTexture( "ListIconImageDeselected" ).getTexture()
 		);
 	}

@@ -100,8 +100,8 @@ public final class LiteSceneItemCellRenderer extends UISurface implements IUICel
 		_image.moveTo( 5, ( _data.getHeight() - _image.height() ) * 0.5f );
 
 		_label.setText( _data.getText() );
-		_label.moveTo( _image.width() + 10, 5 );
-		_label.setSize( cellWidth - ( _image.width() + 15 ), cellHeight - 5 );
+		_label.moveTo( _image.width() + 10, 1 );
+		_label.setSize( cellWidth - ( _image.width() + 15 ), cellHeight - 1 );
 
 		repaint();
 	}

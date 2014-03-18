@@ -292,10 +292,7 @@ public final class LiteSceneEditor extends LiteSceneViewer implements ILiteDropT
 
 		view.update( item.dimensions(), item.alpha() );
 
-		//_resizerLayer.visible( _enabled );
 		_resizer.setPosition( view );
-
-		//_activeItem = item;
 	}
 
 	public void enabled( boolean value )

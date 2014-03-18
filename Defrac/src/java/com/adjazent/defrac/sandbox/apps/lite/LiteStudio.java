@@ -75,6 +75,8 @@ public final class LiteStudio extends Experiment implements ILiteSetupObserver
 		addChild( _sceneSetSettingsArea );
 		addChild( _playoutArea );
 
+		stage.backgroundColor( 0xffd5d9dc );
+
 		onResize( stage.width(), stage.height() );
 
 		LiteCore.data.selectInput( LiteData.INPUT_TYPE_LIVE );
@@ -97,7 +99,8 @@ public final class LiteStudio extends Experiment implements ILiteSetupObserver
 	@Override
 	public void onResize( float width, float height )
 	{
-		_background.resizeTo( width, height );
+		_background.moveTo( -5, -5 );
+		_background.resizeTo( width + 10, height + 10 );
 		_logo.moveTo( ( int ) ( ( width - _logo.width() ) * 0.5 ), 20 );
 	}
 

@@ -34,6 +34,7 @@ public final class LiteSetupUI extends Job implements IUIResourceLoaderQueueObse
 
 		UIResourceLoaderQueue queue = new UIResourceLoaderQueue();
 		queue.add( new UIResourceLoaderSparrowFont( "lite/helvetica11.png", "lite/helvetica11.fnt", "helvetica11" ) );
+		queue.add( new UIResourceLoaderSparrowFont( "lite/helvetica14.png", "lite/helvetica14.fnt", "helvetica14" ) );
 		queue.add( new UIResourceLoaderSparrowFont( "lite/helvetica24.png", "lite/helvetica24.fnt", "helvetica24" ) );
 		queue.add( new UIResourceLoaderTexturePacker( "lite/skins.png", "lite/skins.xml", "skins" ) );
 		queue.addObserver( this );

@@ -6,8 +6,10 @@ import com.adjazent.defrac.sandbox.apps.lite.core.LiteCore;
 import com.adjazent.defrac.sandbox.apps.lite.core.LiteData;
 import com.adjazent.defrac.sandbox.apps.lite.scene.editor.LiteSceneViewer;
 import com.adjazent.defrac.ui.surface.UISurface;
+import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.widget.button.UIButton;
 import com.adjazent.defrac.ui.widget.button.UIToggleButton;
+import com.adjazent.defrac.ui.widget.text.UITextField;
 
 /**
  * @author Alan Ross
@@ -21,6 +23,9 @@ public final class LitePlayoutArea extends UISurface implements ISignalReceiver
 	private UIToggleButton _buttonRecord;
 	private UIButton _buttonDelete;
 	private UIButton _buttonSubmit;
+
+	private UITextField _textField;
+	private UISurface _textArea;
 
 	public LitePlayoutArea()
 	{
@@ -56,28 +61,35 @@ public final class LitePlayoutArea extends UISurface implements ISignalReceiver
 		_buttonSubmit.moveTo( 330, 662 );
 		addChild( _buttonSubmit );
 
-//		_textField = new UITextField( LiteCore.ui.createTextField( "TextInputBackground" ), new TextFormat( "verdana", 14, 0x898989, false ) );
-//		_textField.resizeTo( 300, 32 );
-//		_textField.moveTo( 140, 502 );
-//		addChild( _textField );
+		_textField = new UITextField( LiteCore.ui.createSkin( "TextInputBackground" ), new UITextFormat( "Helvetica14" ) );
+		_textField.resizeTo( 300, 32 );
+		_textField.moveTo( 140, 502 );
+		_textField.setText( "Your text goes here." );
+		addChild( _textField );
 
-//		_textArea = new UITextArea( LiteCore.ui.createTextArea( "TextInputBackground" ), new TextFormat( "verdana", 14, 0x898989, false ) );
-//		_textArea.resizeTo( 300, 96 );
-//		_textArea.moveTo( 140, 552 );
-//		addChild( _textArea );
+		_textArea = new UISurface( LiteCore.ui.createSkin( "TextInputBackground" ) );
+		_textArea.resizeTo( 300, 96 );
+		_textArea.moveTo( 140, 552 );
+		addChild( _textArea );
+
 		LiteCore.data.addReceiver( this );
 	}
 
 	@Override
 	public void onSignal( ISignalSource signalSource, int signalType )
 	{
-		if( signalType == LiteData.SELECT_SCENE_SET )
+		if( signalType == LiteData.SELECT_SCENE_SET || signalType == LiteData.SELECT_SCENE_SLOT )
 		{
-			_videoPlayer.populate( LiteCore.data.selectedSceneSet().a );
-		}
-		if( signalType == LiteData.SELECT_SCENE_SLOT )
-		{
-			//_videoPlayer.populate( LiteCore.data.selectedSceneSet().a );
+			int type = LiteCore.data.selectedSceneSlotId();
+
+			if( type == LiteData.SCENE_SLOT_A )
+			{
+				_videoPlayer.populate( LiteCore.data.selectedSceneSet().a );
+			}
+			if( type == LiteData.SCENE_SLOT_B )
+			{
+				_videoPlayer.populate( LiteCore.data.selectedSceneSet().b );
+			}
 		}
 	}
 
