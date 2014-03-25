@@ -34,7 +34,7 @@ public final class UIVideoMacros extends Macro
 		// "" (an empty string) if the browser is certain it can’t play this format
 
 		return MethodBody(
-				Return( StaticCall( "defrac.lang.Bridge", "toString", Untyped( "document.createElement('video').canPlayType('video/mp4;')" ) )
+				Return( Untyped( "document.createElement('video').canPlayType('video/mp4;')" )
 				)
 		);
 	}
@@ -43,7 +43,7 @@ public final class UIVideoMacros extends Macro
 	public MethodBody supportsOGV()
 	{
 		return MethodBody(
-				Return( StaticCall( "defrac.lang.Bridge", "toString", Untyped( "document.createElement('video').canPlayType('video/ogg;')" ) )
+				Return( Untyped( "document.createElement('video').canPlayType('video/ogg;')" )
 				)
 		);
 	}
@@ -52,7 +52,7 @@ public final class UIVideoMacros extends Macro
 	public MethodBody supportsWEBM()
 	{
 		return MethodBody(
-				Return( StaticCall( "defrac.lang.Bridge", "toString", Untyped( "document.createElement('video').canPlayType('video/webm;')" ) )
+				Return( Untyped( "document.createElement('video').canPlayType('video/webm;')" )
 				)
 		);
 	}
@@ -83,7 +83,7 @@ public final class UIVideoMacros extends Macro
 						"c.style.visibility = 'hidden';                            \n" +
 						"c.appendChild(v);                                         \n" +
 						"document.body.insertBefore( c, document.body.firstChild );\n",
-						StaticCall( "defrac.lang.Bridge", "toJSString", LocalGet( fileUri ) )
+						LocalGet( fileUri )
 				)
 		);
 	}
