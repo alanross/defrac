@@ -1,16 +1,15 @@
 package com.adjazent.defrac.core.xml;
 
-import java.util.LinkedList;
 import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * @author Alan Ross
  * @version 0.1
  */
-public final class XMLProcessor
+public final class XMLScanner
 {
-	public XMLProcessor()
+	public XMLScanner()
 	{
 	}
 
@@ -50,33 +49,31 @@ public final class XMLProcessor
 	{
 		if( node != null )
 		{
-			String atts = node.getAttributes();
+			String att = node.getAttributes();
 
-			if( atts.length() > 0 )
+			if( att.length() > 0 )
 			{
-				atts = " " + atts;
+				att = " " + att;
 			}
 
 			if( node.isLeaf() )
 			{
 				if( node.hasValue() )
 				{
-					result.append( level + "<" + node.name + atts + ">" + node.value + "</" + node.name + ">\n" );
+					result.append( level + "<" + node.name + att + ">" + node.value + "</" + node.name + ">\n" );
 				}
 				else
 				{
-					result.append( level + "<" + node.name + atts + "/>\n" );
+					result.append( level + "<" + node.name + att + "/>\n" );
 				}
 			}
 			else
 			{
-				result.append( level + "<" + node.name + atts + ">\n" );
+				result.append( level + "<" + node.name + att + ">\n" );
 
-				Iterator<XMLNode> it = node.children.iterator();
-
-				while( it.hasNext() )
+				for( XMLNode child : node.children )
 				{
-					recursiveGetInfo( result, it.next(), level + "\t" );
+					recursiveGetInfo( result, child, level + "\t" );
 				}
 
 				result.append( level + "</" + node.name + ">\n" );
@@ -96,11 +93,9 @@ public final class XMLProcessor
 			result.add( node );
 		}
 
-		Iterator<XMLNode> it = node.children.iterator();
-
-		while( it.hasNext() )
+		for( XMLNode child : node.children )
 		{
-			recursiveGetByName( result, it.next(), needle );
+			recursiveGetByName( result, child, needle );
 		}
 	}
 
@@ -113,11 +108,9 @@ public final class XMLProcessor
 				return node;
 			}
 
-			Iterator<XMLNode> it = node.children.iterator();
-
-			while( it.hasNext() )
+			for( XMLNode child : node.children )
 			{
-				XMLNode result = recursiveGetFirstByName( it.next(), needle );
+				XMLNode result = recursiveGetFirstByName( child, needle );
 
 				if( result != null )
 				{
@@ -145,21 +138,18 @@ public final class XMLProcessor
 			if( key.equalsIgnoreCase( needle ) )
 			{
 				result.add( node );
-				continue;
 			}
 		}
 
-		Iterator<XMLNode> it = node.children.iterator();
-
-		while( it.hasNext() )
+		for( XMLNode child : node.children )
 		{
-			recursiveGetByAttribute( result, it.next(), needle );
+			recursiveGetByAttribute( result, child, needle );
 		}
 	}
 
 	@Override
 	public String toString()
 	{
-		return "[XMLProcessor]";
+		return "[XMLScanner]";
 	}
 }

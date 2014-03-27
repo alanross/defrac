@@ -16,12 +16,6 @@ public final class XMLNode
 	public Hashtable<String, String> attributes;
 	public LinkedList<XMLNode> children;
 
-	public XMLNode()
-	{
-		this.children = new LinkedList<XMLNode>();
-		this.attributes = new Hashtable<String, String>();
-	}
-
 	public XMLNode( String name )
 	{
 		this.children = new LinkedList<XMLNode>();
@@ -41,7 +35,7 @@ public final class XMLNode
 
 	public String getAttributes()
 	{
-		StringBuilder atts = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 
 		Enumeration<String> items = this.attributes.keys();
 
@@ -49,19 +43,19 @@ public final class XMLNode
 		{
 			String key = items.nextElement();
 
-			atts.append( key );
-			atts.append( "=" );
-			atts.append( "\"" );
-			atts.append( this.attributes.get( key ) );
-			atts.append( "\"" );
+			result.append( key );
+			result.append( "=" );
+			result.append( "\"" );
+			result.append( this.attributes.get( key ) );
+			result.append( "\"" );
 
 			if( items.hasMoreElements() )
 			{
-				atts.append( " " );
+				result.append( " " );
 			}
 		}
 
-		return atts.toString();
+		return result.toString();
 	}
 
 	public XMLNode clone()

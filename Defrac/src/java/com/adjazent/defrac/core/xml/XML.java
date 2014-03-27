@@ -8,51 +8,48 @@ import java.util.LinkedList;
  */
 public final class XML
 {
-	private XMLParser _parser;
-	private XMLProcessor _processor;
+	private XMLParser _parser = new XMLParser();
+	private XMLScanner _scanner = new XMLScanner();
 	private XMLNode _root;
 
 	public XML( String value )
 	{
-		_parser = new XMLParser();
-		_processor = new XMLProcessor();
-
 		_root = _parser.process( value );
 	}
 
 	public LinkedList<XMLNode> getAllByAttribute( String needle )
 	{
-		return _processor.getAllByAttribute( _root, needle );
+		return _scanner.getAllByAttribute( _root, needle );
 	}
 
 	public LinkedList<XMLNode> getAllByAttribute( XMLNode node, String needle )
 	{
-		return _processor.getAllByAttribute( node, needle );
+		return _scanner.getAllByAttribute( node, needle );
 	}
 
 	public LinkedList<XMLNode> getAllByName( String needle )
 	{
-		return _processor.getAllByName( _root, needle );
+		return _scanner.getAllByName( _root, needle );
 	}
 
 	public LinkedList<XMLNode> getAllByName( XMLNode node, String needle )
 	{
-		return _processor.getAllByName( node, needle );
+		return _scanner.getAllByName( node, needle );
 	}
 
 	public XMLNode getFirstByName( String needle )
 	{
-		return _processor.getFirstByName( _root, needle );
+		return _scanner.getFirstByName( _root, needle );
 	}
 
 	public String getInfo()
 	{
-		return _processor.getInfo( _root );
+		return _scanner.getInfo( _root );
 	}
 
 	public String getInfo( XMLNode node )
 	{
-		return _processor.getInfo( node );
+		return _scanner.getInfo( node );
 	}
 
 	public XMLNode getRoot()

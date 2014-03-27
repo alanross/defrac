@@ -138,8 +138,6 @@ public final class XMLParser
 			return; // no attributes found in this node
 		}
 
-		//cleaned = encodeSpecialKeys( cleaned );
-
 		String[] attributes = StringUtils.split( cleaned, ' ' );
 
 		for( String att : attributes )
@@ -162,8 +160,8 @@ public final class XMLParser
 
 	private String encodeSpecialKeys( String str )
 	{
-		//there is actually more to be done here. Special chars '>' anywhere in the att value or node value have to
-		// encoded not just single chars
+		// there is actually more to be done here. Special chars '>' anywhere in the
+		// str value or node value have to encoded not just single chars
 
 		str = XMLUtils.stripComments( str );
 
