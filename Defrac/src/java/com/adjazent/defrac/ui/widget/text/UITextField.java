@@ -1,5 +1,7 @@
 package com.adjazent.defrac.ui.widget.text;
 
+import com.adjazent.defrac.core.log.Context;
+import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MPoint;
@@ -19,11 +21,8 @@ import defrac.display.Image;
 import defrac.display.Layer;
 import defrac.display.Quad;
 import defrac.display.event.*;
-import defrac.event.Events;
-import defrac.event.KeyboardEvent;
 import defrac.geom.Point;
 import defrac.geom.Rectangle;
-import defrac.lang.Procedure;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
@@ -34,31 +33,6 @@ import java.util.LinkedList;
  */
 public final class UITextField extends UISurface implements IUITextRenderer
 {
-	private static final int SPECIAL = 49; // all beneath this key code are special codes
-	private static final int DEL = 8;
-	private static final int LEFT = 37;
-	private static final int RIGHT = 39;
-	private static final int UP = 38;
-	private static final int DOWN = 40;
-
-	private final Procedure<KeyboardEvent> keyDownHandler = new Procedure<KeyboardEvent>()
-	{
-		@Override
-		public void apply( KeyboardEvent event )
-		{
-			onKeyDown( event );
-		}
-	};
-
-	private final Procedure<KeyboardEvent> keyUpHandler = new Procedure<KeyboardEvent>()
-	{
-		@Override
-		public void apply( KeyboardEvent event )
-		{
-			onKeyUp( event );
-		}
-	};
-
 	public final Action onText = new Action( UIActionType.TEXT_CHANGE );
 	public final Action onSelection = new Action( UIActionType.TEXT_SELECTION_CHANGE );
 
@@ -78,6 +52,8 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 	private boolean _enabled = true;
 	private boolean _hasFocus = false;
+
+	private boolean _shift = false;
 
 	public UITextField( IUISkin skin, UITextFormat textFormat )
 	{
@@ -99,96 +75,6 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		addChild( _bgSelection );
 		addChild( _container );
 		addChild( _bgCaret );
-	}
-
-	private void onKeyDown( KeyboardEvent event )
-	{
-		int keyCode = event.keyCode;
-		StringBuilder s = new StringBuilder( getText() );
-
-		int ci = getCaretIndex();
-		int i0 = getSelectionFirst();
-		int i1 = getSelectionLast();
-
-		boolean textSelected = ( i0 > -1 && i1 > -1 );
-		boolean shiftKey = false;
-
-		setSelection( -1, -1 );
-
-		if( keyCode < SPECIAL )
-		{
-			switch( keyCode )
-			{
-				case DEL:
-					if( textSelected )
-					{
-						s.delete( i0, i1 );
-						setText( s.toString() );
-						setCaretIndex( i0 );
-					}
-					else if( ci > 0 && s.length() > 0 )
-					{
-						s.deleteCharAt( --ci );
-						setText( s.toString() );
-						setCaretIndex( ci );
-					}
-					break;
-
-				case LEFT:
-					if( textSelected && shiftKey )
-					{
-						if( i0 < ci )
-						{
-							setSelection( --i0, i1 );
-						}
-						else
-						{
-							setSelection( i0, --i1 );
-						}
-					}
-					else
-					{
-						if( -1 < --ci )
-						{
-							setCaretIndex( ci );
-						}
-					}
-
-					break;
-
-				case RIGHT:
-					if( textSelected && shiftKey )
-					{
-						if( i0 < ci )
-						{
-							setSelection( ++i0, i1 );
-						}
-						else
-						{
-							setSelection( i0, ++i1 );
-						}
-					}
-					else
-					{
-						if( _processor.getTextLength() >= ++ci )
-						{
-							setCaretIndex( ci );
-						}
-					}
-					break;
-			}
-		}
-		else
-		{
-			char c = UIGlyph.codeToChar( keyCode );
-			s.insert( ci, c );
-			setText( s.toString() );
-			setCaretIndex( ++ci );
-		}
-	}
-
-	private void onKeyUp( KeyboardEvent event )
-	{
 	}
 
 	private void onActionEvent( UIActionEvent actionEvent )
@@ -239,18 +125,139 @@ public final class UITextField extends UISurface implements IUITextRenderer
 	{
 		if( focusEvent.type == UIEventType.FOCUS_IN )
 		{
-			Events.onKeyDown.attach( keyDownHandler );
-			Events.onKeyUp.attach( keyUpHandler );
 			_hasFocus = true;
 		}
 		else if( focusEvent.type == UIEventType.FOCUS_OUT )
 		{
-			Events.onKeyDown.detach( keyDownHandler );
-			Events.onKeyUp.detach( keyUpHandler );
 			_hasFocus = false;
 		}
 
 		_processor.requestRenderAction();
+	}
+
+	private void onKeyEvent( UIKeyboardEvent keyboardEvent )
+	{
+		final int charCode = keyboardEvent.charCode;
+		final int keyCode = keyboardEvent.keyCode;
+
+		if( keyboardEvent.type == UIEventType.KEY_UP )
+		{
+			if( keyCode == UIKeyCode.SHIFT )
+			{
+				_shift = false;
+			}
+		}
+		else if( keyboardEvent.type == UIEventType.KEY_DOWN )
+		{
+			if( keyCode == UIKeyCode.SHIFT )
+			{
+				_shift = true;
+				return;
+			}
+
+			int ci = getCaretIndex();
+			int i0 = getSelectionFirst();
+			int i1 = getSelectionLast();
+
+			boolean textSelected = ( i0 > -1 && i1 > -1 );
+
+			StringBuilder s = new StringBuilder( getText() );
+
+			setSelection( -1, -1 );
+
+			if( UIKeyCode.isSpecial( keyCode ) )
+			{
+				if( keyCode == UIKeyCode.ARROW_LEFT )
+				{
+					if( textSelected && _shift )
+					{
+						Log.info( Context.DEFAULT, this, "LEFT: SHIFT SELECT" );
+					}
+					else if( textSelected )
+					{
+						Log.info( Context.DEFAULT, this, "LEFT: SELECT" );
+//						if( i0 < ci )
+//						{
+//							setSelection( --i0, i1 );
+//						}
+//						else
+//						{
+//							setSelection( i0, --i1 );
+//						}
+					}
+					else if( _shift )
+					{
+						Log.info( Context.DEFAULT, this, "LEFT: SHIFT CURSOR" );
+					}
+					else
+					{
+						if( -1 < --ci )
+						{
+							setCaretIndex( ci );
+						}
+					}
+				}
+				else if( keyCode == UIKeyCode.ARROW_RIGHT )
+				{
+					if( textSelected && _shift )
+					{
+						Log.info( Context.DEFAULT, this, "RIGHT: SHIFT SELECT" );
+					}
+					else if( textSelected )
+					{
+						Log.info( Context.DEFAULT, this, "RIGHT: SELECT" );
+//						if( i0 < ci )
+//						{
+//							setSelection( ++i0, i1 );
+//						}
+//						else
+//						{
+//							setSelection( i0, ++i1 );
+//						}
+					}
+					else if( _shift )
+					{
+						Log.info( Context.DEFAULT, this, "RIGHT: SHIFT CURSOR" );
+					}
+					else
+					{
+						if( _processor.getTextLength() >= ++ci )
+						{
+							setCaretIndex( ci );
+						}
+					}
+				}
+				else if( keyCode == UIKeyCode.DEL )
+				{
+					if( textSelected )
+					{
+						s.delete( i0, i1 );
+						setText( s.toString() );
+						setCaretIndex( i0 );
+					}
+					else if( ci > 0 && s.length() > 0 )
+					{
+						s.deleteCharAt( --ci );
+						setText( s.toString() );
+						setCaretIndex( ci );
+					}
+				}
+			}
+			else
+			{
+				if( textSelected )
+				{
+					s.delete( i0, i1 );
+					ci = i0;
+				}
+
+				char c = UIGlyph.codeToChar( charCode );
+
+				s.insert( ci, c );
+				setText( s.toString() );
+				setCaretIndex( ++ci );
+			}
+		}
 	}
 
 	@Override
@@ -270,9 +277,13 @@ public final class UITextField extends UISurface implements IUITextRenderer
 			{
 				onActionEvent( ( UIActionEvent ) uiEvent );
 			}
-			if( ( uiEvent.type & UIEventType.FOCUS ) != 0 )
+			else if( ( uiEvent.type & UIEventType.FOCUS ) != 0 )
 			{
 				onFocusEvent( ( UIFocusEvent ) uiEvent );
+			}
+			else if( ( uiEvent.type & UIEventType.KEYBOARD ) != 0 )
+			{
+				onKeyEvent( ( UIKeyboardEvent ) uiEvent );
 			}
 		}
 	}
@@ -356,11 +367,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 	public void setCaretIndex( int index )
 	{
-		if( index < 0 )
-		{
-			index = _processor.getTextLength();
-		}
-		else if( index > _processor.getTextLength() )
+		if( index < 0 || index > _processor.getTextLength() )
 		{
 			index = _processor.getTextLength();
 		}
@@ -378,13 +385,9 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		{
 			i0 = MMath.clampInt( i0, 0, _processor.getTextLength() );
 			i1 = MMath.clampInt( i1, 0, _processor.getTextLength() );
+		}
 
-			_selection.setTo( i0, i1 );
-		}
-		else
-		{
-			_selection.setTo( -1, -1 );
-		}
+		_selection.setTo( i0, i1 );
 
 		_processor.requestRenderAction();
 
@@ -440,7 +443,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 	public void setEnabled( boolean _enabled )
 	{
-		this._enabled = _enabled;
+		_enabled = _enabled;
 	}
 
 	@Override
