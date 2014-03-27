@@ -64,7 +64,7 @@ public final class EUIEvent extends Experiment
 				//  - Center its registration point
 				//  - Move it to a position on screen
 				//  - Change the blend mode to ADD
-				//  - Finally, we addGlyph it as a child to the container
+				//  - Finally, we add it as a child to the container
 				//
 				// Hint: The return type of container.addChild would be InteractiveQuad
 				//       in this context
