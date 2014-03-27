@@ -14,6 +14,7 @@ import com.adjazent.defrac.sandbox.experiments.ui.*;
 import com.adjazent.defrac.sandbox.experiments.war.Warzone;
 import com.adjazent.defrac.sandbox.issues.EAddChild;
 import com.adjazent.defrac.sandbox.issues.EKeyboardEvents;
+import com.adjazent.defrac.sandbox.issues.ENativeLabel;
 import com.adjazent.defrac.sandbox.issues.EResourcePath;
 import com.adjazent.defrac.sandbox.samples.canvas.ECanvas;
 import com.adjazent.defrac.sandbox.samples.event.EUIEvent;
@@ -63,10 +64,11 @@ public final class Sandbox extends AbstractSandbox
 		add( new EAddChild() );
 		add( new EResourcePath() );
 		add( new EKeyboardEvents() );
+		add( new ENativeLabel() );
 		//----------------------------- warzone
 		add( new Warzone() );
 
-		activate( LiteStudio.class );
+		activate( ENativeLabel.class );
 	}
 
 	public static void main( final String[] args )
