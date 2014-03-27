@@ -6,7 +6,6 @@ import com.adjazent.defrac.math.geom.MPoint;
 import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import defrac.display.Texture;
-import defrac.display.TextureData;
 
 import java.util.LinkedList;
 
@@ -16,11 +15,8 @@ import java.util.LinkedList;
  */
 public final class UIGlyph implements IAtlasElement, IDisposable
 {
-	public static int NEW_LINE = 10;
-
 	// id
 	private int _code;
-	private char _character;
 
 	// the font of which the glyph is part of
 	private UIFont _font;
@@ -43,22 +39,11 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 	private int _base;
 	private LinkedList<UIKerningPair> _kerning;
 
-	public static int charToCode( char character )
-	{
-		return ( int ) character;
-	}
-
-	public static char codeToChar( int code )
-	{
-		return Character.toString( ( char ) code ).charAt( 0 );
-	}
-
 	public UIGlyph( UIFont font, int code, MRectangle sourceRect, MRectangle bounds, MPoint offset, int xAdvance, int lineHeight, int base, LinkedList<UIKerningPair> kerning )
 	{
 		_font = font;
 
 		_code = code;
-		_character = codeToChar( code );
 
 		_sourceRect = sourceRect;
 		_selectionRect = new MRectangle( 0, 0, xAdvance, lineHeight );
@@ -106,30 +91,20 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 		_offset = null;
 	}
 
-	public int getKerning( int code )
+	public int kerning( int code )
 	{
 		// amount of kerning between this glyph and the following one.
 		// the code of the following glyph is passed into this function
 
-		int n = _kerning.size();
-		UIKerningPair pair;
-
-		while( --n > -1 )
+		for( UIKerningPair pair : _kerning )
 		{
-			pair = _kerning.get( n );
-
-			if( pair.getSecondGlyphCode() == code )
+			if( pair.secondGlyphCode == code )
 			{
-				return pair.getKerning();
+				return pair.kerning;
 			}
 		}
 
 		return 0;
-	}
-
-	public TextureData getTextureData()
-	{
-		return _texture.textureData;
 	}
 
 	public Texture getTexture()
@@ -140,11 +115,6 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 	public int getCode()
 	{
 		return _code;
-	}
-
-	public char getCharacter()
-	{
-		return _character;
 	}
 
 	public MRectangle getSourceRect()
@@ -213,7 +183,6 @@ public final class UIGlyph implements IAtlasElement, IDisposable
 	{
 		return "[UIGlyph" +
 				" code:" + getCode() +
-				", character:" + getCharacter() +
 				", width:" + getWidth() +
 				", height:" + getHeight() +
 				", lineHeight:" + getLineHeight() +

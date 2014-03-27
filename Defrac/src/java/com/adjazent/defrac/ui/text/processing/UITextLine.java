@@ -1,6 +1,7 @@
 package com.adjazent.defrac.ui.text.processing;
 
 import com.adjazent.defrac.math.geom.MRectangle;
+import com.adjazent.defrac.ui.text.UICharCode;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 
 import java.util.LinkedList;
@@ -36,7 +37,7 @@ public final class UITextLine
 			glyph = glyphs.get( i );
 			glyph.setTo( ( int ) ox, ( int ) oy );
 
-			if( glyph.getCode() == UIGlyph.NEW_LINE )
+			if( glyph.getCode() == UICharCode.LINE_FEED )
 			{
 				return new UITextLine( result, bounds, TRUNCATE_LINE_BREAK );
 			}
@@ -60,7 +61,7 @@ public final class UITextLine
 
 			if( n > ++i )
 			{
-				ox += glyph.getXAdvance() + glyph.getKerning( glyphs.get( i ).getCode() ) + tracking;
+				ox += glyph.getXAdvance() + glyph.kerning( glyphs.get( i ).getCode() ) + tracking;
 			}
 		}
 

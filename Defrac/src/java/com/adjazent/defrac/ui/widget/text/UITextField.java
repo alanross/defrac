@@ -8,9 +8,7 @@ import com.adjazent.defrac.math.geom.MPoint;
 import com.adjazent.defrac.math.geom.MRectangle;
 import com.adjazent.defrac.ui.surface.IUISkin;
 import com.adjazent.defrac.ui.surface.UISurface;
-import com.adjazent.defrac.ui.text.UITextFormat;
-import com.adjazent.defrac.ui.text.UITextProcessor;
-import com.adjazent.defrac.ui.text.UITextSelection;
+import com.adjazent.defrac.ui.text.*;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 import com.adjazent.defrac.ui.text.processing.IUITextRenderer;
 import com.adjazent.defrac.ui.text.processing.UITextLayout;
@@ -251,7 +249,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 					ci = i0;
 				}
 
-				char c = UIGlyph.codeToChar( charCode );
+				char c = UICharCode.toChar( charCode );
 
 				s.insert( ci, c );
 				setText( s.toString() );

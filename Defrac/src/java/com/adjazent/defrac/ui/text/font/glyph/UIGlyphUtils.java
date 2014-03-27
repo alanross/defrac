@@ -1,5 +1,7 @@
 package com.adjazent.defrac.ui.text.font.glyph;
 
+import com.adjazent.defrac.ui.text.UICharCode;
+
 import java.util.LinkedList;
 
 /**
@@ -8,11 +10,19 @@ import java.util.LinkedList;
  */
 public final class UIGlyphUtils
 {
-	private static LinkedList<Integer> _wordSeparatorChars;
+	private static int[] _wordSeparators = new int[]{
+			UICharCode.toCode( ' ' ),
+			UICharCode.toCode( '.' ),
+			UICharCode.toCode( ',' ),
+			UICharCode.toCode( ';' ),
+			UICharCode.toCode( '!' ),
+			UICharCode.toCode( '?' )
+	};
 
 	public static int findLastIndexOf( LinkedList<UIGlyph> glyphs, char character )
 	{
-		int code = UIGlyph.charToCode( character );
+		int code = UICharCode.toCode( character );
+
 		int n = glyphs.size();
 
 		while( --n > -1 )
@@ -28,37 +38,23 @@ public final class UIGlyphUtils
 
 	public static String glyphsToString( LinkedList<UIGlyph> glyphs )
 	{
-		final int n = glyphs.size();
-		String str = "";
+		StringBuilder result = new StringBuilder();
 
-		for( int i = 0; i < n; ++i )
+		for( UIGlyph glyph : glyphs )
 		{
-			str += UIGlyph.codeToChar( glyphs.get( i ).getCode() );
+			result.append( UICharCode.toChar( glyph.getCode() ) );
 		}
 
-		return str;
+		return result.toString();
 	}
 
 	public static boolean isWordSeparator( UIGlyph glyph )
 	{
-		if( _wordSeparatorChars == null )
-		{
-			_wordSeparatorChars = new LinkedList<Integer>();
-			_wordSeparatorChars.addLast( UIGlyph.charToCode( ' ' ) );
-			_wordSeparatorChars.addLast( UIGlyph.charToCode( '.' ) );
-			_wordSeparatorChars.addLast( UIGlyph.charToCode( ',' ) );
-			_wordSeparatorChars.addLast( UIGlyph.charToCode( ';' ) );
-			_wordSeparatorChars.addLast( UIGlyph.charToCode( '!' ) );
-			_wordSeparatorChars.addLast( UIGlyph.charToCode( '?' ) );
-		}
-
 		int code = glyph.getCode();
 
-		final int n = _wordSeparatorChars.size();
-
-		for( int i = 0; i < n; ++i )
+		for( int c : _wordSeparators )
 		{
-			if( _wordSeparatorChars.get( i ) == code )
+			if( c == code )
 			{
 				return true;
 			}

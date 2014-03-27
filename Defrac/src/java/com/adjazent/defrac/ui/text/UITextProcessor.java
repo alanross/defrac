@@ -71,7 +71,7 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 		_font = UIFontManager.get().getFont( _format.fontId );
 
-		UIGlyph glyph = _font.getGlyphWithChar( '.' );
+		UIGlyph glyph = _font.getGlyph( '.' );
 
 		_ellipsis = new LinkedList<UIGlyph>();
 		_ellipsis.add( glyph.clone() );
@@ -83,14 +83,12 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 	public void setText( String value )
 	{
+		//NOTE: No RegEx support yet.
 		//value = value.replace( RegExp( /[\a\e\t]/gm),' ');
+		//value = value.replace( RegExp( /[\f\r\v]/gm ), ' ' );
 
 		if( _composer instanceof UITextComposerSingleLine )
 		{
-			//NOTE: No RegEx support yet.
-
-			//value = value.replace( RegExp( /[\f\r\v]/gm ), ' ' );
-
 			value = value.replace( '\f', ' ' );
 			value = value.replace( '\r', ' ' );
 			value = value.replace( '\n', ' ' );
@@ -99,8 +97,6 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 		{
 			value = value.replace( '\f', '\n' );
 			value = value.replace( '\r', '\n' );
-
-			//value = value.replace( RegExp( /[\f\r\v]/gm),'\n');
 		}
 
 		_text = value;
@@ -111,12 +107,11 @@ public final class UITextProcessor implements IDisposable, IUIRenderListener
 
 		for( int i = 0; i < n; ++i )
 		{
-			UIGlyph glyph = _font.getGlyphWithChar( value.charAt( i ) );
+			UIGlyph glyph = _font.getGlyph( value.charAt( i ) );
 
-			// no glyph found for char, insert following substitute
 			if( glyph == null )
 			{
-				glyph = _font.getGlyphWithChar( '_' );
+				glyph = _font.getSubstituteGlyph();
 			}
 
 			_glyphs.addLast( glyph );

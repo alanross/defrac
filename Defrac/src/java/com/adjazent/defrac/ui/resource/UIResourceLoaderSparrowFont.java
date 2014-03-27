@@ -12,6 +12,7 @@ import com.adjazent.defrac.core.xml.XML;
 import com.adjazent.defrac.core.xml.XMLNode;
 import com.adjazent.defrac.math.geom.MPoint;
 import com.adjazent.defrac.math.geom.MRectangle;
+import com.adjazent.defrac.ui.text.UICharCode;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.UIFontManager;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
@@ -78,7 +79,7 @@ public final class UIResourceLoaderSparrowFont extends Job implements IUIResourc
 			font.addGlyph( createGlyph( font, lineHeight, base, glyphs.getChildAt( n ), kernings.children ) );
 		}
 
-		if( !font.hasGlyphWithCode( 10 ) ) // new-line character
+		if( !font.hasGlyph( 10 ) ) // new-line character
 		{
 			font.addGlyph( createNewLineGlyph( font ) );
 		}
@@ -139,14 +140,13 @@ public final class UIResourceLoaderSparrowFont extends Job implements IUIResourc
 	{
 		// try to prepare a new line character by using the info from the space character
 
-		if( !font.hasGlyphWithChar( ' ' ) ) // space character
+		if( !font.hasGlyph( ' ' ) ) // space character
 		{
 			throw new NullError( this, "No space character present in the font atlas." );
 		}
 
-		UIGlyph glyph = font.getGlyphWithChar( ' ' );
+		UIGlyph glyph = font.getGlyph( ' ' );
 
-		int code = UIGlyph.NEW_LINE;
 		int xAdvance = 0;
 		int lineHeight = glyph.getLineHeight();
 		int base = glyph.getBase();
@@ -155,7 +155,7 @@ public final class UIResourceLoaderSparrowFont extends Job implements IUIResourc
 		MRectangle bounds = new MRectangle();
 		LinkedList<UIKerningPair> kerningPairs = new LinkedList<UIKerningPair>();
 
-		return new UIGlyph( font, code, sourceRect, bounds, offset, xAdvance, lineHeight, base, kerningPairs );
+		return new UIGlyph( font, UICharCode.LINE_FEED, sourceRect, bounds, offset, xAdvance, lineHeight, base, kerningPairs );
 	}
 
 	private LinkedList<UIKerningPair> createKerningPairs( LinkedList<XMLNode> pairs )

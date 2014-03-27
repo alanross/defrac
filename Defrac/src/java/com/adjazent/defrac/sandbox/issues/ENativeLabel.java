@@ -24,7 +24,7 @@ public final class ENativeLabel extends Experiment
 		textRenderer.y( 50 );
 
 		Label label = new Label();
-		label.font( BitmapFont.fromFnt( "fonts/font.fnt", "fonts/font.png" ) );
+		label.font( BitmapFont.fromFnt( "fonts/helvetica24.fnt", "fonts/helvetica24.png" ) );
 		label.text( "Hello World" );
 		label.autoSize( Label.AutoSize.AUTO );
 		label.color( 0xFFFFFFFF );

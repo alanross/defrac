@@ -48,12 +48,12 @@ public class UIFontManager extends Atlas
 
 	public boolean hasFont( UIFont element )
 	{
-		return hasFontWithId( element.getId() );
+		return hasFont( element.getId() );
 	}
 
-	public boolean hasFontWithId( String id )
+	public boolean hasFont( String id )
 	{
-		return hasFontWithId( id );
+		return hasElement( id );
 	}
 
 	@Override

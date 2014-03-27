@@ -1,6 +1,7 @@
 package com.adjazent.defrac.ui.text.processing;
 
 import com.adjazent.defrac.math.geom.MRectangle;
+import com.adjazent.defrac.ui.text.UICharCode;
 import com.adjazent.defrac.ui.text.UITextFormat;
 import com.adjazent.defrac.ui.text.font.UIFont;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
@@ -34,7 +35,7 @@ public final class UITextComposerMultiLine implements IUITextComposer
 
 	private UITextLine truncate( LinkedList<UIGlyph> glyphs, LinkedList<UIGlyph> ellipsis, double tracking, double offset, int maxWidth )
 	{
-		if( glyphs.get( glyphs.size() - 1 ).getCharacter() == ' ' )
+		if( glyphs.get( glyphs.size() - 1 ).getCode() == UICharCode.SPACE )
 		{
 			glyphs.pollLast();
 		}

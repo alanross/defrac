@@ -2,6 +2,7 @@ package com.adjazent.defrac.ui.text.font;
 
 import com.adjazent.defrac.ds.atlas.Atlas;
 import com.adjazent.defrac.ds.atlas.IAtlasElement;
+import com.adjazent.defrac.ui.text.UICharCode;
 import com.adjazent.defrac.ui.text.font.glyph.UIGlyph;
 import defrac.display.TextureData;
 
@@ -41,26 +42,31 @@ public class UIFont extends Atlas implements IAtlasElement
 		return removeElement( glyph );
 	}
 
-	public UIGlyph getGlyphWithChar( char character )
+	public UIGlyph getGlyph( char character )
 	{
-		return getGlyphWithCode( UIGlyph.charToCode( character ) );
+		return getGlyph( UICharCode.toCode( character ) );
 	}
 
-	public UIGlyph getGlyphWithCode( int code )
+	public UIGlyph getGlyph( int charCode )
 	{
-		String id = Integer.toString( code );
+		String id = Integer.toString( charCode );
 
 		return ( hasElement( id ) ) ? ( ( UIGlyph ) getElement( id ) ).clone() : null;
 	}
 
-	public boolean hasGlyphWithChar( char character )
+	public UIGlyph getSubstituteGlyph()
 	{
-		return hasGlyphWithCode( UIGlyph.charToCode( character ) );
+		return getGlyph( '_' );
 	}
 
-	public boolean hasGlyphWithCode( int code )
+	public boolean hasGlyph( char character )
 	{
-		return hasElement( Integer.toString( code ) );
+		return hasGlyph( UICharCode.toCode( character ) );
+	}
+
+	public boolean hasGlyph( int charCode )
+	{
+		return hasElement( Integer.toString( charCode ) );
 	}
 
 	@Override
