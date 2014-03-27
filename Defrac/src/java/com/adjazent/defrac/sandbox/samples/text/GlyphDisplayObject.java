@@ -1,4 +1,4 @@
-package com.adjazent.defrac.sandbox.issues;
+package com.adjazent.defrac.sandbox.samples.text;
 
 import defrac.display.BlendMode;
 import defrac.display.DisplayObject;

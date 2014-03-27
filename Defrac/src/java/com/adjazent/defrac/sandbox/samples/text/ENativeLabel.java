@@ -1,4 +1,4 @@
-package com.adjazent.defrac.sandbox.issues;
+package com.adjazent.defrac.sandbox.samples.text;
 
 import com.adjazent.defrac.sandbox.Experiment;
 import defrac.display.Label;
