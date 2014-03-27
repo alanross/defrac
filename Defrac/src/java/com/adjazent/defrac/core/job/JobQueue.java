@@ -96,7 +96,7 @@ public final class JobQueue extends Job implements IJobObserver
 	{
 		if( isRunning() )
 		{
-			throw new GenericError( this, "Can not addGlyph Job while JobQueue is running." );
+			throw new GenericError( this, "Can not addJob Job while JobQueue is running." );
 		}
 
 		if( hasJob( job ) )
