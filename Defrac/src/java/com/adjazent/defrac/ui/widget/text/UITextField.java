@@ -1,7 +1,5 @@
 package com.adjazent.defrac.ui.widget.text;
 
-import com.adjazent.defrac.core.log.Context;
-import com.adjazent.defrac.core.log.Log;
 import com.adjazent.defrac.core.notification.action.Action;
 import com.adjazent.defrac.math.MMath;
 import com.adjazent.defrac.math.geom.MPoint;
@@ -85,8 +83,12 @@ public final class UITextField extends UISurface implements IUITextRenderer
 			_dragEnabled = true;
 			_dragOrigin.setTo( p.x, p.y );
 
+			if( hasSelection() )
+			{
+				setSelection( -1, -1 );
+			}
+
 			setCaretIndex( _processor.getCaretIndexAtPoint( p ) );
-			setSelection( -1, -1 );
 		}
 		if( actionEvent.type == UIEventType.ACTION_MOVE )
 		{
@@ -116,6 +118,7 @@ public final class UITextField extends UISurface implements IUITextRenderer
 			UITextSelection selection = new UITextSelection();
 			_processor.selectWord( p, selection );
 			setSelection( selection.firstIndex, selection.lastIndex );
+			setCaretIndex( getSelectionFirst() );
 		}
 	}
 
@@ -157,80 +160,88 @@ public final class UITextField extends UISurface implements IUITextRenderer
 			int i0 = getSelectionFirst();
 			int i1 = getSelectionLast();
 
-			boolean textSelected = ( i0 > -1 && i1 > -1 );
+			if( !hasSelection() )
+			{
+				i0 = i1 = ci;
+			}
 
 			StringBuilder s = new StringBuilder( getText() );
 
-			setSelection( -1, -1 );
-
 			if( UIKeyCode.isSpecial( keyCode ) )
 			{
-				if( keyCode == UIKeyCode.ARROW_LEFT )
+				if( _shift )
 				{
-					if( textSelected && _shift )
+					int n0 = i0;
+					int n1 = i1;
+
+					if( keyCode == UIKeyCode.ARROW_LEFT )
 					{
-						Log.info( Context.DEFAULT, this, "LEFT: SHIFT SELECT" );
+						if( n1 == ci )
+						{
+							n0--;
+						}
+						else
+						{
+							n1--;
+						}
 					}
-					else if( textSelected )
+					else if( keyCode == UIKeyCode.ARROW_RIGHT )
 					{
-						Log.info( Context.DEFAULT, this, "LEFT: SELECT" );
-//						if( i0 < ci )
-//						{
-//							setSelection( --i0, i1 );
-//						}
-//						else
-//						{
-//							setSelection( i0, --i1 );
-//						}
+						if( n0 == ci )
+						{
+							n1++;
+						}
+						else
+						{
+							n0++;
+						}
 					}
-					else if( _shift )
+
+					if( ( n0 != i0 || n1 != i1 ) )
 					{
-						Log.info( Context.DEFAULT, this, "LEFT: SHIFT CURSOR" );
+						n0 = MMath.clampInt( n0, 0, _processor.getTextLength() );
+						n1 = MMath.clampInt( n1, 0, _processor.getTextLength() );
+
+						setSelection( n0, n1 );
 					}
-					else
+				}
+				else
+				{
+					if( keyCode == UIKeyCode.ARROW_LEFT )
 					{
+						if( hasSelection() )
+						{
+							setSelection( -1, -1 );
+							ci = i0 + 1;
+						}
+
 						if( -1 < --ci )
 						{
 							setCaretIndex( ci );
 						}
 					}
-				}
-				else if( keyCode == UIKeyCode.ARROW_RIGHT )
-				{
-					if( textSelected && _shift )
+					else if( keyCode == UIKeyCode.ARROW_RIGHT )
 					{
-						Log.info( Context.DEFAULT, this, "RIGHT: SHIFT SELECT" );
-					}
-					else if( textSelected )
-					{
-						Log.info( Context.DEFAULT, this, "RIGHT: SELECT" );
-//						if( i0 < ci )
-//						{
-//							setSelection( ++i0, i1 );
-//						}
-//						else
-//						{
-//							setSelection( i0, ++i1 );
-//						}
-					}
-					else if( _shift )
-					{
-						Log.info( Context.DEFAULT, this, "RIGHT: SHIFT CURSOR" );
-					}
-					else
-					{
+						if( hasSelection() )
+						{
+							setSelection( -1, -1 );
+							ci = i1 - 1;
+						}
+
 						if( _processor.getTextLength() >= ++ci )
 						{
 							setCaretIndex( ci );
 						}
 					}
 				}
-				else if( keyCode == UIKeyCode.DEL )
+
+				if( keyCode == UIKeyCode.DEL )
 				{
-					if( textSelected )
+					if( hasSelection() )
 					{
 						s.delete( i0, i1 );
 						setText( s.toString() );
+						setSelection( -1, -1 );
 						setCaretIndex( i0 );
 					}
 					else if( ci > 0 && s.length() > 0 )
@@ -243,10 +254,11 @@ public final class UITextField extends UISurface implements IUITextRenderer
 			}
 			else
 			{
-				if( textSelected )
+				if( hasSelection() )
 				{
 					s.delete( i0, i1 );
 					ci = i0;
+					setSelection( -1, -1 );
 				}
 
 				char c = UICharCode.toChar( charCode );
@@ -328,9 +340,9 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		_bgCaret.moveTo( ( float ) caretBounds.x, ( float ) caretBounds.y );
 		_bgCaret.scaleToSize( ( float ) caretBounds.width, ( float ) caretBounds.height );
 
-		if( _selection.firstIndex != -1 && _selection.lastIndex != -1 )
+		if( hasSelection() )
 		{
-			// Note: We will have several rectangles for multi line, though not implemented yet
+			// Note: We will have several rectangles for multi line, at some point :-)
 			LinkedList<MRectangle> rectangles = _processor.getSelectionRect( _selection );
 
 			for( MRectangle r : rectangles )
@@ -379,17 +391,22 @@ public final class UITextField extends UISurface implements IUITextRenderer
 
 	public void setSelection( int i0, int i1 )
 	{
-		if( i0 != -1 && i1 != -1 )
+		i0 = MMath.clampInt( i0, 0, _processor.getTextLength() );
+		i1 = MMath.clampInt( i1, 0, _processor.getTextLength() );
+
+		if( i0 == i1 )
 		{
-			i0 = MMath.clampInt( i0, 0, _processor.getTextLength() );
-			i1 = MMath.clampInt( i1, 0, _processor.getTextLength() );
+			i0 = i1 = -1;
 		}
 
-		_selection.setTo( i0, i1 );
+		if( i0 != _selection.firstIndex || i1 != _selection.lastIndex )
+		{
+			_selection.setTo( i0, i1 );
 
-		_processor.requestRenderAction();
+			_processor.requestRenderAction();
 
-		onSelection.send( this );
+			onSelection.send( this );
+		}
 	}
 
 	public void setFormat( UITextFormat value )
@@ -424,14 +441,19 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		return _selection.lastIndex;
 	}
 
-	public void setSelectionColor( int color )
+	public boolean hasSelection()
 	{
-		_bgSelection.color( color );
+		return ( _selection.firstIndex != -1 && _selection.lastIndex != -1 );
 	}
 
-	public void setCaretColor( int color )
+	public void setSelectionColor( int value )
 	{
-		_bgCaret.color( color );
+		_bgSelection.color( value );
+	}
+
+	public void setCaretColor( int value )
+	{
+		_bgCaret.color( value );
 	}
 
 	public boolean getEnabled()
@@ -439,9 +461,9 @@ public final class UITextField extends UISurface implements IUITextRenderer
 		return _enabled;
 	}
 
-	public void setEnabled( boolean _enabled )
+	public void setEnabled( boolean value )
 	{
-		_enabled = _enabled;
+		_enabled = value;
 	}
 
 	@Override

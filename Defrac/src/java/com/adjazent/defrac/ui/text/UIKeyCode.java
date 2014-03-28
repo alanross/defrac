@@ -46,7 +46,16 @@ public final class UIKeyCode
 
 	public static boolean isSpecial( int keyCode )
 	{
-		return ( ( keyCode < SPECIAL || keyCode > F1 ) && keyCode != SPACE );
+		if( keyCode < SPECIAL && keyCode != SPACE )
+		{
+			return true;
+		}
+		else if( F1 <= keyCode && keyCode <= F12 || keyCode == CMD )
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	public UIKeyCode()
