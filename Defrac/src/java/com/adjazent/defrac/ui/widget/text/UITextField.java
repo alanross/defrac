@@ -118,7 +118,11 @@ public final class UITextField extends UISurface implements IUITextRenderer
 			UITextSelection selection = new UITextSelection();
 			_processor.selectWord( p, selection );
 			setSelection( selection.firstIndex, selection.lastIndex );
-			setCaretIndex( getSelectionFirst() );
+
+			if( hasSelection() )
+			{
+				setCaretIndex( getSelectionFirst() );
+			}
 		}
 	}
 
